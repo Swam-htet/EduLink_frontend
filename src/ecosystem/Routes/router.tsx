@@ -1,4 +1,5 @@
 import { PrivateRoute } from '@/components/PrivateRoute';
+import { AdminLayout } from '@/shared/components/layouts/AdminLayout/AdminLayout';
 import { ErrorPage, LoadingPage } from '@/shared/components/pages';
 import { Suspense } from 'react';
 import {
@@ -23,16 +24,18 @@ const router = createBrowserRouter(
         />
       ))}
 
-      {/* Private Routes */}
+      {/* Private Routes with Admin Layout */}
       <Route element={<PrivateRoute />} errorElement={<ErrorPage />}>
-        {privateRoutes.map((route) => (
-          <Route
-            key={route.path}
-            path={route.path}
-            element={route.element}
-            errorElement={<ErrorPage />}
-          />
-        ))}
+        <Route element={<AdminLayout />}>
+          {privateRoutes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={route.element}
+              errorElement={<ErrorPage />}
+            />
+          ))}
+        </Route>
       </Route>
     </>
   )

@@ -1,9 +1,10 @@
 import { authReducer } from '@/modules/Auth/store/auth.slice';
 import { configureStore } from '@reduxjs/toolkit';
-
+import tenantReducer from './tenant.slice';
 export const store = configureStore({
   reducer: {
-    auth: authReducer
+    auth: authReducer,
+    tenant: tenantReducer
   }
 });
 
