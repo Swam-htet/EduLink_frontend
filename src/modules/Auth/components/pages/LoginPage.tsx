@@ -1,24 +1,41 @@
 import { Button } from '@/components/ui/button';
-import { PUBLIC_ENDPOINTS } from '@/ecosystem/PageEndpoints/Public';
+import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { LoginForm } from '@/modules/Auth/components/forms/LoginForm';
-import { useAuth } from '@/modules/Auth/hooks/useAuth';
 import { LoginFormData } from '@/modules/Auth/schemas/auth.schema';
+import { AuthService } from '@/modules/Auth/services/auth.service';
+import { setCredentials } from '@/modules/Auth/store/auth.slice';
+import { ErrorPayload } from '@/shared/providers/react-query/ReactQueryProvider';
+import { useMutation } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const LoginPage = () => {
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = async (data: LoginFormData) => {
-    try {
-      await login({
-        email: data.email,
-        password: data.password
-      });
-      navigate('/');
-    } catch (err) {
-      console.error(err);
+  const loginMutation = useMutation({
+    mutationFn: AuthService.login,
+    onSuccess: (data) => {
+      dispatch(
+        setCredentials({
+          user: data.data.staff,
+          token: data.data.token
+        })
+      );
+      toast.success(data.message);
+      navigate(PRIVATE_ENDPOINTS.HOME);
+    },
+    onError: (error) => {
+      toast.error((error.response?.data as ErrorPayload).message);
     }
+  });
+
+  const handleSubmit = async (data: LoginFormData) => {
+    await loginMutation.mutateAsync({
+      email: data.email,
+      password: data.password
+    });
   };
 
   return (
@@ -29,22 +46,15 @@ export const LoginPage = () => {
           <p className="mt-2 text-lg text-gray-600">Sign in to your account</p>
         </div>
 
-        <LoginForm onSubmit={handleSubmit} />
+        <LoginForm onSubmit={handleSubmit} loading={loginMutation.isPending} />
 
         <div className="flex items-center justify-between text-sm">
           <Button
             variant="link"
             className="text-primary-600 hover:text-primary-500"
-            onClick={() => navigate(PUBLIC_ENDPOINTS.FORGOT_PASSWORD)}
+            // onClick={() => navigate(PUBLIC_ENDPOINTS.FORGOT_PASSWORD)}
           >
             Forgot your password?
-          </Button>
-          <Button
-            variant="link"
-            className="text-primary-600 hover:text-primary-500"
-            onClick={() => navigate(PUBLIC_ENDPOINTS.REGISTER)}
-          >
-            Create account
           </Button>
         </div>
       </div>

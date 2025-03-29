@@ -1,7 +1,5 @@
 export const PRIVATE_ENDPOINTS = {
-  HOME: '/',
-  PROFILE: '/profile',
-  DASHBOARD: '/dashboard',
+  DASHBOARD: '/',
   STUDENT_MANAGEMENT: '/student-management',
   STUDENT_CLASS_ENROLLMENT: '/student-class-enrollment',
   STUDENT_CLASS_ATTENDANCE: '/student-class-attendance',

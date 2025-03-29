@@ -1,0 +1,1 @@
+export { SubjectManagementPage } from './SubjectManagementPage';

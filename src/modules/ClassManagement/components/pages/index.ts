@@ -1,0 +1,1 @@
+export { ClassManagementPage } from './ClassManagementPage';

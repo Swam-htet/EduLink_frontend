@@ -1,0 +1,1 @@
+export { StudentClassAttendancePage } from './StudentClassAttendancePage';

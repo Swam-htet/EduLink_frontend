@@ -2,19 +2,6 @@ import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 
-// Lazy load components
-const HomePage = lazy(() =>
-  import('@/modules/Home/components/pages').then((module) => ({
-    default: module.HomePage
-  }))
-);
-
-const ProfilePage = lazy(() =>
-  import('@/modules/Profile/components/pages/ProfilePage').then((module) => ({
-    default: module.ProfilePage
-  }))
-);
-
 const DashboardPage = lazy(() =>
   import('@/modules/Dashboard/components/pages/DashboardPage').then((module) => ({
     default: module.DashboardPage
@@ -57,12 +44,6 @@ const ClassManagementPage = lazy(() =>
   }))
 );
 
-const ExamManagementPage = lazy(() =>
-  import('@/modules/ExamManagement/components/pages/ExamManagementPage').then((module) => ({
-    default: module.ExamManagementPage
-  }))
-);
-
 const CourseManagementPage = lazy(() =>
   import('@/modules/CourseManagement/components/pages/CourseManagementPage').then((module) => ({
     default: module.CourseManagementPage
@@ -82,14 +63,6 @@ const SubjectManagementPage = lazy(() =>
 );
 
 export const privateRoutes: RouteObject[] = [
-  {
-    path: PRIVATE_ENDPOINTS.HOME,
-    element: <HomePage />
-  },
-  {
-    path: PRIVATE_ENDPOINTS.PROFILE,
-    element: <ProfilePage />
-  },
   {
     path: PRIVATE_ENDPOINTS.STUDENT_MANAGEMENT,
     element: <StudentManagementPage />
@@ -113,10 +86,6 @@ export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.CLASS_MANAGEMENT,
     element: <ClassManagementPage />
-  },
-  {
-    path: PRIVATE_ENDPOINTS.EXAM_MANAGEMENT,
-    element: <ExamManagementPage />
   },
   {
     path: PRIVATE_ENDPOINTS.COURSE_MANAGEMENT,

@@ -145,7 +145,7 @@ CustomForm.Password = function PasswordComponent({
                 className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? (
+                {!showPassword ? (
                   <EyeOff className="h-4 w-4 text-gray-500" />
                 ) : (
                   <Eye className="h-4 w-4 text-gray-500" />

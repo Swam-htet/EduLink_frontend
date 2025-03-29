@@ -3,14 +3,14 @@ import { AuthService } from '@/modules/Auth/services/auth.service';
 import {
   clearCredentials,
   selectCurrentUser,
-  selectIsAuthenticated,
-  setCredentials
+  selectIsAuthenticated
 } from '@/modules/Auth/store/auth.slice';
 
-import { AuthResponse, LoginRequest, RegisterRequest } from '@/modules/Auth/types/auth.types';
+import { ErrorPayload } from '@/shared/providers/react-query/ReactQueryProvider';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -18,44 +18,23 @@ export const useAuth = () => {
   const user = useSelector(selectCurrentUser);
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  const loginMutation = useMutation<AuthResponse, Error, LoginRequest>({
-    mutationFn: AuthService.login,
-    onSuccess: (data) => {
-      dispatch(
-        setCredentials({
-          user: data.user,
-          accessToken: data.accessToken
-        })
-      );
-    }
-  });
-
-  const registerMutation = useMutation<AuthResponse, Error, RegisterRequest>({
-    mutationFn: AuthService.register,
-    onSuccess: (data) => {
-      dispatch(
-        setCredentials({
-          user: data.user,
-          accessToken: data.accessToken
-        })
-      );
-    }
-  });
-
-  const logoutMutation = useMutation<void, Error, void>({
+  const logoutMutation = useMutation({
     mutationFn: AuthService.logout,
     onSuccess: () => {
       dispatch(clearCredentials());
+      toast.success('Logged out successfully');
       navigate(PUBLIC_ENDPOINTS.LOGIN);
+    },
+    onError: (error) => {
+      toast.error('Failed to logout');
+      toast.error((error.response?.data as ErrorPayload).message);
     }
   });
 
   return {
     user,
     isAuthenticated,
-    login: loginMutation.mutateAsync,
-    register: registerMutation.mutateAsync,
     logout: logoutMutation.mutateAsync,
-    isLoading: loginMutation.isPending || registerMutation.isPending || logoutMutation.isPending
+    isLoading: logoutMutation.isPending
   };
 };
