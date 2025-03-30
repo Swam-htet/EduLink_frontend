@@ -1,6 +1,7 @@
 export const PRIVATE_ENDPOINTS = {
   DASHBOARD: '/',
   STUDENT_MANAGEMENT: '/student-management',
+  STUDENT_DETAIL: '/student-management/:id',
   STUDENT_CLASS_ENROLLMENT: '/student-class-enrollment',
   STUDENT_CLASS_ATTENDANCE: '/student-class-attendance',
   STAFF_MANAGEMENT: '/staff-management',

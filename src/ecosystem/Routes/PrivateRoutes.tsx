@@ -50,6 +50,18 @@ const SubjectCreatePage = lazy(() =>
   }))
 );
 
+const StudentManagementPage = lazy(() =>
+  import('@/modules/StudentManagement/components/pages/StudentManagementPage').then((module) => ({
+    default: module.StudentManagementPage
+  }))
+);
+
+const StudentDetailPage = lazy(() =>
+  import('@/modules/StudentManagement/components/pages/StudentDetailPage').then((module) => ({
+    default: module.StudentDetailPage
+  }))
+);
+
 export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.DASHBOARD,
@@ -82,5 +94,13 @@ export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.SUBJECT_CREATE,
     element: <SubjectCreatePage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.STUDENT_MANAGEMENT,
+    element: <StudentManagementPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.STUDENT_DETAIL,
+    element: <StudentDetailPage />
   }
 ];

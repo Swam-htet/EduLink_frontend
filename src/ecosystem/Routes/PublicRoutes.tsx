@@ -15,6 +15,18 @@ const NotFound = lazy(() =>
   }))
 );
 
+const StudentRegistrationPage = lazy(() =>
+  import('@/modules/StudentRegistration/components/pages').then((module) => ({
+    default: module.StudentRegistrationPage
+  }))
+);
+
+const RegistrationSuccessPage = lazy(() =>
+  import('@/modules/StudentRegistration/components/pages').then((module) => ({
+    default: module.RegistrationSuccessPage
+  }))
+);
+
 export const publicRoutes: RouteObject[] = [
   {
     path: PUBLIC_ENDPOINTS.LOGIN,
@@ -23,5 +35,13 @@ export const publicRoutes: RouteObject[] = [
   {
     path: PUBLIC_ENDPOINTS.NOT_FOUND,
     element: <NotFound />
+  },
+  {
+    path: PUBLIC_ENDPOINTS.STUDENT_REGISTRATION,
+    element: <StudentRegistrationPage />
+  },
+  {
+    path: PUBLIC_ENDPOINTS.REGISTRATION_SUCCESS,
+    element: <RegistrationSuccessPage />
   }
 ];
