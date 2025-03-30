@@ -4,9 +4,9 @@ import StaffTable from '@/modules/StaffManagement/components/tables/StaffTable';
 import { StaffManagementService } from '@/modules/StaffManagement/services/staffManagement.service';
 import {
   Staff,
-  StaffManagementFilterParams,
-  createDefaultFilterParams
+  StaffManagementFilterParams
 } from '@/modules/StaffManagement/types/staffManagement.types';
+import { createDefaultFilterParams } from '@/modules/StaffManagement/utils';
 import { useQuery } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';

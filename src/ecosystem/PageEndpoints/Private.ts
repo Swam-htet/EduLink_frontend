@@ -8,8 +8,10 @@ export const PRIVATE_ENDPOINTS = {
   STAFF_DETAIL: '/staff-management/:id',
   CLASS_MANAGEMENT: '/class-management',
   CLASS_SCHEDULE_MANAGEMENT: '/class-schedule-management',
-  SUBJECT_MANAGEMENT: '/subject-management',
   COURSE_MANAGEMENT: '/course-management',
+  COURSE_CREATE: '/course-management/new',
+  SUBJECT_MANAGEMENT: '/subject-management',
+  SUBJECT_CREATE: '/subject-management/new',
   EXAM_MANAGEMENT: '/exam-management',
 
   SETTINGS: '/settings'

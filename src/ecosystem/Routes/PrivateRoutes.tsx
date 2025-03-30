@@ -26,6 +26,30 @@ const StaffDetailPage = lazy(() =>
   }))
 );
 
+const CourseManagementPage = lazy(() =>
+  import('@/modules/CourseManagement/components/pages/CourseManagementPage').then((module) => ({
+    default: module.CourseManagementPage
+  }))
+);
+
+const CourseCreatePage = lazy(() =>
+  import('@/modules/CourseManagement/components/pages/CourseCreatePage').then((module) => ({
+    default: module.CourseCreatePage
+  }))
+);
+
+const SubjectManagementPage = lazy(() =>
+  import('@/modules/SubjectManagement/components/pages/SubjectManagementPage').then((module) => ({
+    default: module.SubjectManagementPage
+  }))
+);
+
+const SubjectCreatePage = lazy(() =>
+  import('@/modules/SubjectManagement/components/pages/SubjectCreatePage').then((module) => ({
+    default: module.SubjectCreatePage
+  }))
+);
+
 export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.DASHBOARD,
@@ -42,5 +66,21 @@ export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.STAFF_DETAIL,
     element: <StaffDetailPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.COURSE_MANAGEMENT,
+    element: <CourseManagementPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.COURSE_CREATE,
+    element: <CourseCreatePage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.SUBJECT_MANAGEMENT,
+    element: <SubjectManagementPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.SUBJECT_CREATE,
+    element: <SubjectCreatePage />
   }
 ];

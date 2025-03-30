@@ -1,4 +1,4 @@
-import { User } from '@/modules/Auth/types/auth.types';
+import { User } from '@/modules/Auth/types/index.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {

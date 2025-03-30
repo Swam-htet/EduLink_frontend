@@ -2,6 +2,7 @@ import type { TableColumn } from '@/components/common/Table';
 import Table from '@/components/common/Table';
 import { trimString } from '@/lib/utils';
 import { Staff, StaffStatus } from '@/modules/StaffManagement/types/staffManagement.types';
+
 interface StaffTableProps {
   data: Staff[];
   loading?: boolean;

@@ -1,11 +1,11 @@
 import { apiClient } from '@/lib/axios/api';
+import { StaffCreateFormData } from '@/modules/StaffManagement/schemas/staff.schema';
 import {
   StaffManagementCreateResponse,
   StaffManagementDetailResponse,
   StaffManagementFilterParams,
   StaffManagementListResponse
 } from '@/modules/StaffManagement/types/staffManagement.types';
-import { StaffCreateFormData } from '../schemas/staff.schema';
 
 export class StaffManagementService {
   static async getStaffList(

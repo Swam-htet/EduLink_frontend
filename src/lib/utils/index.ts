@@ -15,3 +15,18 @@ export function formatPrice(price: number, currency = 'USD'): string {
     currency
   }).format(price);
 }
+
+export function cleanObject<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    if (
+      value !== null &&
+      value !== undefined &&
+      value !== '' &&
+      !(Array.isArray(value) && value.length === 0) &&
+      !(typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0)
+    ) {
+      acc[key as keyof T] = value as T[keyof T];
+    }
+    return acc;
+  }, {} as Partial<T>);
+}
