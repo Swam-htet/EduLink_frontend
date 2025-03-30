@@ -21,7 +21,7 @@ export const AdminLayout = () => {
 
       <div className="flex flex-1 flex-col overflow-hidden bg-gray-100">
         <main className="flex-1 overflow-x-hidden overflow-y-auto">
-          <div className="mb-4 flex justify-end p-3">
+          <div className="flex justify-end p-3">
             <Button
               variant="outline"
               onClick={() => {
@@ -32,7 +32,9 @@ export const AdminLayout = () => {
               Logout
             </Button>
           </div>
-          <Outlet />
+          <div className="mx-3 min-h-[calc(100vh-80px)] rounded-sm border border-gray-200 bg-white p-4">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

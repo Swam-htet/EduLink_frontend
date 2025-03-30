@@ -24,7 +24,7 @@ export const LoginPage = () => {
         })
       );
       toast.success(data.message);
-      navigate(PRIVATE_ENDPOINTS.HOME);
+      navigate(PRIVATE_ENDPOINTS.DASHBOARD);
     },
     onError: (error) => {
       toast.error((error.response?.data as ErrorPayload).message);
@@ -44,9 +44,8 @@ export const LoginPage = () => {
         <div className="text-center">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900">Welcome back</h1>
           <p className="mt-2 text-lg text-gray-600">Sign in to your account</p>
+          <LoginForm onSubmit={handleSubmit} loading={loginMutation.isPending} />
         </div>
-
-        <LoginForm onSubmit={handleSubmit} loading={loginMutation.isPending} />
 
         <div className="flex items-center justify-between text-sm">
           <Button

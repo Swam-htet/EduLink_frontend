@@ -7,8 +7,8 @@ export const ErrorPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-background flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md rounded-lg border bg-white px-6 py-12 text-center shadow-sm">
+    <div className="flex w-full items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center px-6 py-12 text-center">
         <h1 className="mb-4 text-4xl font-bold text-red-600">Oops!</h1>
         <h2 className="mb-4 text-2xl font-semibold">Something went wrong</h2>
         <div className="text-muted-foreground mb-8">
@@ -17,13 +17,11 @@ export const ErrorPage = () => {
             {error?.message || 'An unexpected error occurred'}
           </p>
         </div>
-        <div className="space-y-4">
-          <Button variant="outline" className="w-full" onClick={() => window.location.reload()}>
+        <div className="flex gap-4">
+          <Button variant="outline" onClick={() => window.location.reload()}>
             Try Again
           </Button>
-          <Button className="w-full" onClick={() => navigate(PRIVATE_ENDPOINTS.HOME)}>
-            Go to Home
-          </Button>
+          <Button onClick={() => navigate(PRIVATE_ENDPOINTS.DASHBOARD)}>Go to Dashboard</Button>
         </div>
       </div>
     </div>

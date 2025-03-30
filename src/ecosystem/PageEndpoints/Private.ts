@@ -4,6 +4,8 @@ export const PRIVATE_ENDPOINTS = {
   STUDENT_CLASS_ENROLLMENT: '/student-class-enrollment',
   STUDENT_CLASS_ATTENDANCE: '/student-class-attendance',
   STAFF_MANAGEMENT: '/staff-management',
+  STAFF_CREATE: '/staff-management/new',
+  STAFF_DETAIL: '/staff-management/:id',
   CLASS_MANAGEMENT: '/class-management',
   CLASS_SCHEDULE_MANAGEMENT: '/class-schedule-management',
   SUBJECT_MANAGEMENT: '/subject-management',

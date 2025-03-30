@@ -1,5 +1,5 @@
+import { apiClient } from '@/lib/axios/api';
 import { AuthResponse, LoginRequest, User } from '@/modules/Auth/types/auth.types';
-import { apiClient } from '@/shared/utils/api';
 
 export class AuthService {
   static async login(credentials: LoginRequest): Promise<AuthResponse> {

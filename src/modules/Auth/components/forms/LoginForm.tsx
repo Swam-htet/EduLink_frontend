@@ -27,6 +27,7 @@ export const LoginForm = ({ onSubmit, loading }: LoginFormProps) => {
           type: 'email'
         }}
       />
+
       <CustomForm.Password
         field={{
           name: 'password',

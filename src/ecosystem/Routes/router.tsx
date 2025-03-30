@@ -1,6 +1,9 @@
-import { PrivateRoute } from '@/components/PrivateRoute';
-import { AdminLayout } from '@/shared/components/layouts/AdminLayout/AdminLayout';
 import { ErrorPage, LoadingPage } from '@/shared/components/pages';
+
+import { PrivateRoute } from '@/components/PrivateRoute';
+import { privateRoutes } from '@/ecosystem/Routes/PrivateRoutes';
+import { publicRoutes } from '@/ecosystem/Routes/PublicRoutes';
+import { AdminLayout } from '@/shared/components/layouts/AdminLayout/AdminLayout';
 import { Suspense } from 'react';
 import {
   createBrowserRouter,
@@ -8,8 +11,6 @@ import {
   Route,
   RouterProvider
 } from 'react-router-dom';
-import { privateRoutes } from './PrivateRoutes';
-import { publicRoutes } from './PublicRoutes';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
