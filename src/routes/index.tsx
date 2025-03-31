@@ -1,5 +1,6 @@
 import { ClassDetailPage } from '@/modules/ClassManagement/components/pages/ClassDetailPage';
 import { ClassEditPage } from '@/modules/ClassManagement/components/pages/ClassEditPage';
+import { EnrollmentManagementPage } from '@/modules/StudentClassEnrollment/components/pages/EnrollmentManagementPage';
 
 // In your routes configuration
 {
@@ -12,5 +13,9 @@ export const routes = [
   {
     path: '/class-management/:id/edit',
     element: <ClassEditPage />
+  },
+  {
+    path: '/class-enrollments',
+    element: <EnrollmentManagementPage />
   }
 ]; 

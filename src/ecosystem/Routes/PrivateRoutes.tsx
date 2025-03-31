@@ -86,6 +86,14 @@ const ClassDetailPage = lazy(() =>
   }))
 );
 
+const StudentClassEnrollmentPage = lazy(() =>
+  import('@/modules/StudentClassEnrollment/components/pages/StudentClassEnrollmentPage').then(
+    (module) => ({
+      default: module.StudentClassEnrollmentPage
+    })
+  )
+);
+
 export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.DASHBOARD,
@@ -142,5 +150,9 @@ export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.CLASS_MANAGEMENT_DETAIL,
     element: <ClassDetailPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.STUDENT_CLASS_ENROLLMENT,
+    element: <StudentClassEnrollmentPage />
   }
 ];
