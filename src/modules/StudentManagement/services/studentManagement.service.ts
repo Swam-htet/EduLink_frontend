@@ -3,6 +3,8 @@ import { cleanObject } from '@/lib/utils';
 import type {
   ApproveRegistrationRequest,
   RejectRegistrationRequest,
+  SendClassInviteRequest,
+  SendClassInviteResponse,
   StudentFilterParams,
   StudentListResponse,
   StudentResponse
@@ -33,6 +35,14 @@ export class StudentManagementService {
     const { data } = await apiClient.post<StudentResponse>(
       'management/students/reject-registration',
       rejectData
+    );
+    return data;
+  }
+
+  static async sendClassInvite(inviteData: SendClassInviteRequest) {
+    const { data } = await apiClient.post<SendClassInviteResponse>(
+      'management/class-enrollments',
+      inviteData
     );
     return data;
   }

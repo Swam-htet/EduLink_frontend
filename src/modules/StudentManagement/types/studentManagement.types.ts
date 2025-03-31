@@ -90,3 +90,13 @@ export interface RejectRegistrationRequest {
   id: number;
   reason: string;
 }
+
+export interface SendClassInviteRequest {
+  student_ids: number[];
+  class_id: number;
+}
+
+export interface SendClassInviteResponse {
+  message: string;
+  timestamp: string;
+}

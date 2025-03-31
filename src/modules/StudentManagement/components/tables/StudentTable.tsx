@@ -1,15 +1,22 @@
-import Table from '@/components/common/Table';
+import Table, { TableColumn } from '@/components/common/Table';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import type { Student } from '@/modules/StudentManagement/types/studentManagement.types';
+import { StudentStatus } from '@/modules/StudentRegistration/types/student.types';
 import { format } from 'date-fns';
 
+interface StudentWithSelected extends Student {
+  selected: boolean;
+}
+
 interface StudentTableProps {
-  data: Student[];
+  data: StudentWithSelected[];
   isLoading: boolean;
-  onRowClick: (student: Student) => void;
+  onRowClick?: (student: Student) => void;
   onApprove: (student: Student) => void;
   onReject: (student: Student) => void;
+  onSelect: (student: StudentWithSelected, checked: boolean) => void;
 }
 
 export const StudentTable = ({
@@ -17,7 +24,8 @@ export const StudentTable = ({
   isLoading,
   onRowClick,
   onApprove,
-  onReject
+  onReject,
+  onSelect
 }: StudentTableProps) => {
   const getStatusClassName = (status: string) => {
     switch (status) {
@@ -36,7 +44,22 @@ export const StudentTable = ({
     }
   };
 
-  const columns = [
+  const handleSelect = (student: StudentWithSelected, checked: boolean) => {
+    onSelect(student, checked);
+  };
+
+  const columns: TableColumn<StudentWithSelected>[] = [
+    {
+      header: '',
+      accessor: (student: StudentWithSelected) => (
+        <Checkbox
+          disabled={student.status !== StudentStatus.ACTIVE}
+          checked={student.selected}
+          onCheckedChange={(checked) => handleSelect(student, checked as boolean)}
+        />
+      ),
+      width: '50px'
+    },
     {
       header: 'Student ID',
       accessor: (student: Student) => student.student_id
@@ -78,6 +101,9 @@ export const StudentTable = ({
       header: 'Actions',
       accessor: (student: Student) => (
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => onRowClick?.(student)}>
+            View
+          </Button>
           {student.status === 'pending' && (
             <>
               <Button
@@ -107,5 +133,5 @@ export const StudentTable = ({
     }
   ];
 
-  return <Table columns={columns} data={data} loading={isLoading} onRowClick={onRowClick} />;
+  return <Table columns={columns} data={data} loading={isLoading} onRowClick={() => {}} />;
 };

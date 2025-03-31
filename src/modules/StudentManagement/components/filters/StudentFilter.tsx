@@ -1,6 +1,7 @@
 import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
 import type { StudentFilterParams } from '@/modules/StudentManagement/types/studentManagement.types';
+import { StudentStatus } from '@/modules/StudentRegistration/types/student.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -11,7 +12,7 @@ const filterSchema = z.object({
   email: z.string().email().optional().or(z.string().length(0)),
   phone: z.string().optional(),
   nrc: z.string().optional(),
-  status: z.enum(['pending', 'active', 'inactive', 'suspended', 'rejected']).optional(),
+  status: z.nativeEnum(StudentStatus).optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   guardian_name: z.string().optional(),
   guardian_phone: z.string().optional(),
@@ -100,11 +101,11 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
             label: 'Status',
             placeholder: 'Select status',
             options: [
-              { label: 'Pending', value: 'pending' },
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
-              { label: 'Suspended', value: 'suspended' },
-              { label: 'Rejected', value: 'rejected' }
+              { label: 'Pending', value: StudentStatus.PENDING },
+              { label: 'Active', value: StudentStatus.ACTIVE },
+              { label: 'Inactive', value: StudentStatus.INACTIVE },
+              { label: 'Suspended', value: StudentStatus.SUSPENDED },
+              { label: 'Rejected', value: StudentStatus.REJECTED }
             ]
           }}
         />

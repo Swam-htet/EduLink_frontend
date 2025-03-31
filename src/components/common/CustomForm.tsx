@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Clock, Eye, EyeOff } from 'lucide-react';
 import React, { createContext, useContext, useState } from 'react';
+import { DateRange } from 'react-day-picker';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 
 export interface InputProps {
@@ -95,6 +96,15 @@ export interface ButtonProps {
 export interface SelectOption {
   label: string;
   value: string;
+}
+
+export interface DateRangePickerProps {
+  name: string;
+  label?: string;
+  placeholder?: string;
+  description?: string;
+  disabled?: boolean;
+  required?: boolean;
 }
 
 type CustomFormProps<T extends FieldValues> = {
@@ -384,6 +394,74 @@ CustomForm.DatePicker = React.forwardRef<HTMLInputElement, { field: DatePickerPr
 );
 
 CustomForm.DatePicker.displayName = 'CustomForm.DatePicker';
+
+// date range picker component
+CustomForm.DateRangePicker = React.forwardRef<HTMLInputElement, { field: DateRangePickerProps }>(
+  ({ field }, ref) => {
+    const formMethods = useContext(FormMethodsContext);
+    if (!formMethods) {
+      throw new Error('DateRangePicker must be used within a CustomForm');
+    }
+
+    return (
+      <FormField
+        control={formMethods.control}
+        name={field.name}
+        render={({ field: formField }) => (
+          <FormItem>
+            {field.label && <FormLabel>{field.label}</FormLabel>}
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <ShadcnButton
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      'w-full pl-3 text-left font-normal',
+                      !formField.value && 'text-muted-foreground'
+                    )}
+                    disabled={field.disabled}
+                  >
+                    {formField.value?.from ? (
+                      formField.value.to ? (
+                        <>
+                          {format(formField.value.from, 'LLL dd, y')} -{' '}
+                          {format(formField.value.to, 'LLL dd, y')}
+                        </>
+                      ) : (
+                        format(formField.value.from, 'LLL dd, y')
+                      )
+                    ) : (
+                      <span>{field.placeholder || 'Pick a date range'}</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </ShadcnButton>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={formField.value?.from}
+                  selected={formField.value as DateRange}
+                  onSelect={(range) => {
+                    formField.onChange(range);
+                  }}
+                  numberOfMonths={2}
+                  disabled={field.disabled}
+                />
+              </PopoverContent>
+            </Popover>
+            {field.description && <FormDescription>{field.description}</FormDescription>}
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  }
+);
+
+CustomForm.DateRangePicker.displayName = 'CustomForm.DateRangePicker';
 
 // time picker component
 CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerProps }>(

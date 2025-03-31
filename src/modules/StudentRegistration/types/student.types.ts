@@ -1,3 +1,11 @@
+export enum StudentStatus {
+  PENDING = 'pending',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  SUSPENDED = 'suspended',
+  REJECTED = 'rejected'
+}
+
 export interface Student {
   id: number;
   student_id: string;

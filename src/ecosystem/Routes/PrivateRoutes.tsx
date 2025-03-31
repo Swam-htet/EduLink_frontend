@@ -62,6 +62,30 @@ const StudentDetailPage = lazy(() =>
   }))
 );
 
+const ClassManagementPage = lazy(() =>
+  import('@/modules/ClassManagement/components/pages/ClassManagementPage').then((module) => ({
+    default: module.ClassManagementPage
+  }))
+);
+
+const ClassCreatePage = lazy(() =>
+  import('@/modules/ClassManagement/components/pages/ClassCreatePage').then((module) => ({
+    default: module.ClassCreatePage
+  }))
+);
+
+const ClassEditPage = lazy(() =>
+  import('@/modules/ClassManagement/components/pages/ClassEditPage').then((module) => ({
+    default: module.ClassEditPage
+  }))
+);
+
+const ClassDetailPage = lazy(() =>
+  import('@/modules/ClassManagement/components/pages/ClassDetailPage').then((module) => ({
+    default: module.ClassDetailPage
+  }))
+);
+
 export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.DASHBOARD,
@@ -102,5 +126,21 @@ export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.STUDENT_DETAIL,
     element: <StudentDetailPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.CLASS_MANAGEMENT,
+    element: <ClassManagementPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.CLASS_MANAGEMENT_CREATE,
+    element: <ClassCreatePage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.CLASS_MANAGEMENT_EDIT,
+    element: <ClassEditPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.CLASS_MANAGEMENT_DETAIL,
+    element: <ClassDetailPage />
   }
 ];
