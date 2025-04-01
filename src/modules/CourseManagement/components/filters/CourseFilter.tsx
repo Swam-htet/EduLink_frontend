@@ -1,17 +1,10 @@
 import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
+import { courseFilterSchema } from '@/modules/CourseManagement/schemas/course.schema';
 import type { CourseFilterParams } from '@/modules/CourseManagement/types/course.types';
+import { CourseSortBy } from '@/modules/CourseManagement/types/course.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-const filterSchema = z.object({
-  title: z.string().optional(),
-  code: z.string().optional(),
-  status: z.enum(['active', 'inactive']).optional(),
-  sort_by: z.enum(['name', 'code', 'created_at', 'updated_at']).optional(),
-  sort_direction: z.enum(['asc', 'desc']).optional()
-});
 
 interface CourseFilterProps {
   filters: CourseFilterParams;
@@ -20,7 +13,7 @@ interface CourseFilterProps {
 
 export const CourseFilter = ({ filters, onFilterChange }: CourseFilterProps) => {
   const formMethods = useForm<CourseFilterParams>({
-    resolver: zodResolver(filterSchema),
+    resolver: zodResolver(courseFilterSchema),
     defaultValues: filters
   });
 
@@ -49,12 +42,24 @@ export const CourseFilter = ({ filters, onFilterChange }: CourseFilterProps) => 
 
         <CustomForm.Select
           field={{
-            name: 'status',
-            label: 'Status',
-            placeholder: 'Select status',
+            name: 'sort_by',
+            label: 'Sort by',
             options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' }
+              { label: 'Title', value: CourseSortBy.TITLE },
+              { label: 'Code', value: CourseSortBy.CODE },
+              { label: 'Created at', value: CourseSortBy.CREATED_AT },
+              { label: 'Updated at', value: CourseSortBy.UPDATED_AT }
+            ]
+          }}
+        />
+
+        <CustomForm.Select
+          field={{
+            name: 'sort_direction',
+            label: 'Sort direction',
+            options: [
+              { label: 'Ascending', value: 'asc' },
+              { label: 'Descending', value: 'desc' }
             ]
           }}
         />

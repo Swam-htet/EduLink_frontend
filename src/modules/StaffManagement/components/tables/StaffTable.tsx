@@ -17,13 +17,8 @@ const StaffTable: React.FC<StaffTableProps> = ({ data, loading, onRowClick }) =>
       width: '5%'
     },
     {
-      header: 'First Name',
-      accessor: (staff) => staff.first_name,
-      width: '10%'
-    },
-    {
-      header: 'Last Name',
-      accessor: (staff) => staff.last_name,
+      header: 'Name',
+      accessor: (staff) => `${staff.first_name} ${staff.last_name}`,
       width: '10%'
     },
     {

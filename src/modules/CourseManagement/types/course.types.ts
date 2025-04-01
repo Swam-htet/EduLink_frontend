@@ -1,10 +1,11 @@
+import { SortDirection } from '@/shared/types';
+
 export interface Course {
   id: number;
   title: string;
   code: string;
   description: string;
   duration: string;
-  status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;
 }
@@ -23,7 +24,18 @@ export interface CourseListResponse {
 export interface CourseFilterParams {
   title?: string;
   code?: string;
-  status?: 'active' | 'inactive';
-  sort_by?: 'name' | 'code' | 'created_at' | 'updated_at';
-  sort_direction?: 'asc' | 'desc';
+  sort_by?: CourseSortBy;
+  sort_direction?: SortDirection;
+}
+
+export interface CourseActionResponse {
+  message: string;
+  timestamp: string;
+}
+
+export enum CourseSortBy {
+  TITLE = 'title',
+  CODE = 'code',
+  CREATED_AT = 'created_at',
+  UPDATED_AT = 'updated_at'
 }

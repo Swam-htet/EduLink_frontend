@@ -235,7 +235,7 @@ CustomForm.Checkbox = React.forwardRef<
       control={formMethods.control}
       name={field.name}
       render={({ field: formField }) => (
-        <FormItem>
+        <FormItem className="flex items-center gap-2">
           <FormControl>
             <Checkbox
               ref={ref as React.LegacyRef<HTMLButtonElement>}

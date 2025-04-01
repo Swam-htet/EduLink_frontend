@@ -1,26 +1,80 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CourseManagementService from '@/modules/CourseManagement/services/CourseManagement.service';
 import { SubjectFilter } from '@/modules/SubjectManagement/components/filters/SubjectFilter';
+import { SubjectUpdateDialog } from '@/modules/SubjectManagement/components/SubjectUpdateDialog';
 import { SubjectTable } from '@/modules/SubjectManagement/components/tables/SubjectTable';
+import {
+  SubjectFilterParams,
+  type SubjectUpdateFormData
+} from '@/modules/SubjectManagement/schemas/subject.schema';
 import SubjectManagementService from '@/modules/SubjectManagement/services/SubjectManagement.service';
-import type { Subject, SubjectFilterParams } from '@/modules/SubjectManagement/types/subject.types';
+import type { Subject } from '@/modules/SubjectManagement/types/subject.types';
 import { getDefaultFilters } from '@/modules/SubjectManagement/utils/getDefaultFilters';
-import { useQuery } from '@tanstack/react-query';
+import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const SubjectManagementPage = () => {
   const navigate = useNavigate();
+  const { confirmDelete } = useDialog();
   const [filters, setFilters] = useState<SubjectFilterParams>(getDefaultFilters());
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
 
   const subjectManagementQuery = useQuery({
-    queryKey: ['subjects', filters],
+    queryKey: ['subject-management', filters],
     queryFn: () => SubjectManagementService.getSubjects(filters)
   });
 
+  const { data: coursesData } = useQuery({
+    queryKey: ['course-management'],
+    queryFn: () => CourseManagementService.getCourses()
+  });
+
+  const subjectDeleteMutation = useMutation({
+    mutationFn: (subjectId: string) => SubjectManagementService.deleteSubject(subjectId),
+    onSuccess: () => {
+      subjectManagementQuery.refetch();
+      toast.success('Subject deleted successfully');
+    },
+    onError: () => {
+      toast.error('Failed to delete subject');
+    }
+  });
+
+  const subjectUpdateMutation = useMutation({
+    mutationFn: (subject: SubjectUpdateFormData) =>
+      SubjectManagementService.updateSubject(subject.id.toString(), subject),
+    onSuccess: () => {
+      subjectManagementQuery.refetch();
+      toast.success('Subject updated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to update subject');
+    }
+  });
+
   const handleEdit = (subject: Subject) => {
-    console.log(subject);
+    setSelectedSubject(subject);
+    setIsUpdateDialogOpen(true);
+  };
+
+  const handleUpdate = async (data: SubjectUpdateFormData) => {
+    subjectUpdateMutation.mutate(data);
+  };
+
+  const handleDelete = (subject: Subject) => {
+    confirmDelete({
+      title: 'Delete Subject',
+      content: 'Are you sure you want to delete this subject?',
+      onDelete: () => {
+        subjectDeleteMutation.mutate(subject.id.toString());
+      }
+    });
   };
 
   return (
@@ -38,7 +92,11 @@ export const SubjectManagementPage = () => {
           <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <SubjectFilter filters={filters} onFilterChange={setFilters} />
+          <SubjectFilter
+            filters={filters}
+            onFilterChange={setFilters}
+            courses={coursesData?.data || []}
+          />
         </CardContent>
       </Card>
 
@@ -50,11 +108,21 @@ export const SubjectManagementPage = () => {
           <SubjectTable
             data={subjectManagementQuery.data?.data || []}
             isLoading={subjectManagementQuery.isPending}
-            onRowClick={(subject) => navigate(`/subject-management/${subject.id}`)}
             onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         </CardContent>
       </Card>
+
+      {selectedSubject && (
+        <SubjectUpdateDialog
+          open={isUpdateDialogOpen}
+          onOpenChange={setIsUpdateDialogOpen}
+          subject={selectedSubject}
+          courses={coursesData?.data || []}
+          onUpdate={handleUpdate}
+        />
+      )}
     </div>
   );
 };

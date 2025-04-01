@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
+import { format as dateFnsFormat, parseISO } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -29,4 +30,8 @@ export function cleanObject<T extends Record<string, unknown>>(obj: T): Partial<
     }
     return acc;
   }, {} as Partial<T>);
+}
+
+export function formatDate(date: string) {
+  return dateFnsFormat(parseISO(date), 'dd/MM/yyyy');
 }

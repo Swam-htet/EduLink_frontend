@@ -17,8 +17,7 @@ export const CourseCreateForm = ({ onSubmit, isPending, onCancel }: CourseCreate
     defaultValues: {
       title: '',
       description: '',
-      duration: '',
-      status: 'active'
+      duration: ''
     }
   });
 
@@ -38,18 +37,6 @@ export const CourseCreateForm = ({ onSubmit, isPending, onCancel }: CourseCreate
             name: 'duration',
             label: 'Duration',
             placeholder: 'Enter course duration'
-          }}
-        />
-
-        <CustomForm.Select
-          field={{
-            name: 'status',
-            label: 'Status',
-            placeholder: 'Select status',
-            options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' }
-            ]
           }}
         />
       </div>

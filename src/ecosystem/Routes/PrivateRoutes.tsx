@@ -94,6 +94,30 @@ const StudentClassEnrollmentPage = lazy(() =>
   )
 );
 
+const ExamManagementPage = lazy(() =>
+  import('@/modules/ExamManagement/components/pages/ExamManagementPage').then((module) => ({
+    default: module.ExamManagementPage
+  }))
+);
+
+const ExamCreatePage = lazy(() =>
+  import('@/modules/ExamManagement/components/pages/ExamCreatePage').then((module) => ({
+    default: module.ExamCreatePage
+  }))
+);
+
+const ExamDetailPage = lazy(() =>
+  import('@/modules/ExamManagement/components/pages/ExamDetailPage').then((module) => ({
+    default: module.ExamDetailPage
+  }))
+);
+
+const ExamQuestionUploadPage = lazy(() =>
+  import('@/modules/ExamManagement/components/pages/ExamQuestionUploadPage').then((module) => ({
+    default: module.ExamQuestionUploadPage
+  }))
+);
+
 export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.DASHBOARD,
@@ -154,5 +178,21 @@ export const privateRoutes: RouteObject[] = [
   {
     path: PRIVATE_ENDPOINTS.STUDENT_CLASS_ENROLLMENT,
     element: <StudentClassEnrollmentPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.EXAM_MANAGEMENT,
+    element: <ExamManagementPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.EXAM_CREATE,
+    element: <ExamCreatePage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.EXAM_DETAIL,
+    element: <ExamDetailPage />
+  },
+  {
+    path: PRIVATE_ENDPOINTS.EXAM_QUESTION_UPLOAD,
+    element: <ExamQuestionUploadPage />
   }
 ];

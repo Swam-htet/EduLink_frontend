@@ -1,6 +1,5 @@
 import Table, { TableColumn } from '@/components/common/Table';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import type { Enrollment } from '@/modules/StudentClassEnrollment/types/enrollment.types';
 import { EnrollmentStatus } from '@/modules/StudentClassEnrollment/types/enrollment.types';
@@ -8,17 +7,15 @@ import { format } from 'date-fns';
 import React from 'react';
 interface EnrollmentTableProps {
   enrollments: Enrollment[];
-  selectedEnrollments: number[];
+  onSelect: (enrollment: Enrollment, checked: boolean) => void;
   onUpdateStatus: (enrollment: Enrollment) => void;
-  handleSelect: (enrollment: Enrollment, checked: boolean) => void;
   loading: boolean;
 }
 
 export const EnrollmentTable = ({
   enrollments,
-  selectedEnrollments,
+  onSelect,
   onUpdateStatus,
-  handleSelect,
   loading
 }: EnrollmentTableProps) => {
   const getStatusClassName = (status: EnrollmentStatus) => {
@@ -35,17 +32,6 @@ export const EnrollmentTable = ({
   };
 
   const columns: TableColumn<Enrollment>[] = [
-    {
-      header: '',
-      accessor: (row: Enrollment) => (
-        <Checkbox
-          disabled={row.status === EnrollmentStatus.COMPLETED}
-          checked={selectedEnrollments.includes(row.id)}
-          onCheckedChange={(checked) => handleSelect(row, checked as boolean)}
-        />
-      ),
-      width: '50px'
-    },
     {
       header: 'Student ID',
       accessor: (row: Enrollment) => row.student.student_id
@@ -76,6 +62,10 @@ export const EnrollmentTable = ({
       accessor: (row: Enrollment) => format(new Date(row.enrolled_at), 'PPP')
     },
     {
+      header: 'Created At',
+      accessor: (row: Enrollment) => format(new Date(row.created_at), 'PPP')
+    },
+    {
       header: 'Actions',
       accessor: (row: Enrollment) => (
         <React.Fragment>
@@ -91,7 +81,10 @@ export const EnrollmentTable = ({
 
   return (
     <Table
+      checkValidation={(row) => row.status === EnrollmentStatus.ENROLLED}
       columns={columns}
+      selectable
+      onRowSelect={onSelect}
       data={enrollments}
       loading={loading}
       onRowClick={() => {}}

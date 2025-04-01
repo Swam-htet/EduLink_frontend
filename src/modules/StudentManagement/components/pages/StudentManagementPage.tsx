@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import ClassManagementService from '@/modules/ClassManagement/services/classManagement.service';
 import { ClassInvitationDialog } from '@/modules/StudentManagement/components/dialogs/ClassInvitationDialog';
-import { RejectRegistrationDialog } from '@/modules/StudentManagement/components/dialogs/RejectRegistrationDialog';
 import { StudentFilter } from '@/modules/StudentManagement/components/filters/StudentFilter';
 import { StudentTable } from '@/modules/StudentManagement/components/tables/StudentTable';
 import StudentManagementService from '@/modules/StudentManagement/services/studentManagement.service';
@@ -14,7 +13,7 @@ import type {
   StudentFilterParams
 } from '@/modules/StudentManagement/types/studentManagement.types';
 import { getDefaultFilters } from '@/modules/StudentManagement/utils/getDefaultFilters';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { StudentStatus } from '@/modules/StudentRegistration/types/student.types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -23,17 +22,19 @@ interface StudentWithSelected extends Student {
   selected: boolean;
 }
 
+const checkValidation = (student: StudentWithSelected) => {
+  return student.status === StudentStatus.ACTIVE;
+};
+
 export const StudentManagementPage = () => {
   const navigate = useNavigate();
-  const { confirm } = useDialog();
-  const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
 
   const [filters, setFilters] = useState<StudentFilterParams>(getDefaultFilters());
 
-  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [classInvitationDialogOpen, setClassInvitationDialogOpen] = useState(false);
 
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
+  console.log('selectedStudents', selectedStudents);
 
   const studentQuery = useQuery({
     queryKey: ['students', filters],
@@ -57,54 +58,6 @@ export const StudentManagementPage = () => {
       toast.error(error.response?.data?.message || 'Failed to send class invite');
     }
   });
-  const approveRegistrationMutation = useMutation({
-    mutationKey: ['approve-registration'],
-    mutationFn: (id: number) => StudentManagementService.approveRegistration({ id }),
-    onSuccess: (data) => {
-      toast.success(data.message || 'Registration approved successfully');
-      studentQuery.refetch();
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to approve registration');
-    }
-  });
-
-  const rejectRegistrationMutation = useMutation({
-    mutationKey: ['reject-registration'],
-    mutationFn: ({ id, reason }: { id: number; reason: string }) =>
-      StudentManagementService.rejectRegistration({ id, reason }),
-    onSuccess: (data) => {
-      toast.success(data.message || 'Registration rejected successfully');
-      setRejectDialogOpen(false);
-      studentQuery.refetch();
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to reject registration');
-    }
-  });
-
-  const handleRowClick = (student: Student) => {
-    navigate(`/student-management/${student.id}`);
-  };
-
-  const handleApprove = (student: Student) => {
-    confirm({
-      title: 'Approve Registration',
-      content: `Are you sure you want to approve the registration for ${student.first_name} ${student.last_name}?`,
-      onConfirm: () => {
-        approveRegistrationMutation.mutate(student.id);
-      }
-    });
-  };
-
-  const handleReject = (student: Student) => {
-    setSelectedStudent(student);
-    setRejectDialogOpen(true);
-  };
-
-  const handleRejectConfirm = (id: number, reason: string) => {
-    rejectRegistrationMutation.mutate({ id, reason });
-  };
 
   const handleSelect = (student: StudentWithSelected, checked: boolean) => {
     setSelectedStudents((prev) => {
@@ -125,6 +78,10 @@ export const StudentManagementPage = () => {
       student_ids: selectedStudents,
       class_id: classId
     });
+  };
+
+  const handleRowClick = (student: StudentWithSelected) => {
+    navigate(PRIVATE_ENDPOINTS.STUDENT_DETAIL.replace(':id', student.id.toString()));
   };
 
   const classes = classQuery.data?.data;
@@ -161,9 +118,9 @@ export const StudentManagementPage = () => {
             }
             isLoading={studentQuery.isPending}
             onRowClick={handleRowClick}
-            onApprove={handleApprove}
-            onReject={handleReject}
+            selectedRows={selectedStudents}
             onSelect={handleSelect}
+            checkValidation={checkValidation}
           />
           <div>
             <Pagination
@@ -195,17 +152,8 @@ export const StudentManagementPage = () => {
         isOpen={classInvitationDialogOpen}
         onClose={() => setClassInvitationDialogOpen(false)}
         onSubmit={handleClassInviteSubmit}
-        isPending={false}
+        isPending={sendClassInviteMutation.isPending}
         classes={classes || []}
-      />
-
-      {/* Reject Dialog */}
-      <RejectRegistrationDialog
-        isOpen={rejectDialogOpen}
-        onClose={() => setRejectDialogOpen(false)}
-        onReject={handleRejectConfirm}
-        student={selectedStudent}
-        isPending={rejectRegistrationMutation.isPending}
       />
     </div>
   );

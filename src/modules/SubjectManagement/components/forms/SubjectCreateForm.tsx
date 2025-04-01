@@ -57,8 +57,7 @@ export const SubjectCreateForm = ({
           field={{
             name: 'credits',
             label: 'Credits',
-            placeholder: 'Enter credits',
-            type: 'number'
+            placeholder: 'Enter credits'
           }}
         />
       </div>

@@ -17,6 +17,9 @@ export const PRIVATE_ENDPOINTS = {
   SUBJECT_MANAGEMENT: '/subject-management',
   SUBJECT_CREATE: '/subject-management/new',
   EXAM_MANAGEMENT: '/exam-management',
+  EXAM_CREATE: '/exam-management/new',
+  EXAM_DETAIL: '/exam-management/:id',
+  EXAM_QUESTION_UPLOAD: '/exam-management/:id/upload-questions',
 
   SETTINGS: '/settings'
 } as const;

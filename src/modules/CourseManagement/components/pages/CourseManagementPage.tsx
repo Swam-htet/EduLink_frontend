@@ -1,8 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import { CourseUpdateDialog } from '@/modules/CourseManagement/components/dialog/CourseUpdateDialog';
 import { CourseFilter } from '@/modules/CourseManagement/components/filters/CourseFilter';
 import { CourseTable } from '@/modules/CourseManagement/components/tables/CourseTable';
 import { getDefaultFilters } from '@/modules/CourseManagement/components/utils/getDefaultFilters';
+import { CourseUpdateFormData } from '@/modules/CourseManagement/schemas/course.schema';
 import CourseManagementService from '@/modules/CourseManagement/services/CourseManagement.service';
 import type { Course, CourseFilterParams } from '@/modules/CourseManagement/types/course.types';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
@@ -15,16 +18,34 @@ import { toast } from 'sonner';
 export const CourseManagementPage = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<CourseFilterParams>(getDefaultFilters());
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   const { confirmDelete } = useDialog();
 
   const courseManagementQuery = useQuery({
-    queryKey: ['courses', filters],
+    queryKey: ['courses-management', filters],
     queryFn: () => CourseManagementService.getCourses(filters)
   });
 
+  const courseUpdateMutation = useMutation({
+    mutationKey: ['course-management-update'],
+    mutationFn: (course: CourseUpdateFormData) =>
+      CourseManagementService.updateCourse(course.id.toString(), {
+        title: course.title,
+        description: course.description,
+        duration: course.duration
+      }),
+    onSuccess: () => {
+      toast.success('Course updated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to update course');
+    }
+  });
+
   const courseDeleteMutation = useMutation({
-    mutationKey: ['course-delete'],
+    mutationKey: ['course-management-delete'],
     mutationFn: (id: string) => CourseManagementService.deleteCourse(id),
     onSuccess: () => {
       toast.success('Course deleted successfully');
@@ -35,8 +56,14 @@ export const CourseManagementPage = () => {
     }
   });
 
+  const handleEditSubmit = (course: CourseUpdateFormData) => {
+    courseUpdateMutation.mutate(course);
+    setEditDialogOpen(false);
+  };
+
   const handleEdit = (course: Course) => {
-    console.log(course);
+    setSelectedCourse(course);
+    setEditDialogOpen(true);
   };
 
   const handleDelete = (course: Course) => {
@@ -49,11 +76,15 @@ export const CourseManagementPage = () => {
     });
   };
 
+  const handleCreate = () => {
+    navigate(PRIVATE_ENDPOINTS.COURSE_CREATE);
+  };
+
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Course Management</h1>
-        <Button onClick={() => navigate('/course-management/new')}>
+        <Button onClick={handleCreate}>
           <Plus className="mr-2 h-4 w-4" />
           Add Course
         </Button>
@@ -82,6 +113,15 @@ export const CourseManagementPage = () => {
           />
         </CardContent>
       </Card>
+
+      {selectedCourse && (
+        <CourseUpdateDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          course={selectedCourse}
+          onUpdate={handleEditSubmit}
+        />
+      )}
     </div>
   );
 };

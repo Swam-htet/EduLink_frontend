@@ -1,36 +1,25 @@
 import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
-import CourseManagementService from '@/modules/CourseManagement/services/CourseManagement.service';
-import type { SubjectFilterParams } from '@/modules/SubjectManagement/types/subject.types';
+import { Course } from '@/modules/CourseManagement/types/course.types';
+import {
+  SubjectFilterParams,
+  subjectFilterSchema
+} from '@/modules/SubjectManagement/schemas/subject.schema';
+import { SubjectSortBy } from '@/modules/SubjectManagement/types/subject.types';
+import { SortDirection } from '@/shared/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-const filterSchema = z.object({
-  course_id: z.string().optional(),
-  title: z.string().optional(),
-  code: z.string().optional(),
-  status: z.enum(['active', 'inactive']).optional(),
-  credits: z.string().optional(),
-  sort_by: z.enum(['title', 'code', 'credits', 'course_id', 'created_at', 'updated_at']).optional(),
-  sort_direction: z.enum(['asc', 'desc']).optional()
-});
 
 interface SubjectFilterProps {
   filters: SubjectFilterParams;
   onFilterChange: (filters: SubjectFilterParams) => void;
+  courses: Course[];
 }
 
-export const SubjectFilter = ({ filters, onFilterChange }: SubjectFilterProps) => {
+export const SubjectFilter = ({ filters, onFilterChange, courses }: SubjectFilterProps) => {
   const formMethods = useForm<SubjectFilterParams>({
-    resolver: zodResolver(filterSchema),
+    resolver: zodResolver(subjectFilterSchema),
     defaultValues: filters
-  });
-
-  const { data: coursesData } = useQuery({
-    queryKey: ['courses'],
-    queryFn: () => CourseManagementService.getCourses()
   });
 
   const onSubmit = (data: SubjectFilterParams) => {
@@ -62,7 +51,7 @@ export const SubjectFilter = ({ filters, onFilterChange }: SubjectFilterProps) =
             label: 'Course',
             placeholder: 'Select course',
             options:
-              coursesData?.data.map((course) => ({
+              courses?.map((course) => ({
                 label: course.title,
                 value: course.id.toString()
               })) || []
@@ -71,12 +60,28 @@ export const SubjectFilter = ({ filters, onFilterChange }: SubjectFilterProps) =
 
         <CustomForm.Select
           field={{
-            name: 'status',
-            label: 'Status',
-            placeholder: 'Select status',
+            name: 'sort_by',
+            label: 'Sort by',
+            placeholder: 'Select sort by',
             options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' }
+              { label: 'Title', value: SubjectSortBy.TITLE },
+              { label: 'Code', value: SubjectSortBy.CODE },
+              { label: 'Credits', value: SubjectSortBy.CREDITS },
+              { label: 'Course', value: SubjectSortBy.COURSE_ID },
+              { label: 'Created at', value: SubjectSortBy.CREATED_AT },
+              { label: 'Updated at', value: SubjectSortBy.UPDATED_AT }
+            ]
+          }}
+        />
+
+        <CustomForm.Select
+          field={{
+            name: 'sort_direction',
+            label: 'Sort direction',
+            placeholder: 'Select sort direction',
+            options: [
+              { label: 'Ascending', value: SortDirection.Asc },
+              { label: 'Descending', value: SortDirection.Desc }
             ]
           }}
         />

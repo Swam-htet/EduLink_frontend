@@ -1,9 +1,6 @@
 import Table, { TableColumn } from '@/components/common/Table';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import type { Student } from '@/modules/StudentManagement/types/studentManagement.types';
-import { StudentStatus } from '@/modules/StudentRegistration/types/student.types';
 import { format } from 'date-fns';
 
 interface StudentWithSelected extends Student {
@@ -13,19 +10,19 @@ interface StudentWithSelected extends Student {
 interface StudentTableProps {
   data: StudentWithSelected[];
   isLoading: boolean;
-  onRowClick?: (student: Student) => void;
-  onApprove: (student: Student) => void;
-  onReject: (student: Student) => void;
   onSelect: (student: StudentWithSelected, checked: boolean) => void;
+  selectedRows: number[];
+  onRowClick?: (student: StudentWithSelected) => void;
+  checkValidation?: (student: StudentWithSelected) => boolean;
 }
 
 export const StudentTable = ({
   data,
   isLoading,
+  selectedRows,
   onRowClick,
-  onApprove,
-  onReject,
-  onSelect
+  onSelect,
+  checkValidation
 }: StudentTableProps) => {
   const getStatusClassName = (status: string) => {
     switch (status) {
@@ -49,17 +46,6 @@ export const StudentTable = ({
   };
 
   const columns: TableColumn<StudentWithSelected>[] = [
-    {
-      header: '',
-      accessor: (student: StudentWithSelected) => (
-        <Checkbox
-          disabled={student.status !== StudentStatus.ACTIVE}
-          checked={student.selected}
-          onCheckedChange={(checked) => handleSelect(student, checked as boolean)}
-        />
-      ),
-      width: '50px'
-    },
     {
       header: 'Student ID',
       accessor: (student: Student) => student.student_id
@@ -96,42 +82,19 @@ export const StudentTable = ({
     {
       header: 'Created At',
       accessor: (student: Student) => format(new Date(student.created_at), 'PPP')
-    },
-    {
-      header: 'Actions',
-      accessor: (student: Student) => (
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => onRowClick?.(student)}>
-            View
-          </Button>
-          {student.status === 'pending' && (
-            <>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onApprove(student);
-                }}
-              >
-                Approve
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onReject(student);
-                }}
-              >
-                Reject
-              </Button>
-            </>
-          )}
-        </div>
-      )
     }
   ];
 
-  return <Table columns={columns} data={data} loading={isLoading} onRowClick={() => {}} />;
+  return (
+    <Table
+      selectable
+      columns={columns}
+      data={data}
+      checkValidation={checkValidation}
+      loading={isLoading}
+      onRowSelect={handleSelect}
+      selectedRows={selectedRows}
+      onRowClick={onRowClick}
+    />
+  );
 };

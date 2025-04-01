@@ -3,6 +3,7 @@ import { apiClient } from '@/lib/axios/api';
 import { cleanObject } from '@/lib/utils';
 import type { CourseCreateFormData } from '@/modules/CourseManagement/schemas/course.schema';
 import type {
+  CourseActionResponse,
   CourseFilterParams,
   CourseListResponse,
   CourseResponse
@@ -22,17 +23,27 @@ export class CourseManagementService {
   }
 
   static async createCourse(courseData: CourseCreateFormData) {
-    const { data } = await apiClient.post<CourseResponse>('management/courses', courseData);
+    const { data } = await apiClient.post<CourseActionResponse>('management/courses', courseData);
     return data;
   }
 
-  static async updateCourse(id: string, courseData: Partial<CourseCreateFormData>) {
-    const { data } = await apiClient.put<CourseResponse>(`management/courses/${id}`, courseData);
+  static async updateCourse(
+    id: string,
+    courseData: {
+      title?: string;
+      description?: string;
+      duration?: string;
+    }
+  ) {
+    const { data } = await apiClient.put<CourseActionResponse>(
+      `management/courses/${id}`,
+      courseData
+    );
     return data;
   }
 
   static async deleteCourse(id: string) {
-    const { data } = await apiClient.delete<CourseResponse>(`management/courses/${id}`);
+    const { data } = await apiClient.delete<CourseActionResponse>(`management/courses/${id}`);
     return data;
   }
 }

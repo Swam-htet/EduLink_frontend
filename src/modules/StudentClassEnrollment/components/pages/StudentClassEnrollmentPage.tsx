@@ -13,7 +13,6 @@ import type {
 import { getDefaultFilters } from '@/modules/StudentClassEnrollment/utils/getDefaultFilters';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ClipboardCheck } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -23,7 +22,7 @@ export const StudentClassEnrollmentPage = () => {
   const [selectedEnrollmentIds, setSelectedEnrollmentIds] = useState<number[]>([]);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null);
-  console.log(selectedEnrollment);
+
   const enrollmentsQuery = useQuery({
     queryKey: ['enrollments', filters],
     queryFn: () => EnrollmentManagementService.getEnrollments(filters)
@@ -103,7 +102,6 @@ export const StudentClassEnrollmentPage = () => {
           onClick={handleSendEmails}
           disabled={selectedEnrollmentIds.length === 0}
         >
-          <ClipboardCheck className="mr-2 h-4 w-4" />
           Send Enrollment Emails
         </Button>
       </div>
@@ -124,9 +122,8 @@ export const StudentClassEnrollmentPage = () => {
         <CardContent>
           <EnrollmentTable
             loading={enrollmentsQuery.isPending}
-            selectedEnrollments={selectedEnrollmentIds}
-            handleSelect={handleSelect}
             enrollments={enrollmentsQuery.data?.data || []}
+            onSelect={handleSelect}
             onUpdateStatus={handleUpdateStatusDialog}
           />
 

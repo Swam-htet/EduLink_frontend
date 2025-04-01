@@ -1,25 +1,30 @@
-import { Button } from '@/components/ui/button';
+import BackButton from '@/components/common/BackButtton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CourseCreateForm } from '@/modules/CourseManagement/forms/CourseCreateForm';
 import { CourseCreateFormData } from '@/modules/CourseManagement/schemas/course.schema';
 import CourseManagementService from '@/modules/CourseManagement/services/CourseManagement.service';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
-import { useMutation } from '@tanstack/react-query';
-import { ChevronLeft } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export const CourseCreatePage = () => {
   const navigate = useNavigate();
 
+  const courseManagementQuery = useQuery({
+    queryKey: ['course-management'],
+    queryFn: () => CourseManagementService.getCourses()
+  });
+
   const { confirm } = useDialog();
 
   const courseCreateMutation = useMutation({
-    mutationKey: ['course-create'],
+    mutationKey: ['course-management-create'],
     mutationFn: (data: CourseCreateFormData) => CourseManagementService.createCourse(data),
     onSuccess: () => {
       toast.success('Course created successfully');
       navigate(-1);
+      courseManagementQuery.refetch();
     },
     onError: () => {
       toast.error('Failed to create course');
@@ -41,9 +46,7 @@ export const CourseCreatePage = () => {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+        <BackButton navigate={navigate} />
         <h1 className="text-xl font-semibold">Create Course</h1>
       </div>
 

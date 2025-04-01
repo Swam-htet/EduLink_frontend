@@ -1,3 +1,4 @@
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table as ShadcnTable,
   TableBody,
@@ -25,6 +26,10 @@ interface TableProps<T> {
   rowClassName?: string;
   onRowClick?: (row: T) => void;
   emptyMessage?: string;
+  selectable?: boolean;
+  selectedRows?: number[];
+  onRowSelect?: (row: T, checked: boolean) => void;
+  checkValidation?: (row: T) => boolean;
 }
 
 const Table = <T extends object>({
@@ -33,13 +38,18 @@ const Table = <T extends object>({
   className,
   loading,
   rowClassName,
+  selectedRows,
   onRowClick,
-  emptyMessage = 'No data found'
+  emptyMessage = 'No data found',
+  selectable = false,
+  onRowSelect,
+  checkValidation
 }: TableProps<T>) => {
   const tableContent = (
     <ShadcnTable className={cn('w-full', className)}>
       <TableHeader className="bg-muted/50">
         <TableRow className="hover:bg-transparent">
+          {selectable && <TableHead className=""></TableHead>}
           {columns.map((column, index) => (
             <TableHead
               key={index}
@@ -57,7 +67,7 @@ const Table = <T extends object>({
       <TableBody>
         {loading ? (
           <TableRow>
-            <TableCell colSpan={columns.length} className="h-24">
+            <TableCell colSpan={columns.length + (selectable ? 1 : 0)} className="h-24">
               <div className="text-muted-foreground flex items-center justify-center gap-2">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span>Loading...</span>
@@ -66,7 +76,10 @@ const Table = <T extends object>({
           </TableRow>
         ) : data.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={columns.length} className="text-muted-foreground h-24 text-center">
+            <TableCell
+              colSpan={columns.length + (selectable ? 1 : 0)}
+              className="text-muted-foreground h-24 text-center"
+            >
               {emptyMessage}
             </TableCell>
           </TableRow>
@@ -79,8 +92,20 @@ const Table = <T extends object>({
                 onRowClick && 'hover:bg-muted/50 cursor-pointer',
                 rowClassName
               )}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
+              onClick={(e) => {
+                e.stopPropagation();
+                onRowClick?.(row);
+              }}
             >
+              {selectable && (
+                <TableCell className="w-[50px]" onClick={(e) => e.stopPropagation()}>
+                  <Checkbox
+                    disabled={checkValidation ? !checkValidation(row) : false}
+                    checked={selectedRows?.includes(row.id)}
+                    onCheckedChange={(checked) => onRowSelect?.(row, checked as boolean)}
+                  />
+                </TableCell>
+              )}
               {columns.map((column, colIndex) => (
                 <TableCell key={colIndex} className={cn('px-4 py-2.5 text-sm', column.className)}>
                   {column.accessor(row)}

@@ -1,17 +1,16 @@
 import Table from '@/components/common/Table';
 import { Button } from '@/components/ui/button';
-import { cn, trimString } from '@/lib/utils';
+import { formatDate, trimString } from '@/lib/utils';
 import type { Subject } from '@/modules/SubjectManagement/types/subject.types';
-import { format } from 'date-fns';
 
 interface SubjectTableProps {
   data: Subject[];
   isLoading: boolean;
-  onRowClick: (subject: Subject) => void;
   onEdit: (subject: Subject) => void;
+  onDelete: (subject: Subject) => void;
 }
 
-export const SubjectTable = ({ data, isLoading, onRowClick, onEdit }: SubjectTableProps) => {
+export const SubjectTable = ({ data, isLoading, onEdit, onDelete }: SubjectTableProps) => {
   const columns = [
     {
       header: 'Title',
@@ -34,21 +33,8 @@ export const SubjectTable = ({ data, isLoading, onRowClick, onEdit }: SubjectTab
       accessor: (subject: Subject) => subject.course?.title || 'N/A'
     },
     {
-      header: 'Status',
-      accessor: (subject: Subject) => (
-        <span
-          className={cn(
-            'inline-flex rounded-full px-2 py-1 text-xs font-medium',
-            subject.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-          )}
-        >
-          {subject.status.charAt(0).toUpperCase() + subject.status.slice(1)}
-        </span>
-      )
-    },
-    {
       header: 'Created At',
-      accessor: (subject: Subject) => format(new Date(subject.created_at), 'PPP')
+      accessor: (subject: Subject) => formatDate(subject.created_at)
     },
     {
       header: 'Actions',
@@ -57,10 +43,13 @@ export const SubjectTable = ({ data, isLoading, onRowClick, onEdit }: SubjectTab
           <Button variant="outline" size="sm" onClick={() => onEdit(subject)}>
             Edit
           </Button>
+          <Button variant="destructive" size="sm" onClick={() => onDelete(subject)}>
+            Delete
+          </Button>
         </div>
       )
     }
   ];
 
-  return <Table columns={columns} data={data} loading={isLoading} onRowClick={onRowClick} />;
+  return <Table columns={columns} data={data} loading={isLoading} />;
 };

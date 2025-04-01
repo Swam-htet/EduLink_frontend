@@ -1,8 +1,7 @@
 import Table from '@/components/common/Table';
 import { Button } from '@/components/ui/button';
-import { cn, trimString } from '@/lib/utils';
+import { formatDate, trimString } from '@/lib/utils';
 import type { Course } from '@/modules/CourseManagement/types/course.types';
-import { format } from 'date-fns';
 
 interface CourseTableProps {
   data: Course[];
@@ -37,22 +36,8 @@ export const CourseTable = ({
       accessor: (course: Course) => course.duration
     },
     {
-      header: 'Status',
-      accessor: (course: Course) => (
-        <span
-          className={cn(
-            'inline-flex rounded-full px-2 py-1 text-xs font-medium',
-            course.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-          )}
-        >
-          {course.status.charAt(0).toUpperCase() + course.status.slice(1)}
-        </span>
-      )
-    },
-
-    {
       header: 'Created At',
-      accessor: (course: Course) => format(new Date(course.created_at), 'PPP')
+      accessor: (course: Course) => formatDate(course.created_at)
     },
     {
       header: 'Actions',

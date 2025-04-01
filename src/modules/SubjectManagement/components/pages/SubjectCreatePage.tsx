@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import BackButton from '@/components/common/BackButtton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CourseManagementService from '@/modules/CourseManagement/services/CourseManagement.service';
 import { SubjectCreateForm } from '@/modules/SubjectManagement/components/forms/SubjectCreateForm';
@@ -6,7 +6,6 @@ import { SubjectCreateFormData } from '@/modules/SubjectManagement/schemas/subje
 import SubjectManagementService from '@/modules/SubjectManagement/services/SubjectManagement.service';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -15,17 +14,23 @@ export const SubjectCreatePage = () => {
 
   const { confirm } = useDialog();
 
+  const subjectListQuery = useQuery({
+    queryKey: ['subject-management'],
+    queryFn: () => SubjectManagementService.getSubjects()
+  });
+
   const courseListQuery = useQuery({
     queryKey: ['courses'],
     queryFn: () => CourseManagementService.getCourses()
   });
 
   const subjectCreateMutation = useMutation({
-    mutationKey: ['subject-create'],
+    mutationKey: ['subject-management-create'],
     mutationFn: (data: SubjectCreateFormData) => SubjectManagementService.createSubject(data),
     onSuccess: () => {
       toast.success('Subject created successfully');
       navigate(-1);
+      subjectListQuery.refetch();
     },
     onError: () => {
       toast.error('Failed to create subject');
@@ -47,9 +52,7 @@ export const SubjectCreatePage = () => {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+        <BackButton navigate={navigate} />
         <h1 className="text-xl font-semibold">Create Subject</h1>
       </div>
 
