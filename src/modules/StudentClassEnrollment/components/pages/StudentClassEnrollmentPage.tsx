@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UpdateStatusDialog } from '@/modules/StudentClassEnrollment/components/dialogs/UpdateStatusDialog';
 import { EnrollmentFilter } from '@/modules/StudentClassEnrollment/components/filters/EnrollmentFilter';
 import { EnrollmentTable } from '@/modules/StudentClassEnrollment/components/tables/EnrollmentTable';
-import type { UpdateEnrollmentFormData } from '@/modules/StudentClassEnrollment/schemas/enrollment.schema';
-import { EnrollmentManagementService } from '@/modules/StudentClassEnrollment/services/enrollmentManagement.service';
 import type {
-  Enrollment,
-  EnrollmentFilterParams
-} from '@/modules/StudentClassEnrollment/types/enrollment.types';
+  EnrollmentFilterFormData,
+  UpdateEnrollmentFormData
+} from '@/modules/StudentClassEnrollment/schemas/enrollment.schema';
+import { EnrollmentManagementService } from '@/modules/StudentClassEnrollment/services/enrollmentManagement.service';
+import type { Enrollment } from '@/modules/StudentClassEnrollment/types/enrollment.types';
 import { getDefaultFilters } from '@/modules/StudentClassEnrollment/utils/getDefaultFilters';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 
 export const StudentClassEnrollmentPage = () => {
   const { confirm } = useDialog();
-  const [filters, setFilters] = useState<EnrollmentFilterParams>(getDefaultFilters());
+  const [filters, setFilters] = useState<EnrollmentFilterFormData>(getDefaultFilters());
   const [selectedEnrollmentIds, setSelectedEnrollmentIds] = useState<number[]>([]);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null);
@@ -37,8 +37,8 @@ export const StudentClassEnrollmentPage = () => {
       setUpdateDialogOpen(false);
       enrollmentsQuery.refetch();
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to update enrollment status');
+    onError: () => {
+      toast.error('Failed to update enrollment status');
     }
   });
 
@@ -50,8 +50,8 @@ export const StudentClassEnrollmentPage = () => {
       toast.success(data.message || 'Enrollment email sent successfully');
       setSelectedEnrollmentIds([]);
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to send enrollment email');
+    onError: () => {
+      toast.error('Failed to send enrollment email');
     }
   });
 

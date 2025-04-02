@@ -1,47 +1,40 @@
 import Pagination from '@/components/common/Pagination';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import { StaffFilter } from '@/modules/StaffManagement/components/filters/StaffFilter';
 import StaffTable from '@/modules/StaffManagement/components/tables/StaffTable';
+import { StaffFilterFormValues } from '@/modules/StaffManagement/schemas/staff.schema';
 import { StaffManagementService } from '@/modules/StaffManagement/services/staffManagement.service';
-import {
-  Staff,
-  StaffManagementFilterParams
-} from '@/modules/StaffManagement/types/staffManagement.types';
+import { Staff } from '@/modules/StaffManagement/types/staffManagement.types';
 import { createDefaultFilterParams } from '@/modules/StaffManagement/utils';
 import { useQuery } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const StaffManagementPage = () => {
-  const [filterParams, setFilterParams] = useState<StaffManagementFilterParams>(
+  const [filterParams, setFilterParams] = useState<StaffFilterFormValues>(
     createDefaultFilterParams()
   );
-
-  const [staffList, setStaffList] = useState<Staff[]>([]);
 
   const navigate = useNavigate();
 
   const adminStaffManagementListQuery = useQuery({
-    queryKey: ['admin-staff-management-list', filterParams],
+    queryKey: ['staff-management', filterParams],
     queryFn: () => StaffManagementService.getStaffList(filterParams)
   });
-
-  useEffect(() => {
-    if (adminStaffManagementListQuery.data && adminStaffManagementListQuery.isSuccess) {
-      setStaffList(adminStaffManagementListQuery.data.data);
-    }
-  }, [adminStaffManagementListQuery.data, adminStaffManagementListQuery.isSuccess, filterParams]);
 
   const onRowClick = (staff: Staff) => {
     navigate(`/staff-management/${staff.id}`);
   };
 
   const onAddStaffClick = () => {
-    navigate('/staff-management/new');
+    navigate(PRIVATE_ENDPOINTS.STAFF_CREATE);
   };
 
   return (
-    <div className="p-6">
+    <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Staff Management</h1>
         <Button variant="outline" onClick={onAddStaffClick}>
@@ -50,15 +43,25 @@ export const StaffManagementPage = () => {
         </Button>
       </div>
 
-      <div className="flex w-full flex-col gap-4">
-        <div className="mt-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <StaffFilter filters={filterParams} onFilterChange={setFilterParams} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Staff List</CardTitle>
+        </CardHeader>
+        <CardContent>
           <StaffTable
-            data={staffList}
+            data={adminStaffManagementListQuery.data?.data ?? []}
             loading={adminStaffManagementListQuery.isPending}
             onRowClick={onRowClick}
           />
-        </div>
-        <div>
           <Pagination
             currentPage={filterParams.current_page ?? 1}
             totalCount={adminStaffManagementListQuery.data?.meta?.total ?? 1}
@@ -77,8 +80,8 @@ export const StaffManagementPage = () => {
               });
             }}
           />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

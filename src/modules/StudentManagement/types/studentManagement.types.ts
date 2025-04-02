@@ -1,4 +1,10 @@
-export type StudentStatus = 'pending' | 'active' | 'inactive' | 'suspended' | 'rejected';
+export enum StudentStatus {
+  Pending = 'pending',
+  Active = 'active',
+  Inactive = 'inactive',
+  Suspended = 'suspended',
+  Rejected = 'rejected'
+}
 
 export interface Student {
   id: number;
@@ -34,39 +40,17 @@ export interface DateRangeFilter {
   end: string;
 }
 
-export interface StudentFilterParams {
-  // Basic Filters
-  student_id?: string;
-  name?: string;
-  email?: string;
-  phone?: string;
-  nrc?: string;
-
-  // Status and Gender Filters
-  status?: StudentStatus;
-  gender?: 'male' | 'female' | 'other';
-
-  // Date Range Filters
-  date_of_birth?: DateRangeFilter;
-  enrollment_date?: DateRangeFilter;
-
-  // Guardian Filters
-  guardian_name?: string;
-  guardian_phone?: string;
-
-  // Pagination and Sorting
-  per_page?: number;
-  sort_by?:
-    | 'student_id'
-    | 'first_name'
-    | 'last_name'
-    | 'email'
-    | 'enrollment_date'
-    | 'status'
-    | 'created_at'
-    | 'updated_at';
-  sort_direction?: 'asc' | 'desc';
-  current_page?: number;
+export enum StudentSortBy {
+  StudentId = 'student_id',
+  Name = 'name',
+  Email = 'email',
+  Phone = 'phone',
+  Status = 'status',
+  Gender = 'gender',
+  DateOfBirth = 'date_of_birth',
+  EnrollmentDate = 'enrollment_date',
+  CreatedAt = 'created_at',
+  UpdatedAt = 'updated_at'
 }
 
 export interface PaginationMeta {

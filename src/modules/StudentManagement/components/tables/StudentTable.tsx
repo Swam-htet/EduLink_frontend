@@ -1,7 +1,6 @@
 import Table, { TableColumn } from '@/components/common/Table';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import type { Student } from '@/modules/StudentManagement/types/studentManagement.types';
-import { format } from 'date-fns';
 
 interface StudentWithSelected extends Student {
   selected: boolean;
@@ -81,7 +80,7 @@ export const StudentTable = ({
     },
     {
       header: 'Created At',
-      accessor: (student: Student) => format(new Date(student.created_at), 'PPP')
+      accessor: (student: Student) => formatDate(student.created_at)
     }
   ];
 

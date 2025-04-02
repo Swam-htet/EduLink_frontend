@@ -1,9 +1,8 @@
 import type { TableColumn } from '@/components/common/Table';
 import Table from '@/components/common/Table';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import type { Class } from '@/modules/ClassManagement/types/class.types';
 import { ClassStatus } from '@/modules/ClassManagement/types/class.types';
-import { format } from 'date-fns';
 
 interface ClassTableProps {
   data: Class[];
@@ -14,9 +13,9 @@ interface ClassTableProps {
 const getStatusColor = (status: ClassStatus) => {
   switch (status) {
     case ClassStatus.Scheduled:
-      return 'bg-green-100 text-green-800';
-    case ClassStatus.Ongoing:
       return 'bg-yellow-100 text-yellow-800';
+    case ClassStatus.Ongoing:
+      return 'bg-green-100 text-green-800';
     case ClassStatus.Completed:
       return 'bg-blue-100 text-blue-800';
     case ClassStatus.Cancelled:
@@ -61,8 +60,7 @@ const ClassTable: React.FC<ClassTableProps> = ({ data, loading, onRowClick }) =>
       header: 'Duration',
       accessor: (classItem) => (
         <>
-          {format(new Date(classItem.start_date), 'MMM d, yyyy')} -{' '}
-          {format(new Date(classItem.end_date), 'MMM d, yyyy')}
+          {formatDate(classItem.start_date)} - {formatDate(classItem.end_date)}
         </>
       ),
       width: '20%'

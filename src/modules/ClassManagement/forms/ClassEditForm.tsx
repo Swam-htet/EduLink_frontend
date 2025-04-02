@@ -1,11 +1,11 @@
 import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
+import type { Class } from '@/modules/ClassManagement/types/class.types';
 import type { Course } from '@/modules/CourseManagement/types/course.types';
 import type { Staff } from '@/modules/StaffManagement/types/staffManagement.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import type { Class } from '../types/class.types';
 
 const classEditSchema = z.object({
   course_id: z.number().optional(),
@@ -99,11 +99,19 @@ export const ClassEditForm = ({
           }}
         />
 
-        <CustomForm.DateRangePicker
+        <CustomForm.DatePicker
           field={{
-            name: 'date_range',
-            label: 'Class Duration',
-            placeholder: 'Select class duration'
+            name: 'start_date',
+            label: 'Start Date',
+            placeholder: 'Select start date'
+          }}
+        />
+
+        <CustomForm.DatePicker
+          field={{
+            name: 'end_date',
+            label: 'End Date',
+            placeholder: 'Select end date'
           }}
         />
       </div>

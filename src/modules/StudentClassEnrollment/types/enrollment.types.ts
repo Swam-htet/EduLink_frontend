@@ -27,18 +27,13 @@ export interface Enrollment {
   updated_at: string;
 }
 
-export interface EnrollmentFilterParams {
-  student_id?: number;
-  class_id?: number;
-  status?: EnrollmentStatus;
-  enrolled_at?: {
-    start: string;
-    end: string;
-  };
-  per_page?: number;
-  sort_by?: 'student_id' | 'class_id' | 'enrolled_at' | 'status' | 'created_at' | 'updated_at';
-  sort_direction?: 'asc' | 'desc';
-  current_page?: number;
+export enum EnrollmentSortBy {
+  STUDENT_ID = 'student_id',
+  CLASS_ID = 'class_id',
+  ENROLLED_AT = 'enrolled_at',
+  STATUS = 'status',
+  CREATED_AT = 'created_at',
+  UPDATED_AT = 'updated_at'
 }
 
 export interface EnrollmentListResponse {

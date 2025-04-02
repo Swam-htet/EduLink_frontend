@@ -6,24 +6,24 @@ import ClassManagementService from '@/modules/ClassManagement/services/classMana
 import { ClassInvitationDialog } from '@/modules/StudentManagement/components/dialogs/ClassInvitationDialog';
 import { StudentFilter } from '@/modules/StudentManagement/components/filters/StudentFilter';
 import { StudentTable } from '@/modules/StudentManagement/components/tables/StudentTable';
+import { StudentFilterParams } from '@/modules/StudentManagement/schemas/studentManagement.schema';
 import StudentManagementService from '@/modules/StudentManagement/services/studentManagement.service';
 import type {
   SendClassInviteRequest,
-  Student,
-  StudentFilterParams
+  Student
 } from '@/modules/StudentManagement/types/studentManagement.types';
 import { getDefaultFilters } from '@/modules/StudentManagement/utils/getDefaultFilters';
-import { StudentStatus } from '@/modules/StudentRegistration/types/student.types';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+
 interface StudentWithSelected extends Student {
   selected: boolean;
 }
 
 const checkValidation = (student: StudentWithSelected) => {
-  return student.status === StudentStatus.ACTIVE;
+  return student.status == 'active';
 };
 
 export const StudentManagementPage = () => {
@@ -37,12 +37,12 @@ export const StudentManagementPage = () => {
   console.log('selectedStudents', selectedStudents);
 
   const studentQuery = useQuery({
-    queryKey: ['students', filters],
+    queryKey: ['student-management', filters],
     queryFn: () => StudentManagementService.getStudents(filters)
   });
 
   const classQuery = useQuery({
-    queryKey: ['classes'],
+    queryKey: ['class-management'],
     queryFn: () => ClassManagementService.getAllOngoingClasses()
   });
 
@@ -54,8 +54,8 @@ export const StudentManagementPage = () => {
       setClassInvitationDialogOpen(false);
       navigate(PRIVATE_ENDPOINTS.STUDENT_CLASS_ENROLLMENT);
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to send class invite');
+    onError: () => {
+      toast.error('Failed to send class invite');
     }
   });
 

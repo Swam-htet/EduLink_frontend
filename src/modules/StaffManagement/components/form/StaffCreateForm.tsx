@@ -1,8 +1,8 @@
 import CustomForm from '@/components/common/CustomForm';
+import type { StaffCreateFormData } from '@/modules/StaffManagement/schemas/staff.schema';
+import { staffCreateSchema } from '@/modules/StaffManagement/schemas/staff.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import type { StaffCreateFormData } from '../../schemas/staff.schema';
-import { staffCreateSchema } from '../../schemas/staff.schema';
 
 interface StaffCreateFormProps {
   onSubmit: (data: StaffCreateFormData) => void;
@@ -12,18 +12,7 @@ interface StaffCreateFormProps {
 export const StaffCreateForm = ({ onSubmit, loading }: StaffCreateFormProps) => {
   const formMethods = useForm<StaffCreateFormData>({
     resolver: zodResolver(staffCreateSchema),
-    defaultValues: {
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone: '',
-      nrc: '',
-      role: '',
-      gender: '',
-      // todo need to fix this
-      date_of_birth: new Date(),
-      address: ''
-    }
+    defaultValues: {}
   });
 
   return (
@@ -102,17 +91,17 @@ export const StaffCreateForm = ({ onSubmit, loading }: StaffCreateFormProps) => 
             placeholder: 'Select date of birth'
           }}
         />
+
+        <CustomForm.Textarea
+          field={{
+            name: 'address',
+            label: 'Address',
+            placeholder: 'Enter full address'
+          }}
+        />
       </div>
 
-      <CustomForm.Input
-        field={{
-          name: 'address',
-          label: 'Address',
-          placeholder: 'Enter full address'
-        }}
-      />
-
-      <CustomForm.Button type="submit" className="w-full" state={loading ? 'loading' : 'default'}>
+      <CustomForm.Button type="submit" state={loading ? 'loading' : 'default'}>
         {loading ? 'Creating Staff...' : 'Create Staff'}
       </CustomForm.Button>
     </CustomForm>

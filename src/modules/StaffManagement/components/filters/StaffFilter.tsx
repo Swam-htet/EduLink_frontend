@@ -1,41 +1,37 @@
 import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
-import type { StudentFilterParams } from '@/modules/StudentManagement/schemas/studentManagement.schema';
-import { studentFilterSchema } from '@/modules/StudentManagement/schemas/studentManagement.schema';
 import {
-  StudentSortBy,
-  StudentStatus
-} from '@/modules/StudentManagement/types/studentManagement.types';
-import { SortDirection } from '@/shared/types';
+  staffFilterSchema,
+  type StaffFilterFormValues
+} from '@/modules/StaffManagement/schemas/staff.schema';
+import {
+  StaffGender,
+  StaffRole,
+  StaffSortBy,
+  StaffStatus
+} from '@/modules/StaffManagement/types/staffManagement.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-interface StudentFilterProps {
-  filters: StudentFilterParams;
-  onFilterChange: (filters: StudentFilterParams) => void;
+interface StaffFilterProps {
+  filters: StaffFilterFormValues;
+  onFilterChange: (filters: StaffFilterFormValues) => void;
 }
 
-export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) => {
-  const formMethods = useForm<StudentFilterParams>({
-    resolver: zodResolver(studentFilterSchema),
+export const StaffFilter = ({ filters, onFilterChange }: StaffFilterProps) => {
+  const formMethods = useForm<StaffFilterFormValues>({
+    resolver: zodResolver(staffFilterSchema),
     defaultValues: filters
   });
 
-  const onSubmit = (data: StudentFilterParams) => {
+  const onSubmit = (data: StaffFilterFormValues) => {
     onFilterChange(data);
   };
 
+  console.log('Form error ', formMethods.formState.errors);
   return (
     <CustomForm formMethods={formMethods} onSubmit={onSubmit} className="space-y-4">
       <div className="grid gap-4 md:grid-cols-3">
-        <CustomForm.Input
-          field={{
-            name: 'student_id',
-            label: 'Student ID',
-            placeholder: 'Search by student ID'
-          }}
-        />
-
         <CustomForm.Input
           field={{
             name: 'name',
@@ -61,17 +57,35 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
           }}
         />
 
+        <CustomForm.Input
+          field={{
+            name: 'nrc',
+            label: 'NRC',
+            placeholder: 'Search by NRC'
+          }}
+        />
+
         <CustomForm.Select
           field={{
             name: 'status',
             label: 'Status',
             placeholder: 'Select status',
             options: [
-              { label: 'Pending', value: StudentStatus.Pending },
-              { label: 'Active', value: StudentStatus.Active },
-              { label: 'Inactive', value: StudentStatus.Inactive },
-              { label: 'Suspended', value: StudentStatus.Suspended },
-              { label: 'Rejected', value: StudentStatus.Rejected }
+              { label: 'Active', value: StaffStatus.Active },
+              { label: 'Inactive', value: StaffStatus.Inactive }
+            ]
+          }}
+        />
+
+        <CustomForm.Select
+          field={{
+            name: 'role',
+            label: 'Role',
+            placeholder: 'Select role',
+            options: [
+              { label: 'Teacher', value: StaffRole.Teacher },
+              { label: 'Admin', value: StaffRole.Admin },
+              { label: 'Staff', value: StaffRole.Staff }
             ]
           }}
         />
@@ -82,9 +96,9 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
             label: 'Gender',
             placeholder: 'Select gender',
             options: [
-              { label: 'Male', value: 'male' },
-              { label: 'Female', value: 'female' },
-              { label: 'Other', value: 'other' }
+              { label: 'Male', value: StaffGender.Male },
+              { label: 'Female', value: StaffGender.Female },
+              { label: 'Other', value: StaffGender.Other }
             ]
           }}
         />
@@ -107,17 +121,17 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
 
         <CustomForm.DatePicker
           field={{
-            name: 'enrollment_date.start',
-            label: 'Start Enrollment Date',
-            placeholder: 'Select start enrollment date'
+            name: 'joined_date.start',
+            label: 'Start Joined Date',
+            placeholder: 'Select start joined date'
           }}
         />
 
         <CustomForm.DatePicker
           field={{
-            name: 'enrollment_date.end',
-            label: 'End Enrollment Date',
-            placeholder: 'Select end enrollment date'
+            name: 'joined_date.end',
+            label: 'End Joined Date',
+            placeholder: 'Select end joined date'
           }}
         />
 
@@ -127,16 +141,13 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
             label: 'Sort By',
             placeholder: 'Select sort by',
             options: [
-              { label: 'Student ID', value: StudentSortBy.StudentId },
-              { label: 'Name', value: StudentSortBy.Name },
-              { label: 'Email', value: StudentSortBy.Email },
-              { label: 'Phone', value: StudentSortBy.Phone },
-              { label: 'Status', value: StudentSortBy.Status },
-              { label: 'Gender', value: StudentSortBy.Gender },
-              { label: 'Date of Birth', value: StudentSortBy.DateOfBirth },
-              { label: 'Enrollment Date', value: StudentSortBy.EnrollmentDate },
-              { label: 'Created At', value: StudentSortBy.CreatedAt },
-              { label: 'Updated At', value: StudentSortBy.UpdatedAt }
+              { label: 'Name', value: StaffSortBy.Name },
+              { label: 'Email', value: StaffSortBy.Email },
+              { label: 'Role', value: StaffSortBy.Role },
+              { label: 'Joined Date', value: StaffSortBy.JoinedDate },
+              { label: 'Status', value: StaffSortBy.Status },
+              { label: 'Created At', value: StaffSortBy.CreatedAt },
+              { label: 'Updated At', value: StaffSortBy.UpdatedAt }
             ]
           }}
         />
@@ -147,8 +158,8 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
             label: 'Sort Direction',
             placeholder: 'Select sort direction',
             options: [
-              { label: 'Ascending', value: SortDirection.Asc },
-              { label: 'Descending', value: SortDirection.Desc }
+              { label: 'Ascending', value: 'asc' },
+              { label: 'Descending', value: 'desc' }
             ]
           }}
         />
@@ -162,8 +173,8 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
             formMethods.reset();
             onFilterChange({
               per_page: 15,
-              sort_by: StudentSortBy.CreatedAt,
-              sort_direction: SortDirection.Desc
+              sort_by: StaffSortBy.CreatedAt,
+              sort_direction: 'desc'
             });
           }}
         >

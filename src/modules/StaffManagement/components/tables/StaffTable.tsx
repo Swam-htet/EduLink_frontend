@@ -1,6 +1,6 @@
 import type { TableColumn } from '@/components/common/Table';
 import Table from '@/components/common/Table';
-import { trimString } from '@/lib/utils';
+import { formatDate, trimString } from '@/lib/utils';
 import { Staff, StaffStatus } from '@/modules/StaffManagement/types/staffManagement.types';
 
 interface StaffTableProps {
@@ -8,6 +8,10 @@ interface StaffTableProps {
   loading?: boolean;
   onRowClick?: (staff: Staff) => void;
 }
+
+const getStatusColor = (status: StaffStatus) => {
+  return status === StaffStatus.Active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+};
 
 const StaffTable: React.FC<StaffTableProps> = ({ data, loading, onRowClick }) => {
   const columns: TableColumn<Staff>[] = [
@@ -48,7 +52,7 @@ const StaffTable: React.FC<StaffTableProps> = ({ data, loading, onRowClick }) =>
     },
     {
       header: 'Jointed Date',
-      accessor: (staff) => staff.joined_date,
+      accessor: (staff) => formatDate(staff.joined_date),
       width: '10%'
     },
     {
@@ -59,13 +63,7 @@ const StaffTable: React.FC<StaffTableProps> = ({ data, loading, onRowClick }) =>
     {
       header: 'Status',
       accessor: (staff) => (
-        <span
-          className={`rounded-full px-2 py-1 text-sm ${
-            staff.status === StaffStatus.Active
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          }`}
-        >
+        <span className={`rounded-full px-2 py-1 text-sm ${getStatusColor(staff.status)}`}>
           {staff.status}
         </span>
       ),

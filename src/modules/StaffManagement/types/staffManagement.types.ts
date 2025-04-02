@@ -1,4 +1,4 @@
-import { ApiResponse, SortDirection } from '@/shared/types';
+import { ApiResponse } from '@/shared/types';
 
 // Enum types for strict type checking
 export enum StaffStatus {
@@ -12,60 +12,34 @@ export enum StaffRole {
   Staff = 'staff'
 }
 
-export enum Gender {
+export enum StaffGender {
   Male = 'male',
   Female = 'female',
   Other = 'other'
 }
 
-// Valid sort fields
-export type SortableFields =
-  | 'name'
-  | 'email'
-  | 'role'
-  | 'joined_date'
-  | 'status'
-  | 'created_at'
-  | 'updated_at';
+export enum StaffSortBy {
+  Name = 'name',
+  Email = 'email',
+  Role = 'role',
+  JoinedDate = 'joined_date',
+  Status = 'status',
+  CreatedAt = 'created_at',
+  UpdatedAt = 'updated_at'
+}
 
-// Date range filter typeS
 export interface DateRangeFilter {
   start: string;
   end: string;
 }
 
-// Main filter params interface
-export interface StaffManagementFilterParams {
-  // Basic Filters
-  name?: string;
-  email?: string;
-  phone?: string;
-  nrc?: string;
-
-  // Status and Role Filters
-  status?: StaffStatus;
-  role?: StaffRole;
-  gender?: Gender;
-
-  // Date Range Filters
-  date_of_birth?: DateRangeFilter;
-  joined_date?: DateRangeFilter;
-
-  // Pagination and Sorting
-  per_page?: number;
-  current_page?: number;
-  sort_by?: SortableFields;
-  sort_direction?: SortDirection;
-}
-
-// Staff type definition (existing)
 export type Staff = {
   id: number;
   first_name: string;
   last_name: string;
   email: string;
   phone: string;
-  gender: Gender;
+  gender: StaffGender;
   nrc: string;
   profile_photo: string | null;
   date_of_birth: string;

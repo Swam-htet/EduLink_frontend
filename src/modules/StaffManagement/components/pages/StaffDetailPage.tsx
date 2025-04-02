@@ -1,3 +1,4 @@
+import BackButton from '@/components/common/BackButtton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -5,7 +6,6 @@ import StaffManagementService from '@/modules/StaffManagement/services/staffMana
 import { useDialog } from '@/shared/providers/dialog/useDialog';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { ChevronLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export const StaffDetailPage = () => {
@@ -19,10 +19,6 @@ export const StaffDetailPage = () => {
     queryFn: () => StaffManagementService.getStaffDetail(id as string),
     enabled: !!id
   });
-
-  const onBackBtnClick = () => {
-    navigate(-1);
-  };
 
   if (isLoading) {
     return (
@@ -98,9 +94,7 @@ export const StaffDetailPage = () => {
     <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={onBackBtnClick}>
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+        <BackButton navigate={navigate} />
         <h1 className="text-xl font-semibold">Staff Details</h1>
       </div>
 
@@ -129,9 +123,9 @@ export const StaffDetailPage = () => {
           <CardTitle>Actions</CardTitle>
         </CardHeader>
         <CardContent className="flex gap-4">
-          <Button variant="outline" onClick={() => navigate(`/staff-management/edit/${id}`)}>
+          {/* <Button variant="outline" onClick={() => navigate(`/staff-management/edit/${id}`)}>
             Edit Staff
-          </Button>
+          </Button> */}
           <Button
             variant="destructive"
             onClick={() => {

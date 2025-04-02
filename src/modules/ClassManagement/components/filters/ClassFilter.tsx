@@ -1,141 +1,122 @@
+import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import type { ClassFilterParams } from '@/modules/ClassManagement/types/class.types';
+import type { ClassFilterFormValues } from '@/modules/ClassManagement/schemas/class.schema';
+import { classFilterSchema } from '@/modules/ClassManagement/schemas/class.schema';
 import { ClassStatus } from '@/modules/ClassManagement/types/class.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-const filterSchema = z.object({
-  name: z.string().optional(),
-  code: z.string().optional(),
-  status: z.nativeEnum(ClassStatus).optional(),
-  course_id: z.number().optional(),
-  subject_id: z.number().optional(),
-  teacher_id: z.number().optional(),
-  date_range: z
-    .object({
-      start: z.date(),
-      end: z.date()
-    })
-    .optional(),
-  capacity: z.array(z.enum(['available', 'full'])).optional()
-});
-
-type FilterFormValues = z.infer<typeof filterSchema>;
 
 interface ClassFilterProps {
-  onFilterChange: (filters: ClassFilterParams) => void;
+  filters: ClassFilterFormValues;
+  onFilterChange: (filters: ClassFilterFormValues) => void;
+  courses: Array<{ id: number; title: string }>;
 }
 
-export const ClassFilter = ({ onFilterChange }: ClassFilterProps) => {
-  const form = useForm<FilterFormValues>({
-    resolver: zodResolver(filterSchema),
-    defaultValues: {}
+export const ClassFilter = ({ filters, onFilterChange, courses }: ClassFilterProps) => {
+  const formMethods = useForm<ClassFilterFormValues>({
+    resolver: zodResolver(classFilterSchema),
+    defaultValues: filters
   });
 
-  const onSubmit = (values: FilterFormValues) => {
-    // Convert Date objects to ISO strings for the API
-    const formattedValues = {
-      ...values,
-      date_range: values.date_range
-        ? {
-            start: values.date_range.start.toISOString().split('T')[0],
-            end: values.date_range.end.toISOString().split('T')[0]
-          }
-        : undefined
-    };
-    onFilterChange(formattedValues);
+  const onSubmit = (values: ClassFilterFormValues) => {
+    onFilterChange(values);
   };
 
   const handleReset = () => {
-    form.reset();
+    formMethods.reset();
     onFilterChange({});
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Class Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Search by name..." {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+    <CustomForm formMethods={formMethods} onSubmit={onSubmit}>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <CustomForm.Input
+          field={{
+            name: 'name',
+            label: 'Class Name',
+            placeholder: 'Search by name...'
+          }}
+        />
 
-          <FormField
-            control={form.control}
-            name="code"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Class Code</FormLabel>
-                <FormControl>
-                  <Input placeholder="Search by code..." {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+        <CustomForm.Input
+          field={{
+            name: 'code',
+            label: 'Class Code',
+            placeholder: 'Search by code...'
+          }}
+        />
 
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value={ClassStatus.Scheduled}>Scheduled</SelectItem>
-                    <SelectItem value={ClassStatus.Ongoing}>Ongoing</SelectItem>
-                    <SelectItem value={ClassStatus.Completed}>Completed</SelectItem>
-                    <SelectItem value={ClassStatus.Cancelled}>Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
+        <CustomForm.Select
+          field={{
+            name: 'status',
+            label: 'Status',
+            placeholder: 'Select status',
+            options: [
+              { value: ClassStatus.Scheduled, label: 'Scheduled' },
+              { value: ClassStatus.Ongoing, label: 'Ongoing' },
+              { value: ClassStatus.Completed, label: 'Completed' },
+              { value: ClassStatus.Cancelled, label: 'Cancelled' }
+            ]
+          }}
+        />
 
-          {/* todo : add date range picker */}
-          {/* <FormField
-              control={form.control}
-              name="date_range"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date Range</FormLabel>
-                  <FormControl>
-                    <DatePickerWithRange value={field.value} onChange={field.onChange} />
-                  </FormControl>
-                </FormItem>
-              )}
-            /> */}
-        </div>
+        <CustomForm.Select
+          field={{
+            name: 'course_id',
+            label: 'Course',
+            placeholder: 'Select course',
+            options: courses.map((course) => ({ value: course.id.toString(), label: course.title }))
+          }}
+        />
 
-        <div className="flex items-center gap-2">
-          <Button type="submit">Apply Filters</Button>
-          <Button type="button" variant="outline" onClick={handleReset}>
-            Reset
-          </Button>
-        </div>
-      </form>
-    </Form>
+        <CustomForm.DatePicker
+          field={{
+            name: 'date_range.start',
+            label: 'Start Date',
+            placeholder: 'Select start date'
+          }}
+        />
+        <CustomForm.DatePicker
+          field={{
+            name: 'date_range.end',
+            label: 'End Date',
+            placeholder: 'Select end date'
+          }}
+        />
+
+        <CustomForm.Select
+          field={{
+            name: 'sort_by',
+            label: 'Sort By',
+            placeholder: 'Select sort field',
+            options: [
+              { value: 'name', label: 'Name' },
+              { value: 'code', label: 'Code' },
+              { value: 'status', label: 'Status' },
+              { value: 'created_at', label: 'Created At' }
+            ]
+          }}
+        />
+
+        <CustomForm.Select
+          field={{
+            name: 'sort_order',
+            label: 'Sort Order',
+            placeholder: 'Select sort order',
+            options: [
+              { value: 'asc', label: 'Ascending' },
+              { value: 'desc', label: 'Descending' }
+            ]
+          }}
+        />
+      </div>
+
+      <div className="flex items-center justify-end gap-2">
+        <Button type="button" variant="outline" onClick={handleReset}>
+          Reset
+        </Button>
+        <Button type="submit">Apply Filters</Button>
+      </div>
+    </CustomForm>
   );
 };

@@ -1,11 +1,11 @@
 import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
+import type { ClassCreateFormData } from '@/modules/ClassManagement/schemas/class.schema';
+import { classCreateSchema } from '@/modules/ClassManagement/schemas/class.schema';
 import type { Course } from '@/modules/CourseManagement/types/course.types';
 import type { Staff } from '@/modules/StaffManagement/types/staffManagement.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import type { ClassCreateFormData } from '../schemas/class.schema';
-import { classCreateSchema } from '../schemas/class.schema';
 
 interface ClassCreateFormProps {
   onSubmit: (data: ClassCreateFormData) => void;
@@ -25,9 +25,7 @@ export const ClassCreateForm = ({
   const formMethods = useForm<ClassCreateFormData>({
     resolver: zodResolver(classCreateSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      capacity: 1
+      capacity: '1'
     }
   });
 
@@ -70,16 +68,23 @@ export const ClassCreateForm = ({
           field={{
             name: 'capacity',
             label: 'Capacity',
-            type: 'number',
             placeholder: 'Enter class capacity'
           }}
         />
 
-        <CustomForm.DateRangePicker
+        <CustomForm.DatePicker
           field={{
-            name: 'date_range',
-            label: 'Class Duration',
-            placeholder: 'Select class duration'
+            name: 'start_date',
+            label: 'Start Date',
+            placeholder: 'Select start date'
+          }}
+        />
+
+        <CustomForm.DatePicker
+          field={{
+            name: 'end_date',
+            label: 'End Date',
+            placeholder: 'Select end date'
           }}
         />
       </div>

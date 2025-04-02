@@ -1,15 +1,14 @@
 import { apiClient } from '@/lib/axios/api';
 import { cleanObject } from '@/lib/utils';
+import { StudentFilterParams } from '@/modules/StudentManagement/schemas/studentManagement.schema';
 import type {
   ApproveRegistrationRequest,
   RejectRegistrationRequest,
   SendClassInviteRequest,
   SendClassInviteResponse,
-  StudentFilterParams,
   StudentListResponse,
   StudentResponse
 } from '@/modules/StudentManagement/types/studentManagement.types';
-
 export class StudentManagementService {
   static async getStudents(params?: StudentFilterParams) {
     const { data } = await apiClient.get<StudentListResponse>('management/students', {

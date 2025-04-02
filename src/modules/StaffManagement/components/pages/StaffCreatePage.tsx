@@ -1,30 +1,28 @@
-import { Button } from '@/components/ui/button';
+import BackButton from '@/components/common/BackButtton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useMutation } from '@tanstack/react-query';
-import { ChevronLeft } from 'lucide-react';
+import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import StaffCreateForm from '@/modules/StaffManagement/components/form/StaffCreateForm';
+import { type StaffCreateFormData } from '@/modules/StaffManagement/schemas/staff.schema';
+import StaffManagementService from '@/modules/StaffManagement/services/staffManagement.service';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import type { StaffCreateFormData } from '../../schemas/staff.schema';
-import StaffManagementService from '../../services/staffManagement.service';
-import { StaffCreateForm } from '../form/StaffCreateForm';
 
 export const StaffCreatePage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const createStaffMutation = useMutation({
     mutationFn: StaffManagementService.createStaff,
     onSuccess: () => {
       toast.success('Staff created successfully');
-      navigate(-1);
+      navigate(PRIVATE_ENDPOINTS.STAFF_MANAGEMENT);
+      queryClient.invalidateQueries({ queryKey: ['staff-management'] });
     },
     onError: () => {
       toast.error('Failed to create staff');
     }
   });
-
-  const onBackBtnClick = () => {
-    navigate(-1);
-  };
 
   const handleSubmit = async (data: StaffCreateFormData) => {
     await createStaffMutation.mutateAsync(data);
@@ -34,9 +32,7 @@ export const StaffCreatePage = () => {
     <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={onBackBtnClick}>
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+        <BackButton navigate={navigate} />
         <h1 className="text-xl font-semibold">Create New Staff</h1>
       </div>
 

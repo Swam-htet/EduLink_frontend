@@ -1,14 +1,14 @@
 import { apiClient } from '@/lib/axios/api';
 import { cleanObject } from '@/lib/utils';
+import { EnrollmentFilterFormData } from '@/modules/StudentClassEnrollment/schemas/enrollment.schema';
 import type {
-  EnrollmentFilterParams,
   EnrollmentListResponse,
   ManualEnrollmentEmailRequest,
   UpdateEnrollmentRequest
-} from '../types/enrollment.types';
+} from '@/modules/StudentClassEnrollment/types/enrollment.types';
 
 export class EnrollmentManagementService {
-  static async getEnrollments(params?: EnrollmentFilterParams) {
+  static async getEnrollments(params?: EnrollmentFilterFormData) {
     const { data } = await apiClient.get<EnrollmentListResponse>('management/class-enrollments', {
       params: params ? cleanObject(params as Record<string, unknown>) : undefined
     });

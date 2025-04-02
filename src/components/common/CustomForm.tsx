@@ -1,7 +1,6 @@
 import { Button as ShadcnButton } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-
 import { Calendar } from '@/components/ui/calendar';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -23,10 +22,9 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, Eye, EyeOff } from 'lucide-react';
+import { CalendarIcon, Clock, Eye, EyeOff } from 'lucide-react';
 import React, { createContext, useContext, useState } from 'react';
-import { DateRange } from 'react-day-picker';
-import { FieldValues, UseFormReturn } from 'react-hook-form';
+import { FieldValues, useController, UseFormReturn } from 'react-hook-form';
 
 export interface InputProps {
   name: string;
@@ -342,126 +340,56 @@ CustomForm.DatePicker = React.forwardRef<HTMLInputElement, { field: DatePickerPr
       throw new Error('DatePicker must be used within a CustomForm');
     }
 
+    const { field: formField } = useController({
+      control: formMethods.control,
+      name: field.name
+    });
+
     return (
-      <FormField
-        control={formMethods.control}
-        name={field.name}
-        render={({ field: formField }) => (
-          <FormItem>
-            {field.label && <FormLabel>{field.label}</FormLabel>}
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <ShadcnButton
-                    type="button"
-                    variant="outline"
-                    className={cn(
-                      'w-full pl-3 text-left font-normal',
-                      !formField.value && 'text-muted-foreground'
-                    )}
-                    disabled={field.disabled}
-                  >
-                    {formField.value ? (
-                      format(new Date(formField.value), 'PPP')
-                    ) : (
-                      <span>{field.placeholder || 'Pick a date'}</span>
-                    )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </ShadcnButton>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={formField.value ? new Date(formField.value) : undefined}
-                  onSelect={(date) => {
-                    formField.onChange(date?.toISOString() || '');
-                  }}
-                  disabled={(date) =>
-                    field.disabled || date > new Date() || date < new Date('1900-01-01')
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-            {field.description && <FormDescription>{field.description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="flex flex-col gap-2">
+        {field.label && <FormLabel>{field.label}</FormLabel>}
+        <Popover>
+          <PopoverTrigger>
+            <ShadcnButton
+              type="button"
+              variant="outline"
+              className={cn(
+                'w-full pl-3 text-left font-normal',
+                !formField.value && 'text-muted-foreground',
+                formMethods.formState.errors[field.name] && 'border-red-500'
+              )}
+              disabled={field.disabled}
+            >
+              {formField.value ? (
+                format(new Date(formField.value), 'PPP')
+              ) : (
+                <span>{field.placeholder || 'Pick a date'}</span>
+              )}
+              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+            </ShadcnButton>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={formField.value ? new Date(formField.value) : undefined}
+              onSelect={(date) => {
+                formField.onChange(date ? date.toISOString() : null);
+              }}
+              disabled={(date) => field.disabled || date < new Date('1900-01-01')}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+        {field.description && <FormDescription>{field.description}</FormDescription>}
+        <FormMessage className="text-red-500">
+          {formMethods.formState.errors[field.name]?.message as string}
+        </FormMessage>
+      </div>
     );
   }
 );
 
 CustomForm.DatePicker.displayName = 'CustomForm.DatePicker';
-
-// date range picker component
-CustomForm.DateRangePicker = React.forwardRef<HTMLInputElement, { field: DateRangePickerProps }>(
-  ({ field }, ref) => {
-    const formMethods = useContext(FormMethodsContext);
-    if (!formMethods) {
-      throw new Error('DateRangePicker must be used within a CustomForm');
-    }
-
-    return (
-      <FormField
-        control={formMethods.control}
-        name={field.name}
-        render={({ field: formField }) => (
-          <FormItem>
-            {field.label && <FormLabel>{field.label}</FormLabel>}
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <ShadcnButton
-                    type="button"
-                    variant="outline"
-                    className={cn(
-                      'w-full pl-3 text-left font-normal',
-                      !formField.value && 'text-muted-foreground'
-                    )}
-                    disabled={field.disabled}
-                  >
-                    {formField.value?.from ? (
-                      formField.value.to ? (
-                        <>
-                          {format(formField.value.from, 'LLL dd, y')} -{' '}
-                          {format(formField.value.to, 'LLL dd, y')}
-                        </>
-                      ) : (
-                        format(formField.value.from, 'LLL dd, y')
-                      )
-                    ) : (
-                      <span>{field.placeholder || 'Pick a date range'}</span>
-                    )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </ShadcnButton>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={formField.value?.from}
-                  selected={formField.value as DateRange}
-                  onSelect={(range) => {
-                    formField.onChange(range);
-                  }}
-                  numberOfMonths={2}
-                  disabled={field.disabled}
-                />
-              </PopoverContent>
-            </Popover>
-            {field.description && <FormDescription>{field.description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    );
-  }
-);
-
-CustomForm.DateRangePicker.displayName = 'CustomForm.DateRangePicker';
 
 // time picker component
 CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerProps }>(
@@ -478,35 +406,53 @@ CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerPr
         render={({ field: formField }) => (
           <FormItem className="flex flex-col">
             {field.label && <FormLabel>{field.label}</FormLabel>}
-            <FormControl>
-              <Popover>
-                <PopoverTrigger asChild>
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
                   <ShadcnButton
-                    variant="ghost"
+                    type="button"
+                    variant="outline"
                     className={cn(
                       'w-full pl-3 text-left font-normal',
                       !formField.value && 'text-muted-foreground'
                     )}
+                    disabled={field.disabled}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
                   >
-                    {formField.value || <span>Pick a time</span>}
+                    {formField.value || <span>{field.placeholder || 'Pick a time'}</span>}
                     <Clock className="ml-auto h-4 w-4 opacity-50" />
                   </ShadcnButton>
-                </PopoverTrigger>
-
-                <PopoverContent className="w-auto p-4" align="start">
-                  <div className="flex items-center space-x-2">
-                    <Input
-                      type="time"
-                      value={formField.value}
-                      onChange={(e) => formField.onChange(e.target.value)}
-                      className="w-[120px]"
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
-              {field.description && <FormDescription>{field.description}</FormDescription>}
-              <FormMessage />
-            </FormControl>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-auto p-4"
+                align="start"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="time"
+                    ref={ref}
+                    value={formField.value || ''}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      formField.onChange(e.target.value);
+                    }}
+                    className="w-[120px]"
+                    disabled={field.disabled}
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
+            {field.description && <FormDescription>{field.description}</FormDescription>}
+            <FormMessage />
           </FormItem>
         )}
       />

@@ -45,40 +45,15 @@ export interface ClassResponse {
   message?: string;
 }
 
-export interface ClassFilterParams {
-  name?: string;
-  code?: string;
-  status?: ClassStatus;
-  course_id?: number;
-  teacher_id?: number;
-  date_range?: {
-    start: string;
-    end: string;
-  };
-  capacity?: ('available' | 'full')[];
-  per_page?: number;
-  current_page?: number;
-  sort_by?: string;
-  sort_direction?: 'asc' | 'desc';
-}
-
-export interface CreateClassData {
-  course_id: number;
-  teacher_id: number;
-  name: string;
-  description: string;
-  start_date: string;
-  end_date: string;
-  capacity: number;
-}
-
-export interface UpdateClassData {
-  course_id?: number;
-  teacher_id?: number;
-  name?: string;
-  description?: string;
-  start_date?: string;
-  end_date?: string;
-  capacity?: number;
-  status?: ClassStatus;
+export enum ClassSortBy {
+  Name = 'name',
+  Code = 'code',
+  Status = 'status',
+  Course = 'course',
+  Teacher = 'teacher',
+  Subject = 'subject',
+  StartDate = 'start_date',
+  EndDate = 'end_date',
+  Capacity = 'capacity',
+  CreatedAt = 'created_at'
 }

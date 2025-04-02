@@ -1,8 +1,10 @@
-import type { ClassFilterParams } from '../types/class.types';
+import type { ClassFilterFormValues } from '@/modules/ClassManagement/schemas/class.schema';
+import { ClassSortBy } from '@/modules/ClassManagement/types/class.types';
+import { SortDirection } from '@/shared/types';
 
-export const createDefaultFilterParams = (): ClassFilterParams => ({
+export const createDefaultFilterParams = (): ClassFilterFormValues => ({
   per_page: 15,
   current_page: 1,
-  sort_by: 'created_at',
-  sort_direction: 'desc'
+  sort_by: ClassSortBy.CreatedAt,
+  sort_order: SortDirection.Desc
 });

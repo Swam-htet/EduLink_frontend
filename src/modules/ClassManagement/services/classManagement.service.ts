@@ -1,24 +1,14 @@
 import { apiClient } from '@/lib/axios/api';
 import { cleanObject } from '@/lib/utils';
-import type {
-  ClassFilterParams,
-  ClassListResponse,
-  ClassResponse,
-  UpdateClassData
-} from '@/modules/ClassManagement/types/class.types';
-
-interface CreateClassData {
-  course_id: number;
-  teacher_id: number;
-  name: string;
-  description: string;
-  start_date: string;
-  end_date: string;
-  capacity: number;
-}
+import {
+  ClassCreateFormData,
+  ClassFilterFormValues,
+  ClassUpdateFormData
+} from '@/modules/ClassManagement/schemas/class.schema';
+import type { ClassListResponse, ClassResponse } from '@/modules/ClassManagement/types/class.types';
 
 export class ClassManagementService {
-  static async getClasses(params?: ClassFilterParams) {
+  static async getClasses(params?: ClassFilterFormValues) {
     const { data } = await apiClient.get<ClassListResponse>('management/classes', {
       params: params ? cleanObject(params as Record<string, unknown>) : undefined
     });
@@ -35,12 +25,12 @@ export class ClassManagementService {
     return data;
   }
 
-  static async createClass(classData: CreateClassData) {
+  static async createClass(classData: ClassCreateFormData) {
     const { data } = await apiClient.post<ClassResponse>('management/classes', classData);
     return data;
   }
 
-  static async updateClass(id: string, classData: UpdateClassData) {
+  static async updateClass(id: string, classData: ClassUpdateFormData) {
     const { data } = await apiClient.put<ClassResponse>(`management/classes/${id}`, classData);
     return data;
   }

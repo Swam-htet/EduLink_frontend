@@ -1,3 +1,4 @@
+import BackButton from '@/components/common/BackButtton';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,21 +14,39 @@ import { cn } from '@/lib/utils';
 import { RejectRegistrationDialog } from '@/modules/StudentManagement/components/dialogs/RejectRegistrationDialog';
 import StudentManagementService from '@/modules/StudentManagement/services/studentManagement.service';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { ChevronLeft, Mail, Phone, UserRound } from 'lucide-react';
+import { Mail, Phone, UserRound } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+
+const getStatusBadgeClass = (status: string) => {
+  switch (status) {
+    case 'active':
+      return 'bg-green-100 text-green-800';
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'rejected':
+      return 'bg-red-100 text-red-800';
+    case 'inactive':
+      return 'bg-gray-100 text-gray-800';
+    case 'suspended':
+      return 'bg-orange-100 text-orange-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
 
 export const StudentDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { confirm } = useDialog();
+  const queryClient = useQueryClient();
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
 
   const studentQuery = useQuery({
-    queryKey: ['student-detail', id],
+    queryKey: ['student-management-detail', id],
     queryFn: () => StudentManagementService.getStudentById(id as string),
     enabled: !!id
   });
@@ -39,6 +58,7 @@ export const StudentDetailPage = () => {
     onSuccess: (data) => {
       toast.success(data.message || 'Registration approved successfully');
       studentQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ['student-management'] });
     },
     onError: (error: unknown) => {
       const errorMessage =
@@ -55,6 +75,7 @@ export const StudentDetailPage = () => {
       toast.success(data.message || 'Registration rejected successfully');
       setRejectDialogOpen(false);
       studentQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ['student-management'] });
     },
     onError: (error: unknown) => {
       const errorMessage = error instanceof Error ? error.message : 'Failed to reject registration';
@@ -112,31 +133,12 @@ export const StudentDetailPage = () => {
 
   const student = studentQuery.data.data;
 
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      case 'inactive':
-        return 'bg-gray-100 text-gray-800';
-      case 'suspended':
-        return 'bg-orange-100 text-orange-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={() => navigate('/student-management')}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+          <BackButton navigate={navigate} />
           <div>
             <h1 className="text-xl font-semibold">Student Details</h1>
             <p className="text-muted-foreground text-sm">View and manage student information</p>
@@ -157,14 +159,13 @@ export const StudentDetailPage = () => {
         </div>
       </div>
 
-      {/* Profile card */}
       <Card>
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4">
             <div className="bg-primary/10 mb-4 flex h-16 w-16 items-center justify-center rounded-full sm:mb-0">
               {student.profile_photo ? (
                 <img
-                  src={student.profile_photo}
+                  src={student.profile_photo || 'https://via.placeholder.com/150'}
                   alt={`${student.first_name} ${student.last_name}`}
                   className="h-full w-full rounded-full object-cover"
                 />

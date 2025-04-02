@@ -1,9 +1,8 @@
 import Table, { TableColumn } from '@/components/common/Table';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import type { Enrollment } from '@/modules/StudentClassEnrollment/types/enrollment.types';
 import { EnrollmentStatus } from '@/modules/StudentClassEnrollment/types/enrollment.types';
-import { format } from 'date-fns';
 import React from 'react';
 interface EnrollmentTableProps {
   enrollments: Enrollment[];
@@ -12,25 +11,25 @@ interface EnrollmentTableProps {
   loading: boolean;
 }
 
+const getStatusClassName = (status: EnrollmentStatus) => {
+  switch (status) {
+    case EnrollmentStatus.ENROLLED:
+      return 'bg-yellow-100 text-yellow-800';
+    case EnrollmentStatus.COMPLETED:
+      return 'bg-green-100 text-green-800';
+    case EnrollmentStatus.FAILED:
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
 export const EnrollmentTable = ({
   enrollments,
   onSelect,
   onUpdateStatus,
   loading
 }: EnrollmentTableProps) => {
-  const getStatusClassName = (status: EnrollmentStatus) => {
-    switch (status) {
-      case EnrollmentStatus.ENROLLED:
-        return 'bg-yellow-100 text-yellow-800';
-      case EnrollmentStatus.COMPLETED:
-        return 'bg-green-100 text-green-800';
-      case EnrollmentStatus.FAILED:
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   const columns: TableColumn<Enrollment>[] = [
     {
       header: 'Student ID',
@@ -59,18 +58,18 @@ export const EnrollmentTable = ({
     },
     {
       header: 'Enrolled Date',
-      accessor: (row: Enrollment) => format(new Date(row.enrolled_at), 'PPP')
+      accessor: (row: Enrollment) => formatDate(row.enrolled_at)
     },
     {
       header: 'Created At',
-      accessor: (row: Enrollment) => format(new Date(row.created_at), 'PPP')
+      accessor: (row: Enrollment) => formatDate(row.created_at)
     },
     {
       header: 'Actions',
       accessor: (row: Enrollment) => (
         <React.Fragment>
           {row.status === EnrollmentStatus.ENROLLED && (
-            <Button variant="outline" size="sm" onClick={() => onUpdateStatus(row)}>
+            <Button size="sm" onClick={() => onUpdateStatus(row)}>
               Update Status
             </Button>
           )}

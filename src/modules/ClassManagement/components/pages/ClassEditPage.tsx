@@ -1,3 +1,4 @@
+import BackButton from '@/components/common/BackButtton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
@@ -8,7 +9,6 @@ import { StaffManagementService } from '@/modules/StaffManagement/services/staff
 import { StaffRole } from '@/modules/StaffManagement/types/staffManagement.types';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ChevronLeft } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -18,18 +18,18 @@ export const ClassEditPage = () => {
   const { confirm } = useDialog();
 
   const classQuery = useQuery({
-    queryKey: ['class-detail', id],
+    queryKey: ['class-management', id],
     queryFn: () => ClassManagementService.getClassById(id as string),
     enabled: !!id
   });
 
   const coursesQuery = useQuery({
-    queryKey: ['courses'],
+    queryKey: ['course-management'],
     queryFn: () => CourseManagementService.getCourses()
   });
 
   const teachersQuery = useQuery({
-    queryKey: ['teachers'],
+    queryKey: ['staff-management'],
     queryFn: () => StaffManagementService.getStaffList({ role: StaffRole.Teacher })
   });
 
@@ -93,13 +93,7 @@ export const ClassEditPage = () => {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => navigate(`${PRIVATE_ENDPOINTS.CLASS_MANAGEMENT}/${id}`)}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+        <BackButton navigate={navigate} />
         <h1 className="text-xl font-semibold">Edit Class</h1>
       </div>
 

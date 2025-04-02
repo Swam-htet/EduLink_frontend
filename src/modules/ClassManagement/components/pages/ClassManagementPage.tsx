@@ -2,39 +2,33 @@ import Pagination from '@/components/common/Pagination';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import { ClassFilter } from '@/modules/ClassManagement/components/filters/ClassFilter';
 import ClassTable from '@/modules/ClassManagement/components/tables/ClassTable';
+import { ClassFilterFormValues } from '@/modules/ClassManagement/schemas/class.schema';
 import { ClassManagementService } from '@/modules/ClassManagement/services/classManagement.service';
-import type { Class, ClassFilterParams } from '@/modules/ClassManagement/types/class.types';
+import type { Class } from '@/modules/ClassManagement/types/class.types';
 import { createDefaultFilterParams } from '@/modules/ClassManagement/utils';
+import { CourseManagementService } from '@/modules/CourseManagement/services/CourseManagement.service';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ClassFilter } from '../filters/ClassFilter';
 
 export const ClassManagementPage = () => {
   const navigate = useNavigate();
-  const [filterParams, setFilterParams] = useState<ClassFilterParams>(createDefaultFilterParams());
-  const [classList, setClassList] = useState<Class[]>([]);
+  const [filterParams, setFilterParams] = useState<ClassFilterFormValues>(
+    createDefaultFilterParams()
+  );
 
   const classesQuery = useQuery({
-    queryKey: ['classes', filterParams],
+    queryKey: ['class-management', filterParams],
     queryFn: () => ClassManagementService.getClasses(filterParams)
   });
 
-  useEffect(() => {
-    if (classesQuery.data && classesQuery.isSuccess) {
-      setClassList(classesQuery.data.data);
-    }
-  }, [classesQuery.data, classesQuery.isSuccess, filterParams]);
-
-  const handleFilterChange = (newFilters: ClassFilterParams) => {
-    setFilterParams((prev) => ({
-      ...prev,
-      ...newFilters,
-      current_page: 1 // Reset to first page when filters change
-    }));
-  };
+  const courseQuery = useQuery({
+    queryKey: ['course-management'],
+    queryFn: () => CourseManagementService.getCourses()
+  });
 
   const handleRowClick = (classItem: Class) => {
     navigate(`/class-management/${classItem.id}`);
@@ -43,6 +37,9 @@ export const ClassManagementPage = () => {
   const handleCreateClick = () => {
     navigate(PRIVATE_ENDPOINTS.CLASS_MANAGEMENT_CREATE);
   };
+
+  // courses
+  const courses = courseQuery.data?.data;
 
   return (
     <div className="space-y-6 p-6">
@@ -53,23 +50,23 @@ export const ClassManagementPage = () => {
           Add Class
         </Button>
       </div>
-      {/* Header */}
       <Card>
         <CardHeader>
           <CardTitle>Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <ClassFilter onFilterChange={handleFilterChange} />
+          <ClassFilter
+            filters={filterParams}
+            onFilterChange={setFilterParams}
+            courses={courses ?? []}
+          />
         </CardContent>
       </Card>
 
-      {/* Filters */}
-
-      {/* Table and Pagination */}
       <Card>
         <CardContent>
           <ClassTable
-            data={classList}
+            data={classesQuery.data?.data ?? []}
             loading={classesQuery.isPending}
             onRowClick={handleRowClick}
           />

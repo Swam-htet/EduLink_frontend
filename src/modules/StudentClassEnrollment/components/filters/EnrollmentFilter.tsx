@@ -1,51 +1,40 @@
 import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
-import type { EnrollmentFilterParams } from '@/modules/StudentClassEnrollment/types/enrollment.types';
-import { EnrollmentStatus } from '@/modules/StudentClassEnrollment/types/enrollment.types';
+import {
+  enrollmentFilterSchema,
+  type EnrollmentFilterFormData
+} from '@/modules/StudentClassEnrollment/schemas/enrollment.schema';
+import {
+  EnrollmentSortBy,
+  EnrollmentStatus
+} from '@/modules/StudentClassEnrollment/types/enrollment.types';
+import { SortDirection } from '@/shared/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-const enrollmentFilterSchema = z.object({
-  student_id: z.number().optional(),
-  class_id: z.number().optional(),
-  status: z.nativeEnum(EnrollmentStatus).optional(),
-  enrolled_at: z
-    .object({
-      start: z.string(),
-      end: z.string()
-    })
-    .optional(),
-  per_page: z.number().min(1).max(100).optional(),
-  sort_by: z
-    .enum(['student_id', 'class_id', 'enrolled_at', 'status', 'created_at', 'updated_at'])
-    .optional(),
-  sort_direction: z.enum(['asc', 'desc']).optional()
-});
 
 interface EnrollmentFilterProps {
-  filters: EnrollmentFilterParams;
-  onFilterChange: (filters: EnrollmentFilterParams) => void;
+  filters: EnrollmentFilterFormData;
+  onFilterChange: (filters: EnrollmentFilterFormData) => void;
 }
 
 export const EnrollmentFilter = ({ filters, onFilterChange }: EnrollmentFilterProps) => {
-  const formMethods = useForm<EnrollmentFilterParams>({
+  const form = useForm<EnrollmentFilterFormData>({
     resolver: zodResolver(enrollmentFilterSchema),
     defaultValues: filters
   });
 
-  const onSubmit = (data: EnrollmentFilterParams) => {
+  const onSubmit = (data: EnrollmentFilterFormData) => {
     onFilterChange(data);
   };
 
   return (
-    <CustomForm formMethods={formMethods} onSubmit={onSubmit} className="space-y-4">
+    <CustomForm formMethods={form} onSubmit={onSubmit}>
       <div className="grid gap-4 md:grid-cols-3">
         <CustomForm.Select
           field={{
             name: 'status',
             label: 'Status',
-            placeholder: 'Select status',
+            placeholder: 'Select Status',
             options: [
               { label: 'Enrolled', value: EnrollmentStatus.ENROLLED },
               { label: 'Completed', value: EnrollmentStatus.COMPLETED },
@@ -53,45 +42,60 @@ export const EnrollmentFilter = ({ filters, onFilterChange }: EnrollmentFilterPr
             ]
           }}
         />
-        <CustomForm.DateRangePicker
+        <CustomForm.DatePicker
           field={{
-            name: 'enrolled_at',
-            label: 'Enrolled Date'
+            name: 'enrolled_at.start',
+            label: 'Start Enrolled Date',
+            placeholder: 'Select Start Enrolled Date'
+          }}
+        />
+        <CustomForm.DatePicker
+          field={{
+            name: 'enrolled_at.end',
+            label: 'End Enrolled Date',
+            placeholder: 'Select End Enrolled Date'
           }}
         />
         <CustomForm.Select
           field={{
             name: 'sort_by',
             label: 'Sort By',
-            placeholder: 'Select sort field',
+            placeholder: 'Select Sort By',
             options: [
-              { label: 'Student ID', value: 'student_id' },
-              { label: 'Class ID', value: 'class_id' },
-              { label: 'Enrollment Date', value: 'enrolled_at' },
-              { label: 'Status', value: 'status' },
-              { label: 'Created At', value: 'created_at' },
-              { label: 'Updated At', value: 'updated_at' }
+              { label: 'Student ID', value: EnrollmentSortBy.STUDENT_ID },
+              { label: 'Class ID', value: EnrollmentSortBy.CLASS_ID },
+              { label: 'Enrolled At', value: EnrollmentSortBy.ENROLLED_AT },
+              { label: 'Status', value: EnrollmentSortBy.STATUS },
+              { label: 'Created At', value: EnrollmentSortBy.CREATED_AT },
+              { label: 'Updated At', value: EnrollmentSortBy.UPDATED_AT }
+            ]
+          }}
+        />
+
+        <CustomForm.Select
+          field={{
+            name: 'sort_direction',
+            label: 'Sort Direction',
+            placeholder: 'Select Sort Direction',
+            options: [
+              { label: 'Ascending', value: SortDirection.Asc },
+              { label: 'Descending', value: SortDirection.Desc }
             ]
           }}
         />
       </div>
-
       <div className="flex justify-end gap-2">
         <Button
           type="button"
           variant="outline"
           onClick={() => {
-            formMethods.reset();
-            onFilterChange({
-              per_page: 15,
-              sort_by: 'created_at',
-              sort_direction: 'desc'
-            });
+            form.reset();
+            onFilterChange({});
           }}
         >
           Reset
         </Button>
-        <CustomForm.Button type="submit">Apply Filters</CustomForm.Button>
+        <Button type="submit">Apply Filters</Button>
       </div>
     </CustomForm>
   );
