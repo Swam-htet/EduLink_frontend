@@ -24,16 +24,16 @@ export const StudentClassEnrollmentPage = () => {
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null);
 
   const enrollmentsQuery = useQuery({
-    queryKey: ['enrollments', filters],
+    queryKey: ['enrollment-management', filters],
     queryFn: () => EnrollmentManagementService.getEnrollments(filters)
   });
 
   const updateEnrollmentMutation = useMutation({
-    mutationKey: ['update-enrollment'],
+    mutationKey: ['enrollment-management-update'],
     mutationFn: (data: UpdateEnrollmentFormData) =>
       EnrollmentManagementService.updateEnrollment(data.id, data),
-    onSuccess: (data) => {
-      toast.success(data.message || 'Enrollment status updated successfully');
+    onSuccess: () => {
+      toast.success('Enrollment status updated successfully');
       setUpdateDialogOpen(false);
       enrollmentsQuery.refetch();
     },
@@ -43,11 +43,11 @@ export const StudentClassEnrollmentPage = () => {
   });
 
   const sendEmailMutation = useMutation({
-    mutationKey: ['send-enrollment-email'],
+    mutationKey: ['enrollment-management-send-email'],
     mutationFn: (enrollmentIds: number[]) =>
       EnrollmentManagementService.sendManualEnrollmentEmail({ enrollment_ids: enrollmentIds }),
-    onSuccess: (data) => {
-      toast.success(data.message || 'Enrollment email sent successfully');
+    onSuccess: () => {
+      toast.success('Enrollment email sent successfully');
       setSelectedEnrollmentIds([]);
     },
     onError: () => {

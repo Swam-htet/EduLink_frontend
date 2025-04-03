@@ -100,9 +100,9 @@ const Table = <T extends object>({
               {selectable && (
                 <TableCell className="w-[50px]" onClick={(e) => e.stopPropagation()}>
                   <Checkbox
-                    disabled={checkValidation ? !checkValidation(row) : false}
                     checked={selectedRows?.includes(row.id)}
-                    onCheckedChange={(checked) => onRowSelect?.(row, checked as boolean)}
+                    disabled={checkValidation ? !checkValidation(row) : false}
+                    onCheckedChange={(checked: boolean) => onRowSelect?.(row, checked)}
                   />
                 </TableCell>
               )}

@@ -13,28 +13,20 @@ import type {
   Student
 } from '@/modules/StudentManagement/types/studentManagement.types';
 import { getDefaultFilters } from '@/modules/StudentManagement/utils/getDefaultFilters';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-interface StudentWithSelected extends Student {
-  selected: boolean;
-}
-
-const checkValidation = (student: StudentWithSelected) => {
-  return student.status == 'active';
-};
-
 export const StudentManagementPage = () => {
   const navigate = useNavigate();
 
+  const queryClient = useQueryClient();
   const [filters, setFilters] = useState<StudentFilterParams>(getDefaultFilters());
 
   const [classInvitationDialogOpen, setClassInvitationDialogOpen] = useState(false);
 
   const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
-  console.log('selectedStudents', selectedStudents);
 
   const studentQuery = useQuery({
     queryKey: ['student-management', filters],
@@ -49,17 +41,18 @@ export const StudentManagementPage = () => {
   const sendClassInviteMutation = useMutation({
     mutationKey: ['send-class-invite'],
     mutationFn: (data: SendClassInviteRequest) => StudentManagementService.sendClassInvite(data),
-    onSuccess: (data) => {
-      toast.success(data.message || 'Class invite sent successfully');
+    onSuccess: () => {
+      toast.success('Class invite sent successfully');
       setClassInvitationDialogOpen(false);
       navigate(PRIVATE_ENDPOINTS.STUDENT_CLASS_ENROLLMENT);
+      queryClient.invalidateQueries({ queryKey: ['enrollment-management', filters] });
     },
     onError: () => {
       toast.error('Failed to send class invite');
     }
   });
 
-  const handleSelect = (student: StudentWithSelected, checked: boolean) => {
+  const handleSelect = (student: Student, checked: boolean) => {
     setSelectedStudents((prev) => {
       if (checked) {
         return [...prev, student.id];
@@ -80,7 +73,7 @@ export const StudentManagementPage = () => {
     });
   };
 
-  const handleRowClick = (student: StudentWithSelected) => {
+  const handleRowClick = (student: Student) => {
     navigate(PRIVATE_ENDPOINTS.STUDENT_DETAIL.replace(':id', student.id.toString()));
   };
 
@@ -116,7 +109,6 @@ export const StudentManagementPage = () => {
             onRowClick={handleRowClick}
             selectedRows={selectedStudents}
             onSelect={handleSelect}
-            checkValidation={checkValidation}
           />
           <div>
             <Pagination

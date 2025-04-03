@@ -2,19 +2,18 @@ import Table, { TableColumn } from '@/components/common/Table';
 import { cn, formatDate } from '@/lib/utils';
 import type { Student } from '@/modules/StudentManagement/types/studentManagement.types';
 
-interface StudentWithSelected extends Student {
-  selected: boolean;
-}
-
 interface StudentTableProps {
   data: Student[];
   isLoading: boolean;
-  onSelect: (student: StudentWithSelected, checked: boolean) => void;
+  onSelect: (student: Student, checked: boolean) => void;
   selectedRows: number[];
-  onRowClick?: (student: StudentWithSelected) => void;
+  onRowClick?: (student: Student) => void;
   selectable?: boolean;
-  checkValidation?: (student: StudentWithSelected) => boolean;
 }
+
+const checkValidation = (student: Student) => {
+  return student.status == 'active';
+};
 
 export const StudentTable = ({
   data,
@@ -22,8 +21,7 @@ export const StudentTable = ({
   isLoading,
   selectedRows,
   onRowClick,
-  onSelect,
-  checkValidation
+  onSelect
 }: StudentTableProps) => {
   const getStatusClassName = (status: string) => {
     switch (status) {
@@ -42,11 +40,11 @@ export const StudentTable = ({
     }
   };
 
-  const handleSelect = (student: StudentWithSelected, checked: boolean) => {
+  const handleSelect = (student: Student, checked: boolean) => {
     onSelect(student, checked);
   };
 
-  const columns: TableColumn<StudentWithSelected>[] = [
+  const columns: TableColumn<Student>[] = [
     {
       header: 'Student ID',
       accessor: (student: Student) => student.student_id
@@ -87,15 +85,15 @@ export const StudentTable = ({
   ];
 
   return (
-    <Table
+    <Table<Student>
       selectable={selectable}
       columns={columns}
       data={data}
       checkValidation={checkValidation}
       loading={isLoading}
       onRowSelect={handleSelect}
-      selectedRows={selectedRows}
       onRowClick={onRowClick}
+      selectedRows={selectedRows}
     />
   );
 };
