@@ -1,16 +1,18 @@
 import { apiClient } from '@/lib/axios/api';
 import { cleanObject } from '@/lib/utils';
+import {
+  type CreateExamFormData,
+  type ExamFilterFormData,
+  type UpdateExamFormData
+} from '@/modules/ExamManagement/schemas/exam.schema';
 import type {
-  CreateExamData,
-  ExamFilterParams,
   ExamListResponse,
   ExamResponse,
-  UpdateExamData,
   UploadExamQuestionsData
-} from '../types/exam.types';
+} from '@/modules/ExamManagement/types/exam.types';
 
 export class ExamManagementService {
-  static async getExams(params?: ExamFilterParams) {
+  static async getExams(params?: ExamFilterFormData) {
     const { data } = await apiClient.get<ExamListResponse>('management/exams', {
       params: params ? cleanObject(params as Record<string, unknown>) : undefined
     });
@@ -22,12 +24,12 @@ export class ExamManagementService {
     return data;
   }
 
-  static async createExam(examData: CreateExamData) {
+  static async createExam(examData: CreateExamFormData) {
     const { data } = await apiClient.post<ExamResponse>('management/exams', examData);
     return data;
   }
 
-  static async updateExam(id: string, examData: UpdateExamData) {
+  static async updateExam(id: string, examData: UpdateExamFormData) {
     const { data } = await apiClient.put<ExamResponse>(`management/exams/${id}`, examData);
     return data;
   }

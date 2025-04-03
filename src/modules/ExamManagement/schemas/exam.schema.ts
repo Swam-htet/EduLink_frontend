@@ -1,5 +1,7 @@
-import { ExamStatus, QuestionType } from '@/modules/ExamManagement/types/exam.types';
+import { ExamSortBy, ExamStatus, QuestionType } from '@/modules/ExamManagement/types/exam.types';
 import { z } from 'zod';
+
+import { SortDirection } from '@/shared/types';
 
 // Filter schema
 export const examFilterSchema = z.object({
@@ -7,50 +9,44 @@ export const examFilterSchema = z.object({
   subject_id: z.string().optional(),
   title: z.string().optional(),
   status: z.nativeEnum(ExamStatus).optional(),
-  date_range: z
-    .object({
-      start: z.string(),
-      end: z.string()
-    })
-    .optional(),
+  exam_date: z.string().optional(),
+  start_time: z.string().optional(),
+  end_time: z.string().optional(),
   per_page: z.number().min(1).max(100).optional(),
-  sort_by: z.enum(['title', 'start_date', 'created_at']).optional(),
-  sort_direction: z.enum(['asc', 'desc']).optional(),
+  sort_by: z.nativeEnum(ExamSortBy).optional(),
+  sort_direction: z.nativeEnum(SortDirection).optional(),
   current_page: z.number().optional()
 });
 
+export type ExamFilterFormData = z.infer<typeof examFilterSchema>;
+
 // Create exam section schema
 export const createExamSectionSchema = z.object({
-  section_number: z.string(),
-  section_title: z.string().min(1, 'Section title is required'),
-  section_description: z.string().optional()
+  section_number: z.string({ required_error: 'Section number is required' }),
+  section_title: z.string({ required_error: 'Section title is required' }),
+  section_description: z.string().optional(),
+  question_type: z.nativeEnum(QuestionType, {
+    required_error: 'Question type is required'
+  })
 });
 
 // Create exam schema
 export const createExamSchema = z.object({
-  class_id: z.string(),
-  subject_id: z.string(),
-  title: z.string(),
+  class_id: z.string({ required_error: 'Class is required' }),
+  subject_id: z.string({ required_error: 'Subject is required' }),
+  title: z.string({ required_error: 'Title is required' }),
   description: z.string().optional(),
-  total_marks: z.string(),
-  pass_marks: z.string(),
-  duration: z.string(),
-  start_date: z.string().min(1, 'Start date is required'),
-  end_date: z.string().min(1, 'End date is required'),
+  total_marks: z.string({ required_error: 'Total marks is required' }),
+  pass_marks: z.string({ required_error: 'Pass marks is required' }),
+  duration: z.string({ required_error: 'Duration is required' }),
+  exam_date: z.string({ required_error: 'Exam date is required' }),
+  start_time: z.string({ required_error: 'Start time is required' }),
   sections: z.array(createExamSectionSchema).min(1, 'At least one section is required')
 });
 
 // Update exam schema
 export const updateExamSchema = z.object({
-  title: z.string().min(1, 'Title is required').optional(),
-  description: z.string().optional(),
-  total_marks: z.number().min(1, 'Total marks must be at least 1').optional(),
-  pass_marks: z.number().min(1, 'Pass marks must be at least 1').optional(),
-  duration: z.number().min(1, 'Duration must be at least 1 minute').optional(),
-  start_date: z.string().min(1, 'Start date is required').optional(),
-  end_date: z.string().min(1, 'End date is required').optional(),
-  status: z.nativeEnum(ExamStatus).optional(),
-  sections: z.array(createExamSectionSchema).min(1, 'At least one section is required').optional()
+  status: z.nativeEnum(ExamStatus).optional()
 });
 
 // Question option schema
@@ -161,10 +157,11 @@ export const uploadQuestionsSchema = z.object({
   exam_questions: z.array(baseQuestionSchema).min(1, 'At least one question is required')
 });
 
-// Type exports
-export type ExamFilterFormData = z.infer<typeof examFilterSchema>;
+// Exam data type
 export type CreateExamFormData = z.infer<typeof createExamSchema>;
 export type UpdateExamFormData = z.infer<typeof updateExamSchema>;
+
+// Exam question data type
 export type UploadQuestionsFormData = z.infer<typeof uploadQuestionsSchema>;
 export type BaseQuestion = z.infer<typeof baseQuestionSchema>;
 export type QuestionOption = z.infer<typeof questionOptionSchema>;

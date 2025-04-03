@@ -6,16 +6,16 @@ import { Class } from '@/modules/ClassManagement/types/class.types';
 import { ExamCreateForm } from '@/modules/ExamManagement/forms/ExamCreateForm';
 import { CreateExamFormData } from '@/modules/ExamManagement/schemas/exam.schema';
 import { ExamManagementService } from '@/modules/ExamManagement/services/examManagement.service';
-import type { CreateExamData } from '@/modules/ExamManagement/types/exam.types';
 import { SubjectManagementService } from '@/modules/SubjectManagement/services/SubjectManagement.service';
 import { Subject } from '@/modules/SubjectManagement/types/subject.types';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export const ExamCreatePage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const classQuery = useQuery({
     queryKey: ['classes'],
@@ -29,13 +29,14 @@ export const ExamCreatePage = () => {
 
   const createExamMutation = useMutation({
     mutationKey: ['create-exam'],
-    mutationFn: (data: CreateExamData) => ExamManagementService.createExam(data),
+    mutationFn: (data: CreateExamFormData) => ExamManagementService.createExam(data),
     onSuccess: (data) => {
       toast.success(data.message || 'Exam created successfully');
       navigate(PRIVATE_ENDPOINTS.EXAM_MANAGEMENT);
+      queryClient.invalidateQueries({ queryKey: ['exam-management'] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to create exam');
+    onError: () => {
+      toast.error('Failed to create exam');
     }
   });
 
@@ -52,12 +53,7 @@ export const ExamCreatePage = () => {
     })) || [];
 
   const handleSubmit = (data: CreateExamFormData) => {
-    const formattedData = {
-      ...data,
-      class_id: Number(data.class_id),
-      subject_id: Number(data.subject_id)
-    };
-    createExamMutation.mutate(formattedData);
+    createExamMutation.mutate(data);
   };
 
   return (

@@ -14,7 +14,7 @@ export const ExamQuestionUploadPage = () => {
   const navigate = useNavigate();
 
   const examQuery = useQuery({
-    queryKey: ['exam', id],
+    queryKey: ['exam-management-detail', id],
     queryFn: () => ExamManagementService.getExamById(id as string),
     enabled: !!id
   });
@@ -27,8 +27,8 @@ export const ExamQuestionUploadPage = () => {
       toast.success('Questions uploaded successfully');
       navigate(`${PRIVATE_ENDPOINTS.EXAM_MANAGEMENT}/${id}`);
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to upload questions');
+    onError: () => {
+      toast.error('Failed to upload questions');
     }
   });
 
@@ -46,17 +46,6 @@ export const ExamQuestionUploadPage = () => {
       })
     );
   };
-
-  if (examQuery.isPending) {
-    return (
-      <div className="flex h-96 items-center justify-center">
-        <div className="flex items-center gap-2">
-          <div className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
-          <span>Loading exam details...</span>
-        </div>
-      </div>
-    );
-  }
 
   const exam = examQuery.data?.data;
 
@@ -86,7 +75,11 @@ export const ExamQuestionUploadPage = () => {
           <CardTitle>Add Questions</CardTitle>
         </CardHeader>
         <CardContent>
-          <ExamQuestionUploadForm exam={exam} onSubmit={handleSubmit} />
+          <ExamQuestionUploadForm
+            exam={exam}
+            onSubmit={handleSubmit}
+            loading={uploadExamQuestionsMutation.isPending}
+          />
         </CardContent>
       </Card>
     </div>

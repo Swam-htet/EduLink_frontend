@@ -1,3 +1,4 @@
+import { Student } from '@/modules/StudentManagement/types/studentManagement.types';
 import { Subject } from '@/modules/SubjectManagement/types/subject.types';
 
 export enum ClassStatus {
@@ -20,7 +21,8 @@ export interface Class {
     id: number;
     title: string;
   };
-  subject?: Subject;
+  subjects?: Subject[];
+  students?: Student[];
   teacher?: {
     id: number;
     first_name: string;

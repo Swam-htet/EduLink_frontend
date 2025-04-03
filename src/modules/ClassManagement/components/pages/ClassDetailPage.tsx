@@ -7,9 +7,12 @@ import { formatDate } from '@/lib/utils';
 import { ClassUpdateFormData } from '@/modules/ClassManagement/schemas/class.schema';
 import { ClassManagementService } from '@/modules/ClassManagement/services/classManagement.service';
 import { ClassStatus } from '@/modules/ClassManagement/types/class.types';
+import { StudentTable } from '@/modules/StudentManagement/components/tables/StudentTable';
+import { Student } from '@/modules/StudentManagement/types/studentManagement.types';
+import { Subject } from '@/modules/SubjectManagement/types/subject.types';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { GraduationCap, Users } from 'lucide-react';
+import { BookOpen, GraduationCap, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -25,11 +28,42 @@ const getStatusColor = (status: ClassStatus) => {
       return 'bg-red-100 text-red-800';
   }
 };
+
+const SubjectCards = ({ subjects }: { subjects: Subject[] }) => {
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {subjects.map((subject) => (
+        <Card key={subject.id}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5" />
+              {subject.title}
+            </CardTitle>
+            <CardDescription>Code: {subject.code}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-sm">{subject.description}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Credits: {subject.credits}</span>
+                <Button variant="outline" size="sm">
+                  View Materials
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+};
+
 export const ClassDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { confirm } = useDialog();
   const queryClient = useQueryClient();
+
   const classDetailQuery = useQuery({
     queryKey: ['class-management-detail', id],
     queryFn: () => ClassManagementService.getClassById(id as string),
@@ -177,13 +211,27 @@ export const ClassDetailPage = () => {
               <TabsTrigger value="materials">Materials</TabsTrigger>
             </TabsList>
             <TabsContent value="students" className="mt-4">
-              <p className="text-muted-foreground">Student list will be implemented here</p>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">Students ({classData.students.length})</h3>
+                </div>
+                <StudentTable data={classData.students as Student[]} />
+              </div>
             </TabsContent>
             <TabsContent value="schedule" className="mt-4">
               <p className="text-muted-foreground">Class schedule will be implemented here</p>
             </TabsContent>
             <TabsContent value="materials" className="mt-4">
-              <p className="text-muted-foreground">Class materials will be implemented here</p>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">Subjects ({classData.subjects.length})</h3>
+                  <Button variant="outline" size="sm">
+                    <BookOpen className="mr-2 h-4 w-4" />
+                    Add Subject
+                  </Button>
+                </div>
+                <SubjectCards subjects={classData.subjects} />
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>

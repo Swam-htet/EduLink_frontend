@@ -5,6 +5,7 @@ import {
   createExamSchema,
   type CreateExamFormData
 } from '@/modules/ExamManagement/schemas/exam.schema';
+import { QuestionType } from '@/modules/ExamManagement/types/exam.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -36,22 +37,7 @@ export const ExamCreateForm = ({
 }: ExamCreateFormProps) => {
   const formMethods = useForm<CreateExamFormData>({
     resolver: zodResolver(createExamSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      total_marks: '100',
-      pass_marks: '40',
-      duration: '60',
-      start_date: '',
-      end_date: '',
-      sections: [
-        {
-          section_number: '1',
-          section_title: 'Section 1',
-          section_description: ''
-        }
-      ]
-    }
+    defaultValues: {}
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -59,11 +45,14 @@ export const ExamCreateForm = ({
     name: 'sections'
   });
 
+  console.log('Form error ', formMethods.formState.errors);
+
   const addSection = () => {
     append({
       section_number: (fields.length + 1).toString(),
       section_title: `Section ${fields.length + 1}`,
-      section_description: ''
+      section_description: '',
+      question_type: QuestionType.MULTIPLE_CHOICE
     });
   };
 
@@ -127,32 +116,28 @@ export const ExamCreateForm = ({
             }}
           />
 
-          <CustomForm.Input
+          <CustomForm.DatePicker
             field={{
-              name: 'start_date',
-              label: 'Start Date & Time',
-              placeholder: 'YYYY-MM-DD HH:MM',
-              type: 'datetime-local'
+              name: 'exam_date',
+              label: 'Exam Date'
             }}
           />
 
-          <CustomForm.Input
+          <CustomForm.TimePicker
             field={{
-              name: 'end_date',
-              label: 'End Date & Time',
-              placeholder: 'YYYY-MM-DD HH:MM',
-              type: 'datetime-local'
+              name: 'start_time',
+              label: 'Start Time'
+            }}
+          />
+
+          <CustomForm.Textarea
+            field={{
+              name: 'description',
+              label: 'Description',
+              placeholder: 'Enter exam description'
             }}
           />
         </div>
-
-        <CustomForm.Textarea
-          field={{
-            name: 'description',
-            label: 'Description',
-            placeholder: 'Enter exam description'
-          }}
-        />
       </div>
 
       <div>
@@ -163,7 +148,7 @@ export const ExamCreateForm = ({
               Divide your exam into sections for better organization
             </p>
           </div>
-          <Button type="button" variant="outline" onClick={addSection} disabled={isPending}>
+          <Button type="button" onClick={addSection} disabled={isPending}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Section
           </Button>
@@ -200,6 +185,49 @@ export const ExamCreateForm = ({
                   placeholder: 'Enter section title'
                 }}
               />
+
+              <CustomForm.Select
+                field={{
+                  name: `sections.${index}.question_type`,
+                  label: 'Question Type',
+                  placeholder: 'Select question type',
+                  options: [
+                    {
+                      label: 'Multiple Choice',
+                      value: QuestionType.MULTIPLE_CHOICE
+                    },
+                    {
+                      label: 'True/False',
+                      value: QuestionType.TRUE_FALSE
+                    },
+                    {
+                      label: 'Matching',
+                      value: QuestionType.MATCHING
+                    },
+                    {
+                      label: 'Fill in the Blank',
+                      value: QuestionType.FILL_IN_BLANK
+                    },
+                    {
+                      label: 'Short Answer',
+                      value: QuestionType.SHORT_ANSWER
+                    },
+                    {
+                      label: 'Long Answer',
+                      value: QuestionType.LONG_ANSWER
+                    },
+                    {
+                      label: 'Ordering',
+                      value: QuestionType.ORDERING
+                    },
+                    {
+                      label: 'Essay',
+                      value: QuestionType.ESSAY
+                    }
+                  ]
+                }}
+              />
+
               <div className="sm:col-span-2">
                 <CustomForm.Textarea
                   field={{

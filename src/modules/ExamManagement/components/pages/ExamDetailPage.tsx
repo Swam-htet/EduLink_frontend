@@ -1,13 +1,22 @@
+import BackButton from '@/components/common/BackButtton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { ExamManagementService } from '@/modules/ExamManagement/services/examManagement.service';
 import { ExamStatus } from '@/modules/ExamManagement/types/exam.types';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { ChevronLeft, Clock, FilePlus, X } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  BookOpen,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  FilePlus,
+  Timer,
+  X
+} from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -29,9 +38,117 @@ const getStatusClassName = (status: ExamStatus) => {
   }
 };
 
+const QuestionCard = ({ question, index }: { question: any; index: number }) => {
+  return (
+    <div className="bg-card mt-4 rounded-lg border p-4">
+      <div className="flex items-start justify-between">
+        <div>
+          <h4 className="font-medium">Question {index + 1}</h4>
+          <p className="text-muted-foreground mt-1 text-sm">{question.question}</p>
+        </div>
+        <span className="text-muted-foreground text-sm">{question.marks} marks</span>
+      </div>
+
+      {question.explanation && (
+        <div className="mt-2">
+          <p className="text-sm font-medium">Explanation:</p>
+          <p className="text-muted-foreground text-sm">{question.explanation}</p>
+        </div>
+      )}
+
+      {question.answer_guidelines && (
+        <div className="mt-2">
+          <p className="text-sm font-medium">Answer Guidelines:</p>
+          <p className="text-muted-foreground text-sm">{question.answer_guidelines}</p>
+        </div>
+      )}
+
+      {question.type === 'multiple_choice' && (
+        <div className="mt-2">
+          <p className="text-sm font-medium">Options:</p>
+          <ul className="mt-1 list-inside list-disc space-y-1">
+            {question.options.map((option: any) => (
+              <li
+                key={option.id}
+                className={cn(
+                  'text-sm',
+                  option.id === question.correct_answer
+                    ? 'font-medium text-green-600'
+                    : 'text-muted-foreground'
+                )}
+              >
+                {option.text}
+                {option.id === question.correct_answer && ' (Correct)'}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {question.type === 'true_false' && (
+        <div className="mt-2">
+          <p className="text-sm font-medium">Correct Answer:</p>
+          <p className="text-sm font-medium text-green-600 capitalize">{question.correct_answer}</p>
+        </div>
+      )}
+
+      {question.type === 'fill_in_blank' && (
+        <div className="mt-2">
+          <p className="text-sm font-medium">Acceptable Answers:</p>
+          <ul className="mt-1 space-y-1">
+            {question.blank_answers.map((answer: any) => (
+              <li key={answer.id} className="text-muted-foreground text-sm">
+                {answer.acceptable_answers.join(', ')}
+                {answer.case_sensitive ? ' (Case sensitive)' : ' (Case insensitive)'}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {question.type === 'matching' && (
+        <div className="mt-2">
+          <p className="text-sm font-medium">Matching Pairs:</p>
+          <div className="mt-1 grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm font-medium">Questions:</p>
+              <ul className="mt-1 space-y-1">
+                {question.matching_pairs.questions.map((q: any) => (
+                  <li key={q.id} className="text-muted-foreground text-sm">
+                    {q.text} →{' '}
+                    {
+                      question.matching_pairs.answers.find(
+                        (a: any) => a.id === question.matching_pairs.correct_pairs[q.id]
+                      )?.text
+                    }
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {question.type === 'ordering' && (
+        <div className="mt-2">
+          <p className="text-sm font-medium">Correct Order:</p>
+          <ol className="mt-1 list-decimal pl-4">
+            {question.correct_order.map((orderId: string) => (
+              <li key={orderId} className="text-muted-foreground text-sm">
+                {question.options.find((opt: any) => opt.id === orderId)?.text}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const ExamDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { confirm, confirmDelete } = useDialog();
   const [activeSection, setActiveSection] = useState<number | null>(null);
 
@@ -46,10 +163,11 @@ export const ExamDetailPage = () => {
     mutationFn: (status: ExamStatus) => ExamManagementService.updateExam(id as string, { status }),
     onSuccess: () => {
       toast.success('Exam status updated successfully');
-      examQuery.refetch();
+      navigate(PRIVATE_ENDPOINTS.EXAM_MANAGEMENT);
+      queryClient.invalidateQueries({ queryKey: ['exam', id] });
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to update exam status');
+    onError: () => {
+      toast.error('Failed to update exam status');
     }
   });
 
@@ -104,14 +222,8 @@ export const ExamDetailPage = () => {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(PRIVATE_ENDPOINTS.EXAM_MANAGEMENT)}
-          >
-            <ChevronLeft className="mr-1 h-4 w-4" />
-          </Button>
-          <h1 className="text-xl font-semibold">{exam.title}</h1>
+          <BackButton navigate={navigate} />
+          <h1 className="text-2xl font-semibold">{exam.title}</h1>
         </div>
         <div className="flex gap-2">
           {exam.status === ExamStatus.DRAFT && (
@@ -134,17 +246,20 @@ export const ExamDetailPage = () => {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="space-y-6 lg:col-span-2">
+      <div className="grid gap-6 lg:grid-cols-12">
+        <div className="space-y-6 lg:col-span-4">
           <Card>
             <CardHeader>
-              <CardTitle>Exam Overview</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                Exam Overview
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Status</dt>
-                  <dd>
+                  <span className="text-muted-foreground text-sm font-medium">Status</span>
+                  <div className="mt-1">
                     <span
                       className={cn(
                         'inline-flex rounded-full px-2 py-1 text-xs font-medium',
@@ -153,107 +268,148 @@ export const ExamDetailPage = () => {
                     >
                       {exam.status.charAt(0).toUpperCase() + exam.status.slice(1)}
                     </span>
-                  </dd>
+                  </div>
                 </div>
 
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Description</dt>
-                  <dd className="mt-1 text-sm whitespace-pre-wrap">
+                  <span className="text-muted-foreground text-sm font-medium">Class</span>
+                  <p className="mt-1 text-sm">{exam.class?.name || 'N/A'}</p>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground text-sm font-medium">Subject</span>
+                  <p className="mt-1 text-sm">{exam.subject?.title || 'N/A'}</p>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground text-sm font-medium">Description</span>
+                  <p className="text-muted-foreground mt-1 text-sm whitespace-pre-wrap">
                     {exam.description || 'No description provided'}
-                  </dd>
+                  </p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Timer className="h-5 w-5" />
+                Exam Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Class</dt>
-                  <dd className="mt-1 text-sm">{exam.class?.name || 'N/A'}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Subject</dt>
-                  <dd className="mt-1 text-sm">{exam.subject?.title || 'N/A'}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Duration</dt>
-                  <dd className="mt-1 flex items-center text-sm">
-                    <Clock className="mr-1 h-4 w-4 text-gray-400" />
+                  <span className="text-muted-foreground text-sm font-medium">Duration</span>
+                  <p className="mt-1 flex items-center text-sm">
+                    <Clock className="text-muted-foreground mr-1 h-4 w-4" />
                     {exam.exam_details.duration} minutes
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Total Marks</dt>
-                  <dd className="mt-1 text-sm">{exam.exam_details.total_marks}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Pass Marks</dt>
-                  <dd className="mt-1 text-sm">{exam.exam_details.pass_marks}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Start Date</dt>
-                  <dd className="mt-1 text-sm">
-                    {exam.schedule.start_date
-                      ? format(new Date(exam.schedule.start_date), 'PPp')
-                      : 'Not set'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">End Date</dt>
-                  <dd className="mt-1 text-sm">
-                    {exam.schedule.end_date
-                      ? format(new Date(exam.schedule.end_date), 'PPp')
-                      : 'Not set'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Created At</dt>
-                  <dd className="mt-1 text-sm">{format(new Date(exam.created_at), 'PPp')}</dd>
+                  </p>
                 </div>
 
                 <div>
-                  <dt className="text-sm font-medium text-gray-500">Updated At</dt>
-                  <dd className="mt-1 text-sm">{format(new Date(exam.updated_at), 'PPp')}</dd>
+                  <span className="text-muted-foreground text-sm font-medium">Total Marks</span>
+                  <p className="mt-1 text-sm">{exam.exam_details.total_marks}</p>
                 </div>
-              </dl>
+
+                <div>
+                  <span className="text-muted-foreground text-sm font-medium">Pass Marks</span>
+                  <p className="mt-1 text-sm">{exam.exam_details.pass_marks}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Schedule
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <span className="text-muted-foreground text-sm font-medium">Exam Date</span>
+                  <p className="mt-1 text-sm">
+                    {exam.schedule.exam_date ? formatDate(exam.schedule.exam_date) : 'Not set'}
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground text-sm font-medium">Start Time</span>
+                  <p className="mt-1 text-sm">{exam.schedule.start_time || 'Not set'}</p>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground text-sm font-medium">End Time</span>
+                  <p className="mt-1 text-sm">{exam.schedule.end_time || 'Not set'}</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="space-y-6">
+        <div className="lg:col-span-8">
           <Card>
             <CardHeader>
               <CardTitle>Exam Sections</CardTitle>
             </CardHeader>
             <CardContent>
               {exam.sections && exam.sections.length > 0 ? (
-                <ul className="space-y-3">
+                <div className="space-y-4">
                   {exam.sections.map((section) => (
-                    <li key={section.id}>
+                    <div key={section.id} className="rounded-lg border">
                       <button
-                        className={cn(
-                          'hover:border-primary w-full rounded-md border p-3 text-left',
-                          activeSection === section.id
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border'
-                        )}
+                        className={'w-full rounded-t-lg p-4 text-left'}
                         onClick={() =>
                           setActiveSection(activeSection === section.id ? null : section.id)
                         }
                       >
-                        <div className="flex justify-between">
-                          <h3 className="text-sm font-medium">{section.section_title}</h3>
-                          <span className="text-xs">
-                            {section.total_questions} Questions | {section.total_marks} Marks
-                          </span>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h3 className="text-base font-medium">{section.section_title}</h3>
+                            <div className="mt-1 flex items-center gap-2">
+                              <span className="text-muted-foreground text-sm">
+                                {section.question_type}
+                              </span>
+                              <span className="text-muted-foreground text-sm">•</span>
+                              <span className="text-muted-foreground text-sm">
+                                {section.total_questions} Questions
+                              </span>
+                              <span className="text-muted-foreground text-sm">•</span>
+                              <span className="text-muted-foreground text-sm">
+                                {section.total_marks} Marks
+                              </span>
+                            </div>
+                          </div>
+                          {activeSection === section.id ? (
+                            <ChevronUp className="h-5 w-5" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5" />
+                          )}
                         </div>
                         {activeSection === section.id && section.section_description && (
-                          <p className="mt-2 text-xs text-gray-500">
+                          <p className="text-muted-foreground mt-2 text-sm">
                             {section.section_description}
                           </p>
                         )}
                       </button>
-                    </li>
+                      {activeSection === section.id &&
+                        section.questions &&
+                        section.questions.length > 0 && (
+                          <div className="border-t p-4">
+                            {section.questions.map((question, index) => (
+                              <QuestionCard key={question.id} question={question} index={index} />
+                            ))}
+                          </div>
+                        )}
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
-                <p className="text-sm text-gray-500">No sections defined yet</p>
+                <p className="text-muted-foreground text-sm">No sections defined yet</p>
               )}
             </CardContent>
           </Card>

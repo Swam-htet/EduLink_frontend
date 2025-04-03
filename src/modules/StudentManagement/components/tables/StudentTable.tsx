@@ -7,16 +7,18 @@ interface StudentWithSelected extends Student {
 }
 
 interface StudentTableProps {
-  data: StudentWithSelected[];
+  data: Student[];
   isLoading: boolean;
   onSelect: (student: StudentWithSelected, checked: boolean) => void;
   selectedRows: number[];
   onRowClick?: (student: StudentWithSelected) => void;
+  selectable?: boolean;
   checkValidation?: (student: StudentWithSelected) => boolean;
 }
 
 export const StudentTable = ({
   data,
+  selectable = false,
   isLoading,
   selectedRows,
   onRowClick,
@@ -86,7 +88,7 @@ export const StudentTable = ({
 
   return (
     <Table
-      selectable
+      selectable={selectable}
       columns={columns}
       data={data}
       checkValidation={checkValidation}

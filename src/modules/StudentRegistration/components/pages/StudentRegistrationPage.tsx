@@ -19,11 +19,10 @@ export const StudentRegistrationPage = () => {
       StudentRegistrationService.registerStudent(data),
     onSuccess: (response) => {
       toast.success(response.message || 'Registration successful. Please wait for admin approval.');
-      // Redirect to a success page
       navigate(PUBLIC_ENDPOINTS.REGISTRATION_SUCCESS);
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Registration failed. Please try again.');
+    onError: () => {
+      toast.error('Registration failed. Please try again.');
     }
   });
 

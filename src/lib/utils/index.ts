@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function trimString(input: string, count = 10): string {
-  return input.trim().slice(0, count);
+  return input.trim().slice(0, count) + '...';
 }
 
 export function formatPrice(price: number, currency = 'USD'): string {
@@ -32,6 +32,12 @@ export function cleanObject<T extends Record<string, unknown>>(obj: T): Partial<
   }, {} as Partial<T>);
 }
 
-export function formatDate(date: string) {
+export function formatDate(date?: string) {
+  if (!date) return '-';
   return dateFnsFormat(parseISO(date), 'dd/MM/yyyy');
+}
+
+export function formatTime(time?: string) {
+  if (!time) return '-';
+  return dateFnsFormat(parseISO(time), 'HH:mm');
 }

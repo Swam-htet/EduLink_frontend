@@ -24,7 +24,7 @@ export const CourseManagementPage = () => {
   const { confirmDelete } = useDialog();
 
   const courseManagementQuery = useQuery({
-    queryKey: ['courses-management', filters],
+    queryKey: ['course-management', filters],
     queryFn: () => CourseManagementService.getCourses(filters)
   });
 

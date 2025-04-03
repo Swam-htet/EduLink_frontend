@@ -15,21 +15,7 @@ export const StudentRegistrationForm = ({ onSubmit, isPending }: StudentRegistra
 
   const formMethods = useForm<StudentRegistrationFormData>({
     resolver: zodResolver(studentRegistrationSchema),
-    defaultValues: {
-      first_name: '',
-      last_name: '',
-      email: '',
-      password: '',
-      confirm_password: '',
-      phone: '',
-      address: '',
-      date_of_birth: '',
-      gender: undefined,
-      nrc: '',
-      guardian_name: '',
-      guardian_phone: '',
-      guardian_relationship: ''
-    }
+    defaultValues: {}
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,12 +95,10 @@ export const StudentRegistrationForm = ({ onSubmit, isPending }: StudentRegistra
           }}
         />
 
-        <CustomForm.Input
+        <CustomForm.DatePicker
           field={{
             name: 'date_of_birth',
-            label: 'Date of Birth',
-            placeholder: 'YYYY-MM-DD',
-            type: 'date'
+            label: 'Date of Birth'
           }}
         />
       </div>

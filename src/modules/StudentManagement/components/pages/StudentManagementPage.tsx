@@ -110,12 +110,8 @@ export const StudentManagementPage = () => {
         </CardHeader>
         <CardContent>
           <StudentTable
-            data={
-              studentQuery.data?.data.map((student) => ({
-                ...student,
-                selected: selectedStudents.includes(student.id)
-              })) || []
-            }
+            data={studentQuery.data?.data || []}
+            selectable={true}
             isLoading={studentQuery.isPending}
             onRowClick={handleRowClick}
             selectedRows={selectedStudents}

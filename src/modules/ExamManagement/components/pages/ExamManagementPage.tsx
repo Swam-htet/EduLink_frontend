@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { ExamFilter } from '@/modules/ExamManagement/components/filters/ExamFilter';
 import { ExamTable } from '@/modules/ExamManagement/components/tables/ExamTable';
+import { ExamFilterFormData } from '@/modules/ExamManagement/schemas/exam.schema';
 import { ExamManagementService } from '@/modules/ExamManagement/services/examManagement.service';
-import type { Exam, ExamFilterParams } from '@/modules/ExamManagement/types/exam.types';
+import type { Exam } from '@/modules/ExamManagement/types/exam.types';
 import { getDefaultFilters } from '@/modules/ExamManagement/utils/getDefaultFilters';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
@@ -14,10 +15,10 @@ import { useNavigate } from 'react-router-dom';
 
 export const ExamManagementPage = () => {
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<ExamFilterParams>(getDefaultFilters());
+  const [filters, setFilters] = useState<ExamFilterFormData>(getDefaultFilters());
 
   const examsQuery = useQuery({
-    queryKey: ['exams', filters],
+    queryKey: ['exam-management', filters],
     queryFn: () => ExamManagementService.getExams(filters)
   });
 

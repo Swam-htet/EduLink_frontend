@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 interface ExamQuestionUploadFormProps {
   exam: Exam;
   onSubmit: (data: UploadQuestionsFormData) => void;
+  loading: boolean;
 }
 
 export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFormProps) => {
@@ -32,13 +33,13 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
     name: 'exam_questions'
   });
 
-  const addQuestion = (sectionId: number) => {
+  const addQuestion = (sectionId: number, questionType: QuestionType) => {
     const questionId = uuidv4();
     const newQuestion = {
       id: questionId,
       section_id: sectionId,
       question: '',
-      type: QuestionType.MULTIPLE_CHOICE,
+      type: questionType,
       marks: '1',
       difficulty_level: '1',
       options: [
@@ -435,9 +436,18 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-medium">{section.section_title}</h3>
-              <p className="text-sm text-gray-500">{section.section_description}</p>
+
+              <span className="text-sm text-gray-500">Question type - {section.question_type}</span>
+
+              {section.section_description && (
+                <p className="text-sm text-gray-500">Description - {section.section_description}</p>
+              )}
             </div>
-            <Button type="button" variant="outline" onClick={() => addQuestion(section.id)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => addQuestion(section.id, section.question_type)}
+            >
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Question
             </Button>
@@ -476,6 +486,7 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
                       field={{
                         name: `exam_questions.${questionIndex}.type`,
                         label: 'Question Type',
+                        disabled: true,
                         options: [
                           { label: 'Multiple Choice', value: QuestionType.MULTIPLE_CHOICE },
                           { label: 'True/False', value: QuestionType.TRUE_FALSE },
@@ -500,14 +511,17 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
                       <CustomForm.Input
                         field={{
                           name: `exam_questions.${questionIndex}.time_limit`,
-                          label: 'Time Limit'
+                          label: 'Time Limit',
+                          placeholder: 'Enter time limit in minutes',
+                          required: false
                         }}
                       />
 
                       <CustomForm.Input
                         field={{
                           name: `exam_questions.${questionIndex}.difficulty_level`,
-                          label: 'Difficulty Level'
+                          label: 'Difficulty Level',
+                          placeholder: 'Enter difficulty level'
                         }}
                       />
                     </div>

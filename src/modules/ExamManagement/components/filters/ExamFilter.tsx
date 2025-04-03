@@ -1,40 +1,23 @@
 import CustomForm from '@/components/common/CustomForm';
 import { Button } from '@/components/ui/button';
-import type { ExamFilterParams } from '@/modules/ExamManagement/types/exam.types';
-import { ExamStatus } from '@/modules/ExamManagement/types/exam.types';
+import { ExamFilterFormData, examFilterSchema } from '@/modules/ExamManagement/schemas/exam.schema';
+import { ExamSortBy, ExamStatus } from '@/modules/ExamManagement/types/exam.types';
+import { SortDirection } from '@/shared/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-const examFilterSchema = z.object({
-  title: z.string().optional(),
-  class_id: z.number().optional(),
-  subject_id: z.number().optional(),
-  status: z.nativeEnum(ExamStatus).optional(),
-  date_range: z
-    .object({
-      start: z.string(),
-      end: z.string()
-    })
-    .optional(),
-  per_page: z.number().min(1).max(100).optional(),
-  sort_by: z.enum(['title', 'start_date', 'created_at']).optional(),
-  sort_direction: z.enum(['asc', 'desc']).optional(),
-  current_page: z.number().optional()
-});
 
 interface ExamFilterProps {
-  filters: ExamFilterParams;
-  onFilterChange: (filters: ExamFilterParams) => void;
+  filters: ExamFilterFormData;
+  onFilterChange: (filters: ExamFilterFormData) => void;
 }
 
 export const ExamFilter = ({ filters, onFilterChange }: ExamFilterProps) => {
-  const formMethods = useForm<ExamFilterParams>({
+  const formMethods = useForm<ExamFilterFormData>({
     resolver: zodResolver(examFilterSchema),
     defaultValues: filters
   });
 
-  const onSubmit = (data: ExamFilterParams) => {
+  const onSubmit = (data: ExamFilterFormData) => {
     onFilterChange(data);
   };
 
@@ -64,10 +47,24 @@ export const ExamFilter = ({ filters, onFilterChange }: ExamFilterProps) => {
           }}
         />
 
-        <CustomForm.DateRangePicker
+        <CustomForm.DatePicker
           field={{
-            name: 'date_range',
-            label: 'Exam Date Range'
+            name: 'exam_date',
+            label: 'Exam Date'
+          }}
+        />
+
+        <CustomForm.TimePicker
+          field={{
+            name: 'start_time',
+            label: 'Start Time'
+          }}
+        />
+
+        <CustomForm.TimePicker
+          field={{
+            name: 'end_time',
+            label: 'End Time'
           }}
         />
 
@@ -105,8 +102,8 @@ export const ExamFilter = ({ filters, onFilterChange }: ExamFilterProps) => {
             formMethods.reset();
             onFilterChange({
               per_page: 15,
-              sort_by: 'created_at',
-              sort_direction: 'desc'
+              sort_by: ExamSortBy.CREATED_AT,
+              sort_direction: SortDirection.Desc
             });
           }}
         >

@@ -1,8 +1,6 @@
 import Table, { TableColumn } from '@/components/common/Table';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { ExamStatus, type Exam } from '@/modules/ExamManagement/types/exam.types';
-import { format } from 'date-fns';
-import { Loader2 } from 'lucide-react';
 
 interface ExamTableProps {
   data: Exam[];
@@ -42,15 +40,19 @@ export const ExamTable = ({ data, isLoading, onRowClick }: ExamTableProps) => {
       accessor: (exam) => (exam.subject ? exam.subject.title : '-')
     },
     {
-      header: 'Start Date',
-      accessor: (exam) => format(new Date(exam.schedule.start_date), 'PPP')
+      header: 'Exam Date',
+      accessor: (exam) => formatDate(exam.schedule.exam_date)
     },
     {
-      header: 'End Date',
-      accessor: (exam) => format(new Date(exam.schedule.end_date), 'PPP')
+      header: 'Start Time',
+      accessor: (exam) => exam.schedule.start_time
     },
     {
-      header: 'Duration',
+      header: 'End Time',
+      accessor: (exam) => exam.schedule.end_time
+    },
+    {
+      header: 'Duration (Minutes)',
       accessor: (exam) => `${exam.exam_details.duration} minutes`
     },
     {
@@ -66,26 +68,11 @@ export const ExamTable = ({ data, isLoading, onRowClick }: ExamTableProps) => {
             getStatusClassName(exam.status)
           )}
         >
-          {exam.status.charAt(0).toUpperCase() + exam.status.slice(1)}
+          {exam.status}
         </span>
       )
     }
   ];
-
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center">
-        <Loader2 className="h-4 w-4 animate-spin" />
-        <p className="text-sm text-gray-500">Loading...</p>
-      </div>
-    );
-
-  if (data.length === 0)
-    return (
-      <div className="flex items-center justify-center">
-        <p className="text-sm text-gray-500">No exams found</p>
-      </div>
-    );
 
   return <Table columns={columns} data={data} loading={isLoading} onRowClick={onRowClick} />;
 };

@@ -57,6 +57,7 @@ export interface SelectProps {
   placeholder?: string;
   description?: string;
   options: SelectOption[];
+  disabled?: boolean;
 }
 
 export interface TextareaProps {
@@ -83,6 +84,7 @@ export interface TimePickerProps {
   description?: string;
   disabled?: boolean;
   required?: boolean;
+  placeholder?: string;
 }
 
 export interface ButtonProps {
@@ -146,7 +148,11 @@ CustomForm.Input = React.forwardRef<HTMLInputElement, { field: InputProps }>(({ 
       name={field.name}
       render={({ field: formField }) => (
         <FormItem>
-          {field.label && <FormLabel>{field.label}</FormLabel>}
+          {field.label && (
+            <FormLabel>
+              {field.label} {field.required && <span className="text-red-500">*</span>}
+            </FormLabel>
+          )}
           <FormControl>
             <Input
               {...formField}
@@ -271,7 +277,11 @@ CustomForm.Select = React.forwardRef<HTMLSelectElement, { field: SelectProps }>(
           <FormItem>
             {field.label && <FormLabel>{field.label}</FormLabel>}
             <FormControl>
-              <Select onValueChange={formField.onChange} defaultValue={formField.value}>
+              <Select
+                onValueChange={formField.onChange}
+                defaultValue={formField.value}
+                disabled={field.disabled}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder={field.placeholder} />
@@ -399,63 +409,49 @@ CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerPr
       throw new Error('TimePicker must be used within a CustomForm');
     }
 
+    const { field: formField } = useController({
+      control: formMethods.control,
+      name: field.name
+    });
+
     return (
-      <FormField
-        control={formMethods.control}
-        name={field.name}
-        render={({ field: formField }) => (
-          <FormItem className="flex flex-col">
-            {field.label && <FormLabel>{field.label}</FormLabel>}
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <ShadcnButton
-                    type="button"
-                    variant="outline"
-                    className={cn(
-                      'w-full pl-3 text-left font-normal',
-                      !formField.value && 'text-muted-foreground'
-                    )}
-                    disabled={field.disabled}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    {formField.value || <span>{field.placeholder || 'Pick a time'}</span>}
-                    <Clock className="ml-auto h-4 w-4 opacity-50" />
-                  </ShadcnButton>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-auto p-4"
-                align="start"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
+      <div className="flex flex-col gap-2">
+        {field.label && <FormLabel>{field.label}</FormLabel>}
+        <Popover>
+          <PopoverTrigger>
+            <FormControl>
+              <ShadcnButton
+                type="button"
+                variant="outline"
+                className={cn(
+                  'w-full pl-3 text-left font-normal',
+                  !formField.value && 'text-muted-foreground',
+                  formMethods.formState.errors[field.name] && 'border-red-500'
+                )}
+                disabled={field.disabled}
               >
-                <div className="flex items-center space-x-2">
-                  <Input
-                    type="time"
-                    ref={ref}
-                    value={formField.value || ''}
-                    onChange={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      formField.onChange(e.target.value);
-                    }}
-                    className="w-[120px]"
-                    disabled={field.disabled}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
-            {field.description && <FormDescription>{field.description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                {formField.value || <span>{field.placeholder || 'Pick a time'}</span>}
+                <Clock className="ml-auto h-4 w-4 opacity-50" />
+              </ShadcnButton>
+            </FormControl>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-4" align="start">
+            <div className="flex items-center space-x-2">
+              <Input
+                type="time"
+                ref={ref}
+                value={formField.value || ''}
+                className="w-full"
+                disabled={field.disabled}
+                onChange={(e) => {
+                  formField.onChange(e.target.value);
+                }}
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
+        {field.description && <FormDescription>{field.description}</FormDescription>}
+      </div>
     );
   }
 );

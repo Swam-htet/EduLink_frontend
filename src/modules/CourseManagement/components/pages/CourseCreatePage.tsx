@@ -4,17 +4,13 @@ import { CourseCreateForm } from '@/modules/CourseManagement/forms/CourseCreateF
 import { CourseCreateFormData } from '@/modules/CourseManagement/schemas/course.schema';
 import CourseManagementService from '@/modules/CourseManagement/services/CourseManagement.service';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export const CourseCreatePage = () => {
   const navigate = useNavigate();
-
-  const courseManagementQuery = useQuery({
-    queryKey: ['course-management'],
-    queryFn: () => CourseManagementService.getCourses()
-  });
+  const queryClient = useQueryClient();
 
   const { confirm } = useDialog();
 
@@ -24,7 +20,7 @@ export const CourseCreatePage = () => {
     onSuccess: () => {
       toast.success('Course created successfully');
       navigate(-1);
-      courseManagementQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ['course-management'] });
     },
     onError: () => {
       toast.error('Failed to create course');

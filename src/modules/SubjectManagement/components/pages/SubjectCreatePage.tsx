@@ -5,7 +5,7 @@ import { SubjectCreateForm } from '@/modules/SubjectManagement/components/forms/
 import { SubjectCreateFormData } from '@/modules/SubjectManagement/schemas/subject.schema';
 import SubjectManagementService from '@/modules/SubjectManagement/services/SubjectManagement.service';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -13,11 +13,7 @@ export const SubjectCreatePage = () => {
   const navigate = useNavigate();
 
   const { confirm } = useDialog();
-
-  const subjectListQuery = useQuery({
-    queryKey: ['subject-management'],
-    queryFn: () => SubjectManagementService.getSubjects()
-  });
+  const queryClient = useQueryClient();
 
   const courseListQuery = useQuery({
     queryKey: ['courses'],
@@ -30,7 +26,7 @@ export const SubjectCreatePage = () => {
     onSuccess: () => {
       toast.success('Subject created successfully');
       navigate(-1);
-      subjectListQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ['subject-management'] });
     },
     onError: () => {
       toast.error('Failed to create subject');
