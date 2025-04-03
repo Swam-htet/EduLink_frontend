@@ -23,7 +23,7 @@ export const enrollmentFilterSchema = z.object({
 
 export const updateEnrollmentSchema = z.object({
   status: z.nativeEnum(EnrollmentStatus),
-  remarks: z.string().max(500).optional()
+  remarks: z.string()
 });
 
 export const manualEnrollmentEmailSchema = z.object({
@@ -31,7 +31,5 @@ export const manualEnrollmentEmailSchema = z.object({
 });
 
 export type EnrollmentFilterFormData = z.infer<typeof enrollmentFilterSchema>;
-export type UpdateEnrollmentFormData = z.infer<typeof updateEnrollmentSchema> & {
-  id: number;
-};
+export type UpdateEnrollmentFormData = z.infer<typeof updateEnrollmentSchema>;
 export type ManualEnrollmentEmailFormData = z.infer<typeof manualEnrollmentEmailSchema>;

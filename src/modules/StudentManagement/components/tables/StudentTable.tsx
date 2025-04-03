@@ -4,9 +4,9 @@ import type { Student } from '@/modules/StudentManagement/types/studentManagemen
 
 interface StudentTableProps {
   data: Student[];
-  isLoading: boolean;
-  onSelect: (student: Student, checked: boolean) => void;
-  selectedRows: number[];
+  isLoading?: boolean;
+  onSelect?: (student: Student, checked: boolean) => void;
+  selectedRows?: number[];
   onRowClick?: (student: Student) => void;
   selectable?: boolean;
 }
@@ -41,7 +41,7 @@ export const StudentTable = ({
   };
 
   const handleSelect = (student: Student, checked: boolean) => {
-    onSelect(student, checked);
+    onSelect?.(student, checked);
   };
 
   const columns: TableColumn<Student>[] = [

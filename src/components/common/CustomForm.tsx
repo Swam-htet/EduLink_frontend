@@ -115,6 +115,8 @@ type CustomFormProps<T extends FieldValues> = {
 };
 
 // form methods context
+// ignore type error for now
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const FormMethodsContext = createContext<UseFormReturn<any> | null>(null);
 
 // custom form component
@@ -262,48 +264,46 @@ CustomForm.Checkbox = React.forwardRef<
 CustomForm.Checkbox.displayName = 'CustomForm.Checkbox';
 
 // select component
-CustomForm.Select = React.forwardRef<HTMLSelectElement, { field: SelectProps }>(
-  ({ field }, ref) => {
-    const formMethods = useContext(FormMethodsContext);
-    if (!formMethods) {
-      throw new Error('Select must be used within a CustomForm');
-    }
-
-    return (
-      <FormField
-        control={formMethods.control}
-        name={field.name}
-        render={({ field: formField }) => (
-          <FormItem>
-            {field.label && <FormLabel>{field.label}</FormLabel>}
-            <FormControl>
-              <Select
-                onValueChange={formField.onChange}
-                defaultValue={formField.value}
-                disabled={field.disabled}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={field.placeholder} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {field.options.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormControl>
-            {field.description && <FormDescription>{field.description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    );
+CustomForm.Select = React.forwardRef<HTMLSelectElement, { field: SelectProps }>(({ field }) => {
+  const formMethods = useContext(FormMethodsContext);
+  if (!formMethods) {
+    throw new Error('Select must be used within a CustomForm');
   }
-);
+
+  return (
+    <FormField
+      control={formMethods.control}
+      name={field.name}
+      render={({ field: formField }) => (
+        <FormItem>
+          {field.label && <FormLabel>{field.label}</FormLabel>}
+          <FormControl>
+            <Select
+              onValueChange={formField.onChange}
+              defaultValue={formField.value}
+              disabled={field.disabled}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder={field.placeholder} />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {field.options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormControl>
+          {field.description && <FormDescription>{field.description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+});
 
 CustomForm.Select.displayName = 'CustomForm.Select';
 
@@ -344,7 +344,7 @@ CustomForm.Textarea.displayName = 'CustomForm.Textarea';
 
 // date picker component
 CustomForm.DatePicker = React.forwardRef<HTMLInputElement, { field: DatePickerProps }>(
-  ({ field }, ref) => {
+  ({ field }) => {
     const formMethods = useContext(FormMethodsContext);
     if (!formMethods) {
       throw new Error('DatePicker must be used within a CustomForm');

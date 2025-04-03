@@ -8,7 +8,6 @@ import { ClassUpdateFormData } from '@/modules/ClassManagement/schemas/class.sch
 import { ClassManagementService } from '@/modules/ClassManagement/services/classManagement.service';
 import { ClassStatus } from '@/modules/ClassManagement/types/class.types';
 import { StudentTable } from '@/modules/StudentManagement/components/tables/StudentTable';
-import { Student } from '@/modules/StudentManagement/types/studentManagement.types';
 import { Subject } from '@/modules/SubjectManagement/types/subject.types';
 import { useDialog } from '@/shared/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -213,9 +212,9 @@ export const ClassDetailPage = () => {
             <TabsContent value="students" className="mt-4">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium">Students ({classData.students.length})</h3>
+                  <h3 className="text-lg font-medium">Students ({classData.students?.length})</h3>
                 </div>
-                <StudentTable data={classData.students as Student[]} />
+                <StudentTable data={classData.students || []} />
               </div>
             </TabsContent>
             <TabsContent value="schedule" className="mt-4">
@@ -224,13 +223,13 @@ export const ClassDetailPage = () => {
             <TabsContent value="materials" className="mt-4">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium">Subjects ({classData.subjects.length})</h3>
+                  <h3 className="text-lg font-medium">Subjects ({classData.subjects?.length})</h3>
                   <Button variant="outline" size="sm">
                     <BookOpen className="mr-2 h-4 w-4" />
                     Add Subject
                   </Button>
                 </div>
-                <SubjectCards subjects={classData.subjects} />
+                <SubjectCards subjects={classData.subjects || []} />
               </div>
             </TabsContent>
           </Tabs>

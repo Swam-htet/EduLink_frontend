@@ -8,8 +8,8 @@ import {
   DialogTitle
 } from '@/components/ui/dialog';
 import {
-  updateEnrollmentSchema,
-  type UpdateEnrollmentFormData
+  type UpdateEnrollmentFormData,
+  updateEnrollmentSchema
 } from '@/modules/StudentClassEnrollment/schemas/enrollment.schema';
 import { EnrollmentStatus } from '@/modules/StudentClassEnrollment/types/enrollment.types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,16 +28,13 @@ export const UpdateStatusDialog = ({
   onUpdate,
   isPending = false
 }: UpdateStatusDialogProps) => {
-  const formMethods = useForm<UpdateEnrollmentFormData>({
+  const formMethods = useForm({
     resolver: zodResolver(updateEnrollmentSchema),
     defaultValues: {
-      status: EnrollmentStatus.ENROLLED
+      status: EnrollmentStatus.ENROLLED,
+      remarks: ''
     }
   });
-
-  const onSubmit = (data: UpdateEnrollmentFormData) => {
-    onUpdate(data);
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -45,7 +42,7 @@ export const UpdateStatusDialog = ({
         <DialogHeader>
           <DialogTitle>Update Enrollment Status</DialogTitle>
         </DialogHeader>
-        <CustomForm formMethods={formMethods} onSubmit={onSubmit} className="space-y-4">
+        <CustomForm formMethods={formMethods} onSubmit={onUpdate} className="space-y-4">
           <CustomForm.Select
             field={{
               name: 'status',

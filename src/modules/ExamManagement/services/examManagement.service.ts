@@ -3,13 +3,10 @@ import { cleanObject } from '@/lib/utils';
 import {
   type CreateExamFormData,
   type ExamFilterFormData,
-  type UpdateExamFormData
+  type UpdateExamFormData,
+  type UploadQuestionsFormData
 } from '@/modules/ExamManagement/schemas/exam.schema';
-import type {
-  ExamListResponse,
-  ExamResponse,
-  UploadExamQuestionsData
-} from '@/modules/ExamManagement/types/exam.types';
+import type { ExamListResponse, ExamResponse } from '@/modules/ExamManagement/types/exam.types';
 
 export class ExamManagementService {
   static async getExams(params?: ExamFilterFormData) {
@@ -34,7 +31,7 @@ export class ExamManagementService {
     return data;
   }
 
-  static async uploadExamQuestions(id: string, questionData: UploadExamQuestionsData) {
+  static async uploadExamQuestions(id: string, questionData: UploadQuestionsFormData) {
     const { data } = await apiClient.post<ExamResponse>(
       `management/exams/${id}/upload-questions`,
       questionData

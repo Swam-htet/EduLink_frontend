@@ -1,15 +1,17 @@
 import { apiClient } from '@/lib/axios/api';
-import { StaffCreateFormData } from '@/modules/StaffManagement/schemas/staff.schema';
+import {
+  StaffCreateFormData,
+  StaffFilterFormValues
+} from '@/modules/StaffManagement/schemas/staff.schema';
 import {
   StaffManagementCreateResponse,
   StaffManagementDetailResponse,
-  StaffManagementFilterParams,
   StaffManagementListResponse
 } from '@/modules/StaffManagement/types/staffManagement.types';
 
 export class StaffManagementService {
   static async getStaffList(
-    filterParams: StaffManagementFilterParams
+    filterParams: StaffFilterFormValues
   ): Promise<StaffManagementListResponse> {
     const { data } = await apiClient.get<StaffManagementListResponse>(`/management/staff`, {
       params: filterParams

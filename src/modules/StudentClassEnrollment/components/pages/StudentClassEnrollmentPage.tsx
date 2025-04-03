@@ -30,8 +30,8 @@ export const StudentClassEnrollmentPage = () => {
 
   const updateEnrollmentMutation = useMutation({
     mutationKey: ['enrollment-management-update'],
-    mutationFn: (data: UpdateEnrollmentFormData) =>
-      EnrollmentManagementService.updateEnrollment(data.id, data),
+    mutationFn: ({ id, data }: { id: number; data: UpdateEnrollmentFormData }) =>
+      EnrollmentManagementService.updateEnrollment(id, data),
     onSuccess: () => {
       toast.success('Enrollment status updated successfully');
       setUpdateDialogOpen(false);
@@ -88,8 +88,8 @@ export const StudentClassEnrollmentPage = () => {
     }
 
     updateEnrollmentMutation.mutate({
-      ...data,
-      id: selectedEnrollment.id
+      id: selectedEnrollment.id,
+      data
     });
   };
 

@@ -48,16 +48,6 @@ export interface EnrollmentListResponse {
   message?: string;
 }
 
-export interface UpdateEnrollmentRequest {
-  id: number;
-  status: EnrollmentStatus;
-  remarks?: string;
-}
-
-export interface ManualEnrollmentEmailRequest {
-  enrollment_ids: number[];
-}
-
 export interface EnrollmentResponse {
   data: Enrollment;
   message: string;
