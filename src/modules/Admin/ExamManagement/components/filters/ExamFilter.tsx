@@ -5,7 +5,7 @@ import {
   examFilterSchema
 } from '@/modules/Admin/ExamManagement/schemas/exam.schema';
 import { ExamSortBy, ExamStatus } from '@/modules/Admin/ExamManagement/types/exam.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 

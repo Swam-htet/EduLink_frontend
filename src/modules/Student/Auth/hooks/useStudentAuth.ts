@@ -5,8 +5,7 @@ import {
   selectCurrentStudentUser,
   selectIsStudentAuthenticated
 } from '@/modules/Student/Auth/store/auth.slice';
-
-import { ErrorPayload } from '@/shared/providers/react-query/ReactQueryProvider';
+import { ErrorPayload } from '@/providers/react-query/ReactQueryProvider';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

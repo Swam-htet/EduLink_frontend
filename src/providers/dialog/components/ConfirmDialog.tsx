@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { DialogConfig } from '@/shared/providers/dialog/types';
+import { DialogConfig } from '@/providers/dialog/types';
 
 interface ConfirmDialogProps {
   config: DialogConfig;

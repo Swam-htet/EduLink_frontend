@@ -1,4 +1,4 @@
-import { ApiResponse } from '@/shared/types';
+import { ApiResponse } from '@/types';
 
 // todo : need to update later
 export interface StudentUser {

@@ -18,7 +18,7 @@ const StudentLoginPage = lazy(() =>
 
 // not found page
 const NotFound = lazy(() =>
-  import('@/shared/components/pages').then((module) => ({
+  import('@/components/pages').then((module) => ({
     default: module.NotFoundPage
   }))
 );

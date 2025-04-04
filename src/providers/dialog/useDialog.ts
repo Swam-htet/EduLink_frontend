@@ -1,5 +1,5 @@
-import { useDialogContext } from '@/shared/providers/dialog/DialogContext';
-import type { DialogConfig } from '@/shared/providers/dialog/types';
+import { useDialogContext } from '@/providers/dialog/DialogContext';
+import type { DialogConfig } from '@/providers/dialog/types';
 
 export const useDialog = () => {
   const { openDialog, closeDialog, isOpen } = useDialogContext();

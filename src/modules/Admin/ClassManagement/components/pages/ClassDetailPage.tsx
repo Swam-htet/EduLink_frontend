@@ -9,7 +9,7 @@ import { ClassManagementService } from '@/modules/Admin/ClassManagement/services
 import { ClassStatus } from '@/modules/Admin/ClassManagement/types/class.types';
 import { StudentTable } from '@/modules/Admin/StudentManagement/components/tables/StudentTable';
 import { Subject } from '@/modules/Admin/SubjectManagement/types/subject.types';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BookOpen, GraduationCap, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';

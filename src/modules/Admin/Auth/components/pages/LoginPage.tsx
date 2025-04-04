@@ -4,7 +4,7 @@ import { LoginForm } from '@/modules/Admin/Auth/components/forms/LoginForm';
 import { LoginFormData } from '@/modules/Admin/Auth/schemas/auth.schema';
 import { AuthService } from '@/modules/Admin/Auth/services/auth.service';
 import { setCredentials } from '@/modules/Admin/Auth/store/auth.slice';
-import { ErrorPayload } from '@/shared/providers/react-query/ReactQueryProvider';
+import { ErrorPayload } from '@/providers/react-query/ReactQueryProvider';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

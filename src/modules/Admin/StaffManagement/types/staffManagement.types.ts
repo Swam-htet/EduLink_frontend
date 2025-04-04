@@ -1,4 +1,4 @@
-import { ApiResponse } from '@/shared/types';
+import { ApiResponse } from '@/types';
 
 // Enum types for strict type checking
 export enum StaffStatus {

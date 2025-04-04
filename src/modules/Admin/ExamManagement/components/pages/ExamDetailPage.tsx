@@ -5,7 +5,7 @@ import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { cn, formatDate } from '@/lib/utils';
 import { ExamManagementService } from '@/modules/Admin/ExamManagement/services/examManagement.service';
 import { ExamStatus } from '@/modules/Admin/ExamManagement/types/exam.types';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   BookOpen,

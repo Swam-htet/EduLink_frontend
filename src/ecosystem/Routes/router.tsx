@@ -1,12 +1,12 @@
-import { ErrorPage, LoadingPage } from '@/shared/components/pages';
+import { ErrorPage, LoadingPage } from '@/components/pages';
 
 import { AdminPrivateRoute } from '@/components/AdminPrivateRoute';
+import { AdminLayout } from '@/components/layouts/AdminLayout/AdminLayout';
+import { StudentLayout } from '@/components/layouts/StudentLayout/StudentLayout';
 import { StudentPrivateRoute } from '@/components/StudentPrivateRoute';
 import { privateAdminRoutes } from '@/ecosystem/Routes/PrivateAdminRoutes';
 import { privateStudentRoutes } from '@/ecosystem/Routes/PrivateStudentRoutes';
 import { publicRoutes } from '@/ecosystem/Routes/PublicRoutes';
-import { AdminLayout } from '@/shared/components/layouts/AdminLayout/AdminLayout';
-import { StudentLayout } from '@/shared/components/layouts/StudentLayout/StudentLayout';
 import { Suspense } from 'react';
 import {
   createBrowserRouter,

@@ -7,7 +7,7 @@ import { ClassManagementService } from '@/modules/Admin/ClassManagement/services
 import { CourseManagementService } from '@/modules/Admin/CourseManagement/services/CourseManagement.service';
 import { StaffManagementService } from '@/modules/Admin/StaffManagement/services/staffManagement.service';
 import { StaffRole } from '@/modules/Admin/StaffManagement/types/staffManagement.types';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';

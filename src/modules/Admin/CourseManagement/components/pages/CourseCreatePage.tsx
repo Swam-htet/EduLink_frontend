@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CourseCreateForm } from '@/modules/Admin/CourseManagement/forms/CourseCreateForm';
 import { CourseCreateFormData } from '@/modules/Admin/CourseManagement/schemas/course.schema';
 import CourseManagementService from '@/modules/Admin/CourseManagement/services/CourseManagement.service';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';

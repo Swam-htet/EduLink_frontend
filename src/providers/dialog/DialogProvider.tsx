@@ -1,8 +1,8 @@
-import { ConfirmDialog } from '@/shared/providers/dialog/components/ConfirmDialog';
-import { CustomDialog } from '@/shared/providers/dialog/components/CustomDialog';
-import { DeleteDialog } from '@/shared/providers/dialog/components/DeleteDialog';
-import { DialogContext } from '@/shared/providers/dialog/DialogContext';
-import { DialogConfig } from '@/shared/providers/dialog/types';
+import { ConfirmDialog } from '@/providers/dialog/components/ConfirmDialog';
+import { CustomDialog } from '@/providers/dialog/components/CustomDialog';
+import { DeleteDialog } from '@/providers/dialog/components/DeleteDialog';
+import { DialogContext } from '@/providers/dialog/DialogContext';
+import { DialogConfig } from '@/providers/dialog/types';
 import { ReactNode, useState } from 'react';
 
 interface DialogProviderProps {

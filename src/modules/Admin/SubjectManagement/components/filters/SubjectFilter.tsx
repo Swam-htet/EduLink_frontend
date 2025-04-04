@@ -6,7 +6,7 @@ import {
   subjectFilterSchema
 } from '@/modules/Admin/SubjectManagement/schemas/subject.schema';
 import { SubjectSortBy } from '@/modules/Admin/SubjectManagement/types/subject.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 

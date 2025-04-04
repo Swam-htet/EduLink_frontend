@@ -1,4 +1,4 @@
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 
 export interface Course {
   id: number;

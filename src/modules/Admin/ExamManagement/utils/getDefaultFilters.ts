@@ -1,6 +1,6 @@
 import { ExamFilterFormData } from '@/modules/Admin/ExamManagement/schemas/exam.schema';
 import { ExamSortBy } from '@/modules/Admin/ExamManagement/types/exam.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 
 export const getDefaultFilters = (): ExamFilterFormData => ({
   per_page: 15,

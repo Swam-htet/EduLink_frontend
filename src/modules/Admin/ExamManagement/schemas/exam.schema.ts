@@ -5,7 +5,7 @@ import {
 } from '@/modules/Admin/ExamManagement/types/exam.types';
 import { z } from 'zod';
 
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 
 // Filter schema
 export const examFilterSchema = z.object({

@@ -2,7 +2,7 @@ import {
   EnrollmentSortBy,
   EnrollmentStatus
 } from '@/modules/Admin/StudentClassEnrollment/types/enrollment.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 import { z } from 'zod';
 
 export const enrollmentFilterSchema = z.object({

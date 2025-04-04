@@ -1,6 +1,6 @@
 import type { ClassFilterFormValues } from '@/modules/Admin/ClassManagement/schemas/class.schema';
 import { ClassSortBy } from '@/modules/Admin/ClassManagement/types/class.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 
 export const createDefaultFilterParams = (): ClassFilterFormValues => ({
   per_page: 15,

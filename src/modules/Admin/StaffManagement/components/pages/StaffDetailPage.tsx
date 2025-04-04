@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import StaffManagementService from '@/modules/Admin/StaffManagement/services/staffManagement.service';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';

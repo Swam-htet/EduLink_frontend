@@ -4,7 +4,7 @@ import CourseManagementService from '@/modules/Admin/CourseManagement/services/C
 import { SubjectCreateForm } from '@/modules/Admin/SubjectManagement/components/forms/SubjectCreateForm';
 import { SubjectCreateFormData } from '@/modules/Admin/SubjectManagement/schemas/subject.schema';
 import SubjectManagementService from '@/modules/Admin/SubjectManagement/services/SubjectManagement.service';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';

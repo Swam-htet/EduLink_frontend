@@ -11,7 +11,7 @@ import {
 import SubjectManagementService from '@/modules/Admin/SubjectManagement/services/SubjectManagement.service';
 import type { Subject } from '@/modules/Admin/SubjectManagement/types/subject.types';
 import { getDefaultFilters } from '@/modules/Admin/SubjectManagement/utils/getDefaultFilters';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';

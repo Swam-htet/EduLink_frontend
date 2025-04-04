@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { RejectRegistrationDialog } from '@/modules/Admin/StudentManagement/components/dialogs/RejectRegistrationDialog';
 import StudentManagementService from '@/modules/Admin/StudentManagement/services/studentManagement.service';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Mail, Phone, UserRound } from 'lucide-react';

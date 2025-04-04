@@ -1,5 +1,5 @@
 import { SubjectSortBy } from '@/modules/Admin/SubjectManagement/types/subject.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 import { z } from 'zod';
 
 export const subjectCreateSchema = z

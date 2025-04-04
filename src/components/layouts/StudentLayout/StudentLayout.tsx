@@ -1,15 +1,16 @@
 import { Outlet } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { useAdminAuth } from '@/modules/Admin/Auth/hooks/useAdminAuth';
-import Sidebar from '@/shared/components/layouts/AdminLayout/components/Sidebar';
+
+import Sidebar from '@/components/layouts/StudentLayout/components/Sidebar';
+import { useStudentAuth } from '@/modules/Student/Auth/hooks/useStudentAuth';
 import { selectTenantId } from '@/store/tenant.slice';
 import { LogOutIcon } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
-export const AdminLayout = () => {
+export const StudentLayout = () => {
   const tenantId = useSelector(selectTenantId);
-  const { logout } = useAdminAuth();
+  const { logout } = useStudentAuth();
   return (
     <div className="grid h-screen grid-cols-[250px_1fr]">
       <div className="flex flex-col gap-4 overflow-hidden bg-white">

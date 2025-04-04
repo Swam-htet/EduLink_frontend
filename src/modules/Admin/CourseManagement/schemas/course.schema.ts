@@ -1,5 +1,5 @@
 import { CourseSortBy } from '@/modules/Admin/CourseManagement/types/course.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 import { z } from 'zod';
 
 export const courseCreateSchema = z

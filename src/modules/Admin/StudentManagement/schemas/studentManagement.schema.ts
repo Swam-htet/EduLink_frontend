@@ -1,5 +1,5 @@
 import { StudentStatus } from '@/modules/Admin/StudentRegistration/types/student.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 import { z } from 'zod';
 import { StudentSortBy } from '../types/studentManagement.types';
 

@@ -11,7 +11,7 @@ import type {
   Course,
   CourseFilterParams
 } from '@/modules/Admin/CourseManagement/types/course.types';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';

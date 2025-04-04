@@ -11,7 +11,7 @@ import type {
 import { EnrollmentManagementService } from '@/modules/Admin/StudentClassEnrollment/services/enrollmentManagement.service';
 import type { Enrollment } from '@/modules/Admin/StudentClassEnrollment/types/enrollment.types';
 import { getDefaultFilters } from '@/modules/Admin/StudentClassEnrollment/utils/getDefaultFilters';
-import { useDialog } from '@/shared/providers/dialog/useDialog';
+import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';

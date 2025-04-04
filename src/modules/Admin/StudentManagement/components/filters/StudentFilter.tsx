@@ -6,7 +6,7 @@ import {
   StudentSortBy,
   StudentStatus
 } from '@/modules/Admin/StudentManagement/types/studentManagement.types';
-import { SortDirection } from '@/shared/types';
+import { SortDirection } from '@/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 

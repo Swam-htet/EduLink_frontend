@@ -1,4 +1,4 @@
-import { DialogContextType } from '@/shared/providers/dialog/types';
+import { DialogContextType } from '@/providers/dialog/types';
 import { createContext, useContext } from 'react';
 
 export const DialogContext = createContext<DialogContextType | undefined>(undefined);

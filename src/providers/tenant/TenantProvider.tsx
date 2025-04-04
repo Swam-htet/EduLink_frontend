@@ -1,4 +1,4 @@
-import { LoadingPage } from '@/shared/components/pages';
+import { LoadingPage } from '@/components/pages';
 import { setTenantId } from '@/store/tenant.slice';
 
 import React, { useEffect } from 'react';
