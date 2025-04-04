@@ -1,25 +1,28 @@
 import { ApiResponse } from '@/types';
 
-// todo : need to update later
 export interface StudentUser {
   id: number;
+  student_id: string;
   first_name: string;
   last_name: string;
   email: string;
   phone: string;
   gender: string;
-  nrc: string;
-  profile_photo: string | null;
   date_of_birth: string;
   address: string;
-  role: string;
-  joined_date: string;
-  qualifications: string | null;
+  enrollment_date: string;
+  guardian_info: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  nrc: string | null;
+  profile_photo: string | null;
   created_at: string;
 }
 
 export interface StudentAuthResponseData {
-  studentUser: StudentUser;
+  student: StudentUser;
   token: string;
   token_type: string;
   expires_at: number;

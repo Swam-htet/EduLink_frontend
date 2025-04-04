@@ -1,4 +1,3 @@
-import { LoadingPage } from '@/components/pages';
 import { setTenantId } from '@/store/tenant.slice';
 
 import React, { useEffect } from 'react';
@@ -11,12 +10,6 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     dispatch(setTenantId(tenantId));
   }, [dispatch, tenantId]);
-
-  console.log('tenantId', tenantId);
-
-  if (!tenantId) {
-    return <LoadingPage />;
-  }
 
   return <React.Fragment>{children}</React.Fragment>;
 };

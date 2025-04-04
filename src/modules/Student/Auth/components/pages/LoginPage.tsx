@@ -19,7 +19,7 @@ export const LoginPage = () => {
     onSuccess: (data) => {
       dispatch(
         setCredentials({
-          studentUser: data.data.studentUser,
+          studentUser: data.data.student,
           token: data.data.token
         })
       );
