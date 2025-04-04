@@ -1,3 +1,4 @@
+import { EdulinkOrTenantRoute } from '@/components/HOC/EdulinkOrTenantRoute';
 import { PUBLIC_ENDPOINTS } from '@/ecosystem/PageEndpoints/Public';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
@@ -37,6 +38,18 @@ const RegistrationSuccessPage = lazy(() =>
   }))
 );
 
+const EdulinkLandingPage = lazy(() =>
+  import('@/modules/Edulink/Landing/components/pages').then((module) => ({
+    default: module.EdulinkLandingPage
+  }))
+);
+
+const TenantLandingPage = lazy(() =>
+  import('@/modules/Tenant/Landing/components/pages').then((module) => ({
+    default: module.TenantLandingPage
+  }))
+);
+
 export const publicRoutes: RouteObject[] = [
   // admin routes
   {
@@ -62,5 +75,14 @@ export const publicRoutes: RouteObject[] = [
   {
     path: PUBLIC_ENDPOINTS.REGISTRATION_SUCCESS,
     element: <RegistrationSuccessPage />
+  },
+  {
+    path: PUBLIC_ENDPOINTS.LANDING,
+    element: (
+      <EdulinkOrTenantRoute
+        edulinkLandingPage={<EdulinkLandingPage />}
+        tenantLandingPage={<TenantLandingPage />}
+      />
+    )
   }
 ];

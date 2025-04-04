@@ -1,5 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { format as dateFnsFormat, parseISO } from 'date-fns';
+import * as Icons from 'lucide-react';
+import { LucideProps } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -45,3 +47,10 @@ export function formatTime(time?: string) {
 export function goToDynamicRoute(path: string, id: string) {
   return path.replace(':id', id);
 }
+
+export const getIcon = (iconName: string): React.ForwardRefExoticComponent<LucideProps> => {
+  const IconComponent = Icons[
+    iconName as keyof typeof Icons
+  ] as React.ForwardRefExoticComponent<LucideProps>;
+  return IconComponent || Icons.Bookmark;
+};
