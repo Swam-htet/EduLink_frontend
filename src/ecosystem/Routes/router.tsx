@@ -1,9 +1,9 @@
 import { ErrorPage, LoadingPage } from '@/components/pages';
 
-import { AdminPrivateRoute } from '@/components/AdminPrivateRoute';
+import { AdminPrivateRoute } from '@/components/HOC/AdminPrivateRoute';
+import { StudentPrivateRoute } from '@/components/HOC/StudentPrivateRoute';
 import { AdminLayout } from '@/components/layouts/AdminLayout/AdminLayout';
 import { StudentLayout } from '@/components/layouts/StudentLayout/StudentLayout';
-import { StudentPrivateRoute } from '@/components/StudentPrivateRoute';
 import { privateAdminRoutes } from '@/ecosystem/Routes/PrivateAdminRoutes';
 import { privateStudentRoutes } from '@/ecosystem/Routes/PrivateStudentRoutes';
 import { publicRoutes } from '@/ecosystem/Routes/PublicRoutes';
