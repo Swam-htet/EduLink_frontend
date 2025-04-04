@@ -33,6 +33,7 @@ export interface InputProps {
   type?: string;
   disabled?: boolean;
   required?: boolean;
+  error?: string;
 }
 
 export interface PasswordFieldProps {
@@ -41,6 +42,7 @@ export interface PasswordFieldProps {
   placeholder?: string;
   disabled?: boolean;
   required?: boolean;
+  error?: string;
 }
 
 export interface CheckFieldProps {
@@ -49,6 +51,7 @@ export interface CheckFieldProps {
   description?: string;
   disabled?: boolean;
   required?: boolean;
+  error?: string;
 }
 
 export interface SelectProps {
@@ -58,6 +61,7 @@ export interface SelectProps {
   description?: string;
   options: SelectOption[];
   disabled?: boolean;
+  error?: string;
 }
 
 export interface TextareaProps {
@@ -67,6 +71,7 @@ export interface TextareaProps {
   description?: string;
   disabled?: boolean;
   required?: boolean;
+  error?: string;
 }
 
 export interface DatePickerProps {
@@ -76,6 +81,7 @@ export interface DatePickerProps {
   description?: string;
   disabled?: boolean;
   required?: boolean;
+  error?: string;
 }
 
 export interface TimePickerProps {
@@ -85,6 +91,7 @@ export interface TimePickerProps {
   disabled?: boolean;
   required?: boolean;
   placeholder?: string;
+  error?: string;
 }
 
 export interface ButtonProps {
@@ -105,6 +112,7 @@ export interface DateRangePickerProps {
   description?: string;
   disabled?: boolean;
   required?: boolean;
+  error?: string;
 }
 
 type CustomFormProps<T extends FieldValues> = {
@@ -160,6 +168,7 @@ CustomForm.Input = React.forwardRef<HTMLInputElement, { field: InputProps }>(({ 
               {...formField}
               ref={ref}
               type={field.type}
+              className={field.error && 'border-red-500'}
               placeholder={field.placeholder}
               disabled={field.disabled}
               required={field.required}
@@ -200,7 +209,7 @@ CustomForm.Password = React.forwardRef<HTMLInputElement, { field: PasswordFieldP
                   placeholder={field.placeholder}
                   disabled={field.disabled}
                   required={field.required}
-                  className="pr-10"
+                  className={field.error && 'border-red-500'}
                 />
                 <ShadcnButton
                   className="absolute right-0 bottom-0"
@@ -216,6 +225,7 @@ CustomForm.Password = React.forwardRef<HTMLInputElement, { field: PasswordFieldP
                 </ShadcnButton>
               </div>
             </FormControl>
+            {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
             <FormMessage />
           </FormItem>
         )}
@@ -298,6 +308,7 @@ CustomForm.Select = React.forwardRef<HTMLSelectElement, { field: SelectProps }>(
             </Select>
           </FormControl>
           {field.description && <FormDescription>{field.description}</FormDescription>}
+          {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
           <FormMessage />
         </FormItem>
       )}
@@ -332,6 +343,7 @@ CustomForm.Textarea = React.forwardRef<HTMLTextAreaElement, { field: TextareaPro
               />
             </FormControl>
             {field.description && <FormDescription>{field.description}</FormDescription>}
+            {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
             <FormMessage />
           </FormItem>
         )}
@@ -366,7 +378,7 @@ CustomForm.DatePicker = React.forwardRef<HTMLInputElement, { field: DatePickerPr
               className={cn(
                 'w-full pl-3 text-left font-normal',
                 !formField.value && 'text-muted-foreground',
-                formMethods.formState.errors[field.name] && 'border-red-500'
+                formMethods.formState.errors[field.name] && field.error && 'border-red-500'
               )}
               disabled={field.disabled}
             >
@@ -383,7 +395,7 @@ CustomForm.DatePicker = React.forwardRef<HTMLInputElement, { field: DatePickerPr
               mode="single"
               selected={formField.value ? new Date(formField.value) : undefined}
               onSelect={(date) => {
-                formField.onChange(date ? date.toISOString() : null);
+                formField.onChange(date ? format(date, 'yyyy-MM-dd') : null);
               }}
               disabled={(date) => field.disabled || date < new Date('1900-01-01')}
               initialFocus
@@ -392,7 +404,7 @@ CustomForm.DatePicker = React.forwardRef<HTMLInputElement, { field: DatePickerPr
         </Popover>
         {field.description && <FormDescription>{field.description}</FormDescription>}
         <FormMessage className="text-red-500">
-          {formMethods.formState.errors[field.name]?.message as string}
+          {formMethods.formState.errors[field.name]?.message as string} {field.error}
         </FormMessage>
       </div>
     );
@@ -426,7 +438,7 @@ CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerPr
                 className={cn(
                   'w-full pl-3 text-left font-normal',
                   !formField.value && 'text-muted-foreground',
-                  formMethods.formState.errors[field.name] && 'border-red-500'
+                  formMethods.formState.errors[field.name] && field.error && 'border-red-500'
                 )}
                 disabled={field.disabled}
               >
@@ -451,6 +463,7 @@ CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerPr
           </PopoverContent>
         </Popover>
         {field.description && <FormDescription>{field.description}</FormDescription>}
+        {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
       </div>
     );
   }

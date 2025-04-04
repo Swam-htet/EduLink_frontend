@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/modules/Auth/hooks/useAuth';
+import { useAdminAuth } from '@/modules/Admin/Auth/hooks/useAdminAuth';
 import Sidebar from '@/shared/components/layouts/AdminLayout/components/Sidebar';
 import { selectTenantId } from '@/store/tenant.slice';
 import { LogOutIcon } from 'lucide-react';
@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 
 export const AdminLayout = () => {
   const tenantId = useSelector(selectTenantId);
-  const { logout } = useAuth();
+  const { logout } = useAdminAuth();
   return (
     <div className="grid h-screen grid-cols-[250px_1fr]">
       <div className="flex flex-col gap-4 overflow-hidden bg-white">

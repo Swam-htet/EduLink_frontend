@@ -1,9 +1,12 @@
 import { ErrorPage, LoadingPage } from '@/shared/components/pages';
 
-import { PrivateRoute } from '@/components/PrivateRoute';
-import { privateRoutes } from '@/ecosystem/Routes/PrivateRoutes';
+import { AdminPrivateRoute } from '@/components/AdminPrivateRoute';
+import { StudentPrivateRoute } from '@/components/StudentPrivateRoute';
+import { privateAdminRoutes } from '@/ecosystem/Routes/PrivateAdminRoutes';
+import { privateStudentRoutes } from '@/ecosystem/Routes/PrivateStudentRoutes';
 import { publicRoutes } from '@/ecosystem/Routes/PublicRoutes';
 import { AdminLayout } from '@/shared/components/layouts/AdminLayout/AdminLayout';
+import { StudentLayout } from '@/shared/components/layouts/StudentLayout/StudentLayout';
 import { Suspense } from 'react';
 import {
   createBrowserRouter,
@@ -26,9 +29,22 @@ const router = createBrowserRouter(
       ))}
 
       {/* Private Routes with Admin Layout */}
-      <Route element={<PrivateRoute />} errorElement={<ErrorPage />}>
+      <Route element={<AdminPrivateRoute />} errorElement={<ErrorPage />}>
         <Route element={<AdminLayout />}>
-          {privateRoutes.map((route) => (
+          {privateAdminRoutes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={route.element}
+              errorElement={<ErrorPage />}
+            />
+          ))}
+        </Route>
+      </Route>
+
+      <Route element={<StudentPrivateRoute />} errorElement={<ErrorPage />}>
+        <Route element={<StudentLayout />}>
+          {privateStudentRoutes.map((route) => (
             <Route
               key={route.path}
               path={route.path}

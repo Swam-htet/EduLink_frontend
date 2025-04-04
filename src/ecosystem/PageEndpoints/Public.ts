@@ -1,5 +1,6 @@
 export const PUBLIC_ENDPOINTS = {
-  LOGIN: '/login',
+  ADMIN_LOGIN: '/admin/login',
+  STUDENT_LOGIN: '/student/login',
   STUDENT_REGISTRATION: '/student-registration',
   REGISTRATION_SUCCESS: '/student-registration/success',
   NOT_FOUND: '*'

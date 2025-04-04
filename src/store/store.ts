@@ -1,4 +1,6 @@
-import { authReducer } from '@/modules/Auth/store/auth.slice';
+import { adminAuthReducer } from '@/modules/Admin/Auth/store/auth.slice';
+import { studentAuthReducer } from '@/modules/Student/Auth/store/auth.slice';
+import tenantReducer from '@/store/tenant.slice';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
   FLUSH,
@@ -11,7 +13,6 @@ import {
   REHYDRATE
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import tenantReducer from './tenant.slice';
 
 const persistConfig = {
   key: 'root',
@@ -19,7 +20,8 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  auth: authReducer,
+  adminAuth: adminAuthReducer,
+  studentAuth: studentAuthReducer,
   tenant: tenantReducer
 });
 

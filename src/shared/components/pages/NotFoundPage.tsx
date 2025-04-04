@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { useNavigate } from 'react-router-dom';
 
 export const NotFoundPage = () => {
@@ -13,7 +13,7 @@ export const NotFoundPage = () => {
         <p className="text-muted-foreground mb-8">
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <Button onClick={() => navigate(PRIVATE_ENDPOINTS.DASHBOARD)}>Go to Dashboard</Button>
+        <Button onClick={() => navigate(ADMIN_PRIVATE_ENDPOINTS.DASHBOARD)}>Go to Dashboard</Button>
       </div>
     </div>
   );

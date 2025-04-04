@@ -14,10 +14,20 @@ export const apiClient = axios.create({
   }
 });
 
+// get token from store
+const getTokenFromStore = (): string | null => {
+  console.log(window.location.pathname);
+  if (window.location.pathname.includes('admin')) {
+    return store.getState().adminAuth.token;
+  } else {
+    return store.getState().studentAuth.token;
+  }
+};
+
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth.token;
+    const token = getTokenFromStore();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

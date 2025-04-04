@@ -1,4 +1,4 @@
-import { PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { cn } from '@/lib/utils';
 import {
   Book,
@@ -27,59 +27,59 @@ const Sidebar = () => {
       {
         icon: <ChartArea size={15} />,
         label: 'Dashboard',
-        href: PRIVATE_ENDPOINTS.DASHBOARD
+        href: ADMIN_PRIVATE_ENDPOINTS.DASHBOARD
       }
     ],
     [
       {
         icon: <Users2 size={15} />,
         label: 'Student Management',
-        href: PRIVATE_ENDPOINTS.STUDENT_MANAGEMENT
+        href: ADMIN_PRIVATE_ENDPOINTS.STUDENT_MANAGEMENT
       },
       {
         icon: <Scroll size={15} />,
         label: 'Student Class Enrollment',
-        href: PRIVATE_ENDPOINTS.STUDENT_CLASS_ENROLLMENT
+        href: ADMIN_PRIVATE_ENDPOINTS.STUDENT_CLASS_ENROLLMENT
       },
       {
         icon: <Notebook size={15} />,
         label: 'Student Class Attendance',
-        href: PRIVATE_ENDPOINTS.STUDENT_CLASS_ATTENDANCE
+        href: ADMIN_PRIVATE_ENDPOINTS.STUDENT_CLASS_ATTENDANCE
       }
     ],
     [
       {
         icon: <User size={15} />,
         label: 'Staff Management',
-        href: PRIVATE_ENDPOINTS.STAFF_MANAGEMENT
+        href: ADMIN_PRIVATE_ENDPOINTS.STAFF_MANAGEMENT
       }
     ],
     [
       {
         icon: <School size={15} />,
         label: 'Class Management',
-        href: PRIVATE_ENDPOINTS.CLASS_MANAGEMENT
+        href: ADMIN_PRIVATE_ENDPOINTS.CLASS_MANAGEMENT
       },
       {
         icon: <Calendar size={15} />,
         label: 'Class Schedule',
-        href: PRIVATE_ENDPOINTS.CLASS_SCHEDULE_MANAGEMENT
+        href: ADMIN_PRIVATE_ENDPOINTS.CLASS_SCHEDULE_MANAGEMENT
       },
 
       {
         icon: <Book size={15} />,
         label: 'Subject Management',
-        href: PRIVATE_ENDPOINTS.SUBJECT_MANAGEMENT
+        href: ADMIN_PRIVATE_ENDPOINTS.SUBJECT_MANAGEMENT
       },
       {
         icon: <Library size={15} />,
         label: 'Course Management',
-        href: PRIVATE_ENDPOINTS.COURSE_MANAGEMENT
+        href: ADMIN_PRIVATE_ENDPOINTS.COURSE_MANAGEMENT
       },
       {
         icon: <Calendar size={15} />,
         label: 'Exam Management',
-        href: PRIVATE_ENDPOINTS.EXAM_MANAGEMENT
+        href: ADMIN_PRIVATE_ENDPOINTS.EXAM_MANAGEMENT
       }
     ]
   ];
