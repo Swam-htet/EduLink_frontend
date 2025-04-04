@@ -2,6 +2,7 @@ import Pagination from '@/components/common/Pagination';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import { goToDynamicRoute } from '@/lib/utils';
 import ClassManagementService from '@/modules/Admin/ClassManagement/services/classManagement.service';
 import { ClassInvitationDialog } from '@/modules/Admin/StudentManagement/components/dialogs/ClassInvitationDialog';
 import { StudentFilter } from '@/modules/Admin/StudentManagement/components/filters/StudentFilter';
@@ -74,7 +75,7 @@ export const StudentManagementPage = () => {
   };
 
   const handleRowClick = (student: Student) => {
-    navigate(ADMIN_PRIVATE_ENDPOINTS.STUDENT_DETAIL.replace(':id', student.id.toString()));
+    navigate(goToDynamicRoute(ADMIN_PRIVATE_ENDPOINTS.STUDENT_DETAIL, student.id.toString()));
   };
 
   const classes = classQuery.data?.data;

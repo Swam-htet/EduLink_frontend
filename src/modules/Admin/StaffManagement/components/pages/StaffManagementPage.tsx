@@ -2,6 +2,7 @@ import Pagination from '@/components/common/Pagination';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import { goToDynamicRoute } from '@/lib/utils';
 import { StaffFilter } from '@/modules/Admin/StaffManagement/components/filters/StaffFilter';
 import StaffTable from '@/modules/Admin/StaffManagement/components/tables/StaffTable';
 import { StaffFilterFormValues } from '@/modules/Admin/StaffManagement/schemas/staff.schema';
@@ -26,7 +27,7 @@ export const StaffManagementPage = () => {
   });
 
   const onRowClick = (staff: Staff) => {
-    navigate(`/staff-management/${staff.id}`);
+    navigate(goToDynamicRoute(ADMIN_PRIVATE_ENDPOINTS.STAFF_DETAIL, staff.id.toString()));
   };
 
   const onAddStaffClick = () => {

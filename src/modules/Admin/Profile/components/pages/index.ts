@@ -1,1 +1,1 @@
-export { ProfilePage } from './ProfilePage';
+export { ProfilePage } from '@/modules/Admin/Profile/components/pages/ProfilePage';

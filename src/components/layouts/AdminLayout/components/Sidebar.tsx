@@ -8,6 +8,7 @@ import {
   Notebook,
   School,
   Scroll,
+  Settings,
   User,
   Users2
 } from 'lucide-react';
@@ -80,6 +81,20 @@ const Sidebar = () => {
         icon: <Calendar size={15} />,
         label: 'Exam Management',
         href: ADMIN_PRIVATE_ENDPOINTS.EXAM_MANAGEMENT
+      }
+    ],
+    [
+      {
+        icon: <Settings size={15} />,
+        label: 'General Setting Management',
+        href: ADMIN_PRIVATE_ENDPOINTS.GENERAL_SETTING_MANAGEMENT
+      }
+    ],
+    [
+      {
+        icon: <User size={15} />,
+        label: 'Admin Profile',
+        href: ADMIN_PRIVATE_ENDPOINTS.PROFILE
       }
     ]
   ];

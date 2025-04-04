@@ -41,3 +41,7 @@ export function formatTime(time?: string) {
   if (!time) return '-';
   return dateFnsFormat(parseISO(time), 'HH:mm');
 }
+
+export function goToDynamicRoute(path: string, id: string) {
+  return path.replace(':id', id);
+}

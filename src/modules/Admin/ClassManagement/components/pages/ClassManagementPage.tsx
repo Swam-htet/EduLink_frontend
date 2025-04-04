@@ -2,6 +2,7 @@ import Pagination from '@/components/common/Pagination';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
+import { goToDynamicRoute } from '@/lib/utils';
 import { ClassFilter } from '@/modules/Admin/ClassManagement/components/filters/ClassFilter';
 import ClassTable from '@/modules/Admin/ClassManagement/components/tables/ClassTable';
 import { ClassFilterFormValues } from '@/modules/Admin/ClassManagement/schemas/class.schema';
@@ -31,7 +32,9 @@ export const ClassManagementPage = () => {
   });
 
   const handleRowClick = (classItem: Class) => {
-    navigate(`/class-management/${classItem.id}`);
+    navigate(
+      goToDynamicRoute(ADMIN_PRIVATE_ENDPOINTS.CLASS_MANAGEMENT_DETAIL, classItem.id.toString())
+    );
   };
 
   const handleCreateClick = () => {

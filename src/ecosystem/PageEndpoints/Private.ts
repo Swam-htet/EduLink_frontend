@@ -21,6 +21,7 @@ export const ADMIN_PRIVATE_ENDPOINTS = {
   EXAM_QUESTION_UPLOAD: '/admin/exam-management/:id/upload-questions',
   CLASS_SCHEDULE_MANAGEMENT: '/admin/class-schedule-management',
   CLASS_SCHEDULE_CREATE: '/admin/class-schedule-management/new',
+  GENERAL_SETTING_MANAGEMENT: '/admin/general-setting-management',
   PROFILE: '/admin/profile',
   SETTINGS: '/admin/settings'
 } as const;

@@ -142,6 +142,20 @@ const ClassScheduleCreatePage = lazy(() =>
   )
 );
 
+const GeneralSettingManagementPage = lazy(() =>
+  import('@/modules/Admin/Setting/components/pages/GeneralSettingManagementPage').then(
+    (module) => ({
+      default: module.GeneralSettingManagementPage
+    })
+  )
+);
+
+const ProfilePage = lazy(() =>
+  import('@/modules/Admin/Profile/components/pages/ProfilePage').then((module) => ({
+    default: module.ProfilePage
+  }))
+);
+
 export const privateAdminRoutes: RouteObject[] = [
   {
     path: ADMIN_PRIVATE_ENDPOINTS.DASHBOARD,
@@ -226,5 +240,13 @@ export const privateAdminRoutes: RouteObject[] = [
   {
     path: ADMIN_PRIVATE_ENDPOINTS.CLASS_SCHEDULE_CREATE,
     element: <ClassScheduleCreatePage />
+  },
+  {
+    path: ADMIN_PRIVATE_ENDPOINTS.GENERAL_SETTING_MANAGEMENT,
+    element: <GeneralSettingManagementPage />
+  },
+  {
+    path: ADMIN_PRIVATE_ENDPOINTS.PROFILE,
+    element: <ProfilePage />
   }
 ];
