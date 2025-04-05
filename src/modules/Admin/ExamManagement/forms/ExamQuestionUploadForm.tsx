@@ -25,9 +25,6 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
     }
   });
 
-  console.log('Form error - ', formMethods.formState.errors);
-  console.log('Form values - ', formMethods.getValues());
-
   const { fields, remove } = useFieldArray({
     control: formMethods.control,
     name: 'exam_questions'

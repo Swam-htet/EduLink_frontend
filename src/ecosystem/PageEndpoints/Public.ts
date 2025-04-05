@@ -1,6 +1,6 @@
 export const PUBLIC_ENDPOINTS = {
   LANDING: '/',
-  TENANT_LANDING: '/',
+  TENANT_LANDING: '/tenant',
   ADMIN_LOGIN: '/admin/login',
   STUDENT_LOGIN: '/student/login',
   STUDENT_REGISTRATION: '/student-registration',

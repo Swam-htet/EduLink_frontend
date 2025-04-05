@@ -28,7 +28,6 @@ export const StaffFilter = ({ filters, onFilterChange }: StaffFilterProps) => {
     onFilterChange(data);
   };
 
-  console.log('Form error ', formMethods.formState.errors);
   return (
     <CustomForm formMethods={formMethods} onSubmit={onSubmit} className="space-y-4">
       <div className="grid gap-4 md:grid-cols-3">

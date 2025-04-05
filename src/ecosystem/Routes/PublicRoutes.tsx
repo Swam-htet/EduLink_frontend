@@ -1,4 +1,3 @@
-import { EdulinkOrTenantRoute } from '@/components/HOC/EdulinkOrTenantRoute';
 import { PUBLIC_ENDPOINTS } from '@/ecosystem/PageEndpoints/Public';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
@@ -78,11 +77,10 @@ export const publicRoutes: RouteObject[] = [
   },
   {
     path: PUBLIC_ENDPOINTS.LANDING,
-    element: (
-      <EdulinkOrTenantRoute
-        edulinkLandingPage={<EdulinkLandingPage />}
-        tenantLandingPage={<TenantLandingPage />}
-      />
-    )
+    element: <EdulinkLandingPage />
+  },
+  {
+    path: PUBLIC_ENDPOINTS.TENANT_LANDING,
+    element: <TenantLandingPage />
   }
 ];

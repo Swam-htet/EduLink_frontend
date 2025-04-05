@@ -34,17 +34,6 @@ export const ExamQuestionUploadPage = () => {
 
   const handleSubmit = async (data: UploadQuestionsFormData) => {
     uploadExamQuestionsMutation.mutate(data);
-    console.log(
-      data.exam_questions.map((question) => {
-        return {
-          ...question,
-          marking_schema: {
-            correct: question.marks,
-            incorrect: 0
-          }
-        };
-      })
-    );
   };
 
   const exam = examQuery.data?.data;

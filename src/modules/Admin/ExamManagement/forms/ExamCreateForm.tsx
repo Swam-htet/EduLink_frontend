@@ -45,8 +45,6 @@ export const ExamCreateForm = ({
     name: 'sections'
   });
 
-  console.log('Form error ', formMethods.formState.errors);
-
   const addSection = () => {
     append({
       section_number: (fields.length + 1).toString(),

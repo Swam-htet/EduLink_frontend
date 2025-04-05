@@ -16,7 +16,6 @@ export const apiClient = axios.create({
 
 // get token from store
 const getTokenFromStore = (): string | null => {
-  console.log(window.location.pathname);
   if (window.location.pathname.includes('admin')) {
     return store.getState().adminAuth.token;
   } else {
