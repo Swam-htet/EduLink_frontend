@@ -11,6 +11,16 @@ import { PlusCircle, Trash2 } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 
+const defaultOptions = [
+  { id: '1', text: 'Option 1' },
+  { id: '2', text: 'Option 2' }
+];
+
+const defaultTrueFalseOptions = [
+  { id: 'true', text: 'True' },
+  { id: 'false', text: 'False' }
+];
+
 interface ExamQuestionUploadFormProps {
   exam: Exam;
   onSubmit: (data: UploadQuestionsFormData) => void;
@@ -21,7 +31,25 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
   const formMethods = useForm<UploadQuestionsFormData>({
     resolver: zodResolver(uploadQuestionsSchema),
     defaultValues: {
-      exam_questions: []
+      exam_questions:
+        exam.sections?.map((section) => ({
+          id: uuidv4(),
+          section_id: section.id,
+          question: `Default question for ${section.section_title}`,
+          type: section.question_type,
+          marks: '1',
+          difficulty_level: '1',
+          options:
+            section.question_type === QuestionType.MULTIPLE_CHOICE
+              ? defaultOptions
+              : section.question_type === QuestionType.TRUE_FALSE
+                ? defaultTrueFalseOptions
+                : [],
+          requires_manual_grading: false,
+          correct_answer: section.question_type === QuestionType.TRUE_FALSE ? 'true' : '1',
+          explanation: 'This is a default question. Please edit it as needed.',
+          time_limit: '5'
+        })) || []
     }
   });
 
@@ -39,10 +67,12 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
       type: questionType,
       marks: '1',
       difficulty_level: '1',
-      options: [
-        { id: '1', text: 'Option 1' },
-        { id: '2', text: 'Option 2' }
-      ],
+      options:
+        questionType === QuestionType.MULTIPLE_CHOICE
+          ? defaultOptions
+          : questionType === QuestionType.TRUE_FALSE
+            ? defaultTrueFalseOptions
+            : [],
       requires_manual_grading: false,
       correct_answer: '1'
     };
@@ -509,8 +539,7 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
                         field={{
                           name: `exam_questions.${questionIndex}.time_limit`,
                           label: 'Time Limit',
-                          placeholder: 'Enter time limit in minutes',
-                          required: false
+                          placeholder: 'Enter time limit in minutes'
                         }}
                       />
 

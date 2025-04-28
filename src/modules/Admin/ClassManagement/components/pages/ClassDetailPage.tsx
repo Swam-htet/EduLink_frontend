@@ -1,17 +1,18 @@
 import BackButton from '@/components/common/BackButtton';
+import Table, { TableColumn } from '@/components/common/Table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatTime } from '@/lib/utils';
+import { StudentTable } from '@/modules/Admin/ClassManagement/components/tables/StudentTable';
 import { ClassUpdateFormData } from '@/modules/Admin/ClassManagement/schemas/class.schema';
 import { ClassManagementService } from '@/modules/Admin/ClassManagement/services/classManagement.service';
-import { ClassStatus } from '@/modules/Admin/ClassManagement/types/class.types';
-import { StudentTable } from '@/modules/Admin/StudentManagement/components/tables/StudentTable';
+import { ClassStatus, Schedule } from '@/modules/Admin/ClassManagement/types/class.types';
 import { Subject } from '@/modules/Admin/SubjectManagement/types/subject.types';
 import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BookOpen, GraduationCap, Users } from 'lucide-react';
+import { BookOpen, Calendar, Clock, GraduationCap, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -45,15 +46,79 @@ const SubjectCards = ({ subjects }: { subjects: Subject[] }) => {
               <p className="text-muted-foreground text-sm">{subject.description}</p>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Credits: {subject.credits}</span>
-                <Button variant="outline" size="sm">
-                  View Materials
-                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
       ))}
     </div>
+  );
+};
+
+const ScheduleTable = ({ schedules }: { schedules: Schedule[] }) => {
+  const columns: TableColumn<Schedule>[] = [
+    {
+      header: 'Subject',
+      accessor: (schedule) => (
+        <div className="flex items-center gap-2">
+          <BookOpen className="text-muted-foreground h-4 w-4" />
+          <span>{schedule.subject.title}</span>
+        </div>
+      ),
+      width: '20%'
+    },
+    {
+      header: 'Tutor',
+      accessor: (schedule) => (
+        <div className="flex items-center gap-2">
+          <Users className="text-muted-foreground h-4 w-4" />
+          <span>{`${schedule.tutor.first_name} ${schedule.tutor.last_name}`}</span>
+        </div>
+      ),
+      width: '20%'
+    },
+    {
+      header: 'Date',
+      accessor: (schedule) => (
+        <div className="flex items-center gap-2">
+          <Calendar className="text-muted-foreground h-4 w-4" />
+          <span>{formatDate(schedule.schedule_details.start_date)}</span>
+        </div>
+      ),
+      width: '20%'
+    },
+
+    {
+      header: 'Time',
+      accessor: (schedule) => (
+        <div className="flex items-center gap-2">
+          <Clock className="text-muted-foreground h-4 w-4" />
+          <span>{formatTime(schedule.schedule_details.start_date)}</span>
+          <span>-</span>
+          <span>{formatTime(schedule.schedule_details.end_date)}</span>
+        </div>
+      ),
+      width: '30%'
+    },
+    {
+      header: 'Late Minutes',
+      accessor: (schedule) => (
+        <div className="flex items-center gap-2">
+          <Clock className="text-muted-foreground h-4 w-4" />
+          <span>{schedule.schedule_details.late_mins} mins</span>
+        </div>
+      ),
+      width: '20%'
+    }
+  ];
+
+  return (
+    <Table
+      columns={columns}
+      data={schedules}
+      loading={false}
+      emptyMessage="No schedules available"
+    />
   );
 };
 
@@ -97,6 +162,17 @@ export const ClassDetailPage = () => {
     });
   };
 
+  const handleOnGoing = () => {
+    confirm({
+      title: 'Are you sure you want to start this class?',
+      onConfirm: () => {
+        classEditMutation.mutate({
+          status: ClassStatus.Ongoing
+        });
+      }
+    });
+  };
+
   if (classDetailQuery.isPending) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -128,6 +204,11 @@ export const ClassDetailPage = () => {
           >
             {classData.status}
           </span>
+          {classData.status === ClassStatus.Scheduled && (
+            <Button variant="outline" onClick={handleOnGoing}>
+              Start Class
+            </Button>
+          )}
           {classData.status !== ClassStatus.Cancelled && (
             <div className="flex gap-2">
               {/* <Button variant="outline" onClick={handleEdit}>
@@ -218,16 +299,23 @@ export const ClassDetailPage = () => {
               </div>
             </TabsContent>
             <TabsContent value="schedule" className="mt-4">
-              <p className="text-muted-foreground">Class schedule will be implemented here</p>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">Class Schedule</h3>
+                </div>
+                {classData.schedules && classData.schedules.length > 0 ? (
+                  <ScheduleTable schedules={classData.schedules} />
+                ) : (
+                  <div className="flex h-32 items-center justify-center rounded-md border border-dashed">
+                    <p className="text-muted-foreground">No schedule available</p>
+                  </div>
+                )}
+              </div>
             </TabsContent>
             <TabsContent value="materials" className="mt-4">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium">Subjects ({classData.subjects?.length})</h3>
-                  <Button variant="outline" size="sm">
-                    <BookOpen className="mr-2 h-4 w-4" />
-                    Add Subject
-                  </Button>
                 </div>
                 <SubjectCards subjects={classData.subjects || []} />
               </div>

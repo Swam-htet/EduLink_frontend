@@ -24,7 +24,7 @@ export const LoginPage = () => {
         })
       );
       toast.success(data.message);
-      navigate(ADMIN_PRIVATE_ENDPOINTS.DASHBOARD);
+      navigate(ADMIN_PRIVATE_ENDPOINTS.PROFILE);
     },
     onError: (error) => {
       toast.error((error.response?.data as ErrorPayload).message);

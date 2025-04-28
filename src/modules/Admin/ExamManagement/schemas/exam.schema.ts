@@ -26,8 +26,12 @@ export type ExamFilterFormData = z.infer<typeof examFilterSchema>;
 
 // Create exam section schema
 export const createExamSectionSchema = z.object({
-  section_number: z.string({ required_error: 'Section number is required' }),
-  section_title: z.string({ required_error: 'Section title is required' }),
+  section_number: z
+    .string({ required_error: 'Section number is required' })
+    .min(1, 'Section number is required'),
+  section_title: z
+    .string({ required_error: 'Section title is required' })
+    .min(1, 'Section title is required'),
   section_description: z.string().optional(),
   question_type: z.nativeEnum(QuestionType, {
     required_error: 'Question type is required'
@@ -76,26 +80,26 @@ export const matchingPairsSchema = z.object({
 // Base question schema
 export const baseQuestionSchema = z.object({
   section_id: z.number(),
-  question: z.string(),
+  question: z.string().min(1, 'Question is required'),
   type: z.nativeEnum(QuestionType),
-  marks: z.string(),
+  marks: z.string().min(1, 'Marks is required'),
   explanation: z.string().optional(),
   answer_guidelines: z.string().optional(),
   requires_manual_grading: z.boolean().optional(),
-  difficulty_level: z.string(),
-  time_limit: z.string().optional(),
+  difficulty_level: z.string().min(1, 'Difficulty level is required'),
+  time_limit: z.string().min(1, 'Time limit is required'),
   options: z.array(questionOptionSchema).optional(),
-  correct_answer: z.string(),
   blank_answers: z.array(blankAnswerSchema).optional(),
   matching_pairs: matchingPairsSchema.optional(),
-  correct_order: z.array(z.string()).optional()
+  correct_order: z.array(z.string()).optional(),
+  correct_answer: z.string().optional()
 });
 
 // Multiple choice question schema
 export const multipleChoiceQuestionSchema = baseQuestionSchema.extend({
   type: z.literal(QuestionType.MULTIPLE_CHOICE),
-  options: z.array(questionOptionSchema).min(2, 'At least two options are required'),
-  correct_answer: z.string()
+  correct_answer: z.string(),
+  options: z.array(questionOptionSchema).min(2, 'At least two options are required')
 });
 
 // True false question schema

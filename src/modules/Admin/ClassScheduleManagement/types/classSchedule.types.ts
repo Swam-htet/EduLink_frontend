@@ -1,4 +1,4 @@
-export interface ClassSchedule {
+export interface CalendarEventClassSchedule {
   id: number;
   class: {
     id: number;
@@ -23,7 +23,7 @@ export interface ClassSchedule {
     end_date: string;
     late_mins: number;
   };
-  status: 'scheduled' | 'completed' | 'cancelled';
+  status: 'active' | 'completed' | 'cancelled';
   created_at: string;
   updated_at: string;
 }

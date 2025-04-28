@@ -1,11 +1,12 @@
+import { Button } from '@/components/ui/button';
 import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { cn } from '@/lib/utils';
+import { useAdminAuth } from '@/modules/Admin/Auth/hooks/useAdminAuth';
 import {
   Book,
   Calendar,
-  ChartArea,
   Library,
-  Notebook,
+  LogOutIcon,
   School,
   Scroll,
   Settings,
@@ -23,14 +24,15 @@ type SidebarItem = {
 };
 
 const Sidebar = () => {
+  const { logout } = useAdminAuth();
   const SIDEBAR_ITEMS: SidebarItem[][] = [
-    [
-      {
-        icon: <ChartArea size={15} />,
-        label: 'Dashboard',
-        href: ADMIN_PRIVATE_ENDPOINTS.DASHBOARD
-      }
-    ],
+    // [
+    //   {
+    //     icon: <ChartArea size={15} />,
+    //     label: 'Dashboard',
+    //     href: ADMIN_PRIVATE_ENDPOINTS.DASHBOARD
+    //   }
+    // ],
     [
       {
         icon: <Users2 size={15} />,
@@ -41,11 +43,6 @@ const Sidebar = () => {
         icon: <Scroll size={15} />,
         label: 'Student Class Enrollment',
         href: ADMIN_PRIVATE_ENDPOINTS.STUDENT_CLASS_ENROLLMENT
-      },
-      {
-        icon: <Notebook size={15} />,
-        label: 'Student Class Attendance',
-        href: ADMIN_PRIVATE_ENDPOINTS.STUDENT_CLASS_ATTENDANCE
       }
     ],
     [
@@ -123,6 +120,18 @@ const Sidebar = () => {
             </React.Fragment>
           );
         })}
+        <div className="flex justify-end p-3">
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={() => {
+              logout();
+            }}
+          >
+            <LogOutIcon className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
         <div className="border-border-weak border-t border-t-red-50" />
       </div>
     </nav>

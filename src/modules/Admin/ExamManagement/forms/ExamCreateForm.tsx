@@ -28,6 +28,15 @@ interface ExamCreateFormProps {
   subjectOptions: SubjectOption[];
 }
 
+const defaultSection = [
+  {
+    section_number: '1',
+    section_title: 'Section 1',
+    section_description: '',
+    question_type: QuestionType.MULTIPLE_CHOICE
+  }
+];
+
 export const ExamCreateForm = ({
   onSubmit,
   isPending,
@@ -37,7 +46,10 @@ export const ExamCreateForm = ({
 }: ExamCreateFormProps) => {
   const formMethods = useForm<CreateExamFormData>({
     resolver: zodResolver(createExamSchema),
-    defaultValues: {}
+    defaultValues: {
+      sections: defaultSection
+    },
+    mode: 'onChange'
   });
 
   const { fields, append, remove } = useFieldArray({

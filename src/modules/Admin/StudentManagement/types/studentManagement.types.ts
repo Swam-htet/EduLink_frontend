@@ -27,6 +27,7 @@ export interface Student {
   profile_photo: string | null;
   created_at: string;
   updated_at: string;
+  attendance: string;
 }
 
 export interface StudentResponse {

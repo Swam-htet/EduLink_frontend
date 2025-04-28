@@ -156,11 +156,23 @@ const ProfilePage = lazy(() =>
   }))
 );
 
+const ExamResultDetailPage = lazy(() =>
+  import('@/modules/Admin/ExamManagement/components/pages/ExamResultDetailPage').then((module) => ({
+    default: module.ExamResultDetailPage
+  }))
+);
+
+const ManualGradingPage = lazy(() =>
+  import('@/modules/Admin/ExamManagement/components/pages/ManualGradingPage').then((module) => ({
+    default: module.ManualGradingPage
+  }))
+);
+
 export const privateAdminRoutes: RouteObject[] = [
-  {
-    path: ADMIN_PRIVATE_ENDPOINTS.DASHBOARD,
-    element: <DashboardPage />
-  },
+  // {
+  //   path: ADMIN_PRIVATE_ENDPOINTS.DASHBOARD,
+  //   element: <DashboardPage />
+  // },
   {
     path: ADMIN_PRIVATE_ENDPOINTS.STAFF_MANAGEMENT,
     element: <StaffManagementPage />
@@ -220,6 +232,14 @@ export const privateAdminRoutes: RouteObject[] = [
   {
     path: ADMIN_PRIVATE_ENDPOINTS.EXAM_MANAGEMENT,
     element: <ExamManagementPage />
+  },
+  {
+    path: ADMIN_PRIVATE_ENDPOINTS.EXAM_RESULT_DETAIL,
+    element: <ExamResultDetailPage />
+  },
+  {
+    path: ADMIN_PRIVATE_ENDPOINTS.EXAM_RESULT_DETAIL_MANUAL_GRADING,
+    element: <ManualGradingPage />
   },
   {
     path: ADMIN_PRIVATE_ENDPOINTS.EXAM_CREATE,

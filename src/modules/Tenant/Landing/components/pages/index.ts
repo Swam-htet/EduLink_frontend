@@ -1,1 +1,1 @@
-export { TenantLandingPage } from '@/modules/Tenant/Landing/components/pages/LandingPage';
+export { TenantLandingPage } from '@/modules/Tenant/Landing/components/pages/TenantLandingPage';

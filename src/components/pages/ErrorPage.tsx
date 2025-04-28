@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { useNavigate, useRouteError } from 'react-router-dom';
 
 export const ErrorPage = () => {
@@ -21,9 +20,9 @@ export const ErrorPage = () => {
           <Button variant="outline" onClick={() => window.location.reload()}>
             Try Again
           </Button>
-          <Button onClick={() => navigate(ADMIN_PRIVATE_ENDPOINTS.DASHBOARD)}>
+          {/* <Button onClick={() => navigate(ADMIN_PRIVATE_ENDPOINTS.DASHBOARD)}>
             Go to Dashboard
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

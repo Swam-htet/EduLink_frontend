@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import CourseManagementService from '@/modules/Admin/CourseManagement/services/CourseManagement.service';
 import { SubjectFilter } from '@/modules/Admin/SubjectManagement/components/filters/SubjectFilter';
 import { SubjectUpdateDialog } from '@/modules/Admin/SubjectManagement/components/SubjectUpdateDialog';
@@ -81,7 +82,7 @@ export const SubjectManagementPage = () => {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Subject Management</h1>
-        <Button onClick={() => navigate('/subject-management/new')}>
+        <Button onClick={() => navigate(ADMIN_PRIVATE_ENDPOINTS.SUBJECT_CREATE)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Subject
         </Button>

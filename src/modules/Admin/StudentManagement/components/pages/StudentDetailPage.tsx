@@ -126,7 +126,7 @@ export const StudentDetailPage = () => {
             The student you're looking for doesn't exist or you don't have access.
           </p>
         </div>
-        <Button onClick={() => navigate('/student-management')}>Back to Student List</Button>
+        <BackButton navigate={navigate} />
       </div>
     );
   }

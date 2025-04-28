@@ -5,6 +5,12 @@ import { formatDate } from '@/lib/utils';
 import { useAdminAuth } from '@/modules/Admin/Auth/hooks/useAdminAuth';
 import { Briefcase, CalendarDays, GraduationCap, Mail, MapPin, Phone, User } from 'lucide-react';
 
+interface Qualifications {
+  degree: string;
+  subject: string;
+  experience: number;
+}
+
 export const ProfilePage = () => {
   const { adminUser } = useAdminAuth();
 
@@ -100,7 +106,11 @@ export const ProfilePage = () => {
               <div className="flex items-start gap-2">
                 <GraduationCap className="text-muted-foreground mt-1 h-4 w-4" />
                 <span className="text-muted-foreground text-sm">Qualifications:</span>
-                <span className="flex-1">{adminUser.qualifications}</span>
+                <span className="flex-1">
+                  {typeof adminUser.qualifications === 'object'
+                    ? `${(adminUser.qualifications as Qualifications).degree} in ${(adminUser.qualifications as Qualifications).subject} (${(adminUser.qualifications as Qualifications).experience} years experience)`
+                    : adminUser.qualifications}
+                </span>
               </div>
             )}
             <div className="flex items-center gap-2">

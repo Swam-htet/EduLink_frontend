@@ -16,3 +16,8 @@ export enum SortDirection {
   Asc = 'asc',
   Desc = 'desc'
 }
+
+export interface ActionResponse {
+  message: string;
+  timestamp: string;
+}

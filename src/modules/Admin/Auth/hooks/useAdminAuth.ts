@@ -27,6 +27,7 @@ export const useAdminAuth = () => {
     onError: (error) => {
       toast.error('Failed to logout');
       toast.error((error.response?.data as ErrorPayload).message);
+      dispatch(clearCredentials());
     }
   });
 

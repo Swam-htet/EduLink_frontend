@@ -25,6 +25,46 @@ export enum QuestionType {
   ESSAY = 'essay'
 }
 
+export interface QuestionOption {
+  id: string;
+  text: string;
+}
+
+export interface BlankAnswer {
+  id: number;
+  acceptable_answers: string[];
+  case_sensitive: boolean;
+}
+
+export interface MatchingPairs {
+  questions: QuestionOption[];
+  answers: QuestionOption[];
+  correct_pairs: { [key: string]: string };
+}
+
+export interface Student {
+  id: string;
+  name: string;
+  email: string;
+}
+
+// question
+export interface ExamQuestion {
+  id: number;
+  question: string;
+  type: QuestionType;
+  marks: number;
+  explanation?: string;
+  answer_guidelines?: string;
+  requires_manual_grading: boolean;
+  difficulty_level: number;
+  time_limit?: number;
+  options?: QuestionOption[];
+  correct_answer?: string;
+  blank_answers?: BlankAnswer[];
+  matching_pairs?: MatchingPairs;
+  correct_order?: string[];
+}
 export interface ExamSection {
   id: number;
   section_number: number;
@@ -78,43 +118,59 @@ export interface ExamListResponse {
   message?: string;
 }
 
-export interface ExamResponse {
+export interface ExamDetailsResponse {
   data: Exam;
   message?: string;
   timestamp: string;
 }
 
-// question
-export interface ExamQuestion {
+export interface ExamAnswer {
   id: number;
-  question: string;
-  type: QuestionType;
-  marks: number;
-  explanation?: string;
-  answer_guidelines?: string;
-  requires_manual_grading: boolean;
-  difficulty_level: number;
-  time_limit?: number;
-  options?: QuestionOption[];
-  correct_answer?: string;
-  blank_answers?: BlankAnswer[];
-  matching_pairs?: MatchingPairs;
-  correct_order?: string[];
+  question: {
+    id: number;
+    question: string;
+    type: QuestionType;
+    marks: number;
+    explanation: string | null;
+    answer_guidelines: string | null;
+    requires_manual_grading: boolean;
+    difficulty_level: number;
+    time_limit: number | null;
+    options?: QuestionOption[];
+    matching_pairs?: MatchingPairs;
+  };
+  is_correct: boolean;
+  marks_obtained: string;
+  grading_comments: string | null;
+  answered_at: string | null;
+  selected_choice?: string;
+  fill_in_blank_answers?: string | null;
+  written_answer?: string | null;
+  matching_answers?: Array<{ question: string; answer: string }> | null;
+  ordering_answer?: string[] | null;
 }
 
-export interface QuestionOption {
-  id: string;
-  text: string;
-}
-
-export interface BlankAnswer {
+export interface ExamResultDetail {
   id: number;
-  acceptable_answers: string[];
-  case_sensitive: boolean;
+  student: Student;
+  total_marks_obtained: number;
+  total_questions: number;
+  correct_answers: number;
+  wrong_answers: number;
+  skipped_questions: number;
+  condition: string;
+  status: 'pass' | 'fail';
+  submitted_at: string;
+  updated_at: string;
+  answers: ExamAnswer[];
 }
 
-export interface MatchingPairs {
-  questions: QuestionOption[];
-  answers: QuestionOption[];
-  correct_pairs: { [key: string]: string };
+export interface ExamResultListResponse {
+  data: ExamResultDetail[];
+  timestamp: string;
+}
+
+export interface ExamResultResponse {
+  data: ExamResultDetail;
+  timestamp: string;
 }

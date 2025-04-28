@@ -5,9 +5,7 @@ import { useDispatch } from 'react-redux';
 
 export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch();
-  const tenantId = window.location.hostname.split('_edulink.')[0];
-
-  console.log('tenantId', tenantId);
+  const tenantId = window.location.hostname.split('.')[0];
 
   useEffect(() => {
     dispatch(setTenantId(tenantId));

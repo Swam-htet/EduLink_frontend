@@ -16,7 +16,7 @@ export const ClassScheduleCreatePage = () => {
 
   const { data: classes = { data: [] } } = useQuery({
     queryKey: ['classes'],
-    queryFn: () => ClassManagementService.getClasses()
+    queryFn: () => ClassManagementService.getAllOngoingClasses()
   });
 
   const { data: subjects = { data: [] } } = useQuery({

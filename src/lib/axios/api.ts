@@ -1,3 +1,5 @@
+import { clearCredentials as clearAdminCredentials } from '@/modules/Admin/Auth/store/auth.slice';
+import { clearCredentials as clearStudentCredentials } from '@/modules/Student/Auth/store/auth.slice';
 import { store } from '@/store/store';
 import axios from 'axios';
 
@@ -38,12 +40,18 @@ apiClient.interceptors.request.use(
 );
 
 // // Response interceptor
-// apiClient.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       store.dispatch(logout());
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // store.dispatch(logout());
+      console.log('401 condition');
+      if (window.location.pathname.includes('admin')) {
+        store.dispatch(clearAdminCredentials());
+      } else {
+        store.dispatch(clearStudentCredentials());
+      }
+    }
+    return Promise.reject(error);
+  }
+);

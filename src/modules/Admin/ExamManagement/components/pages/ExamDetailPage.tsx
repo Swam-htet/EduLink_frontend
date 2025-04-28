@@ -1,10 +1,24 @@
 import BackButton from '@/components/common/BackButtton';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import { ADMIN_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { cn, formatDate } from '@/lib/utils';
 import { ExamManagementService } from '@/modules/Admin/ExamManagement/services/examManagement.service';
-import { ExamStatus } from '@/modules/Admin/ExamManagement/types/exam.types';
+import {
+  BlankAnswer,
+  ExamQuestion,
+  ExamStatus,
+  QuestionOption
+} from '@/modules/Admin/ExamManagement/types/exam.types';
 import { useDialog } from '@/providers/dialog/useDialog';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -14,6 +28,8 @@ import {
   ChevronUp,
   Clock,
   FilePlus,
+  Loader2,
+  Mail,
   Timer,
   X
 } from 'lucide-react';
@@ -38,7 +54,7 @@ const getStatusClassName = (status: ExamStatus) => {
   }
 };
 
-const QuestionCard = ({ question, index }: { question: any; index: number }) => {
+const QuestionCard = ({ question, index }: { question: ExamQuestion; index: number }) => {
   return (
     <div className="bg-card mt-4 rounded-lg border p-4">
       <div className="flex items-start justify-between">
@@ -63,11 +79,11 @@ const QuestionCard = ({ question, index }: { question: any; index: number }) => 
         </div>
       )}
 
-      {question.type === 'multiple_choice' && (
+      {question.type === 'multiple_choice' && question.options && (
         <div className="mt-2">
           <p className="text-sm font-medium">Options:</p>
           <ul className="mt-1 list-inside list-disc space-y-1">
-            {question.options.map((option: any) => (
+            {question.options.map((option: QuestionOption) => (
               <li
                 key={option.id}
                 className={cn(
@@ -92,11 +108,11 @@ const QuestionCard = ({ question, index }: { question: any; index: number }) => 
         </div>
       )}
 
-      {question.type === 'fill_in_blank' && (
+      {question.type === 'fill_in_blank' && question.blank_answers && (
         <div className="mt-2">
           <p className="text-sm font-medium">Acceptable Answers:</p>
           <ul className="mt-1 space-y-1">
-            {question.blank_answers.map((answer: any) => (
+            {question.blank_answers.map((answer: BlankAnswer) => (
               <li key={answer.id} className="text-muted-foreground text-sm">
                 {answer.acceptable_answers.join(', ')}
                 {answer.case_sensitive ? ' (Case sensitive)' : ' (Case insensitive)'}
@@ -106,38 +122,41 @@ const QuestionCard = ({ question, index }: { question: any; index: number }) => 
         </div>
       )}
 
-      {question.type === 'matching' && (
+      {question.type === 'matching' && question.matching_pairs && (
         <div className="mt-2">
           <p className="text-sm font-medium">Matching Pairs:</p>
           <div className="mt-1 grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium">Questions:</p>
               <ul className="mt-1 space-y-1">
-                {question.matching_pairs.questions.map((q: any) => (
-                  <li key={q.id} className="text-muted-foreground text-sm">
-                    {q.text} →{' '}
-                    {
-                      question.matching_pairs.answers.find(
-                        (a: any) => a.id === question.matching_pairs.correct_pairs[q.id]
-                      )?.text
-                    }
-                  </li>
-                ))}
+                {question.matching_pairs.questions.map((q) => {
+                  const matchingAnswer = question.matching_pairs?.answers.find(
+                    (a) => a.id === question.matching_pairs?.correct_pairs[q.id]
+                  );
+                  return (
+                    <li key={q.id} className="text-muted-foreground text-sm">
+                      {q.text} → {matchingAnswer?.text}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>
         </div>
       )}
 
-      {question.type === 'ordering' && (
+      {question.type === 'ordering' && question.correct_order && question.options && (
         <div className="mt-2">
           <p className="text-sm font-medium">Correct Order:</p>
           <ol className="mt-1 list-decimal pl-4">
-            {question.correct_order.map((orderId: string) => (
-              <li key={orderId} className="text-muted-foreground text-sm">
-                {question.options.find((opt: any) => opt.id === orderId)?.text}
-              </li>
-            ))}
+            {question.correct_order.map((orderId: string | number) => {
+              const option = question.options?.find((opt: QuestionOption) => opt.id === orderId);
+              return (
+                <li key={orderId} className="text-muted-foreground text-sm">
+                  {option?.text}
+                </li>
+              );
+            })}
           </ol>
         </div>
       )}
@@ -158,6 +177,20 @@ export const ExamDetailPage = () => {
     enabled: !!id
   });
 
+  const examResultsQuery = useQuery({
+    queryKey: ['exam-results', id],
+    queryFn: () => ExamManagementService.getExamResults(id as string),
+    enabled: !!id
+  });
+
+  const sendExamResultsMutation = useMutation({
+    mutationKey: ['send-exam-results'],
+    mutationFn: () => ExamManagementService.sendExamResults(id as string),
+    onSuccess: () => {
+      toast.success('Exam results sent successfully');
+    }
+  });
+
   const updateExamMutation = useMutation({
     mutationKey: ['update-exam-status'],
     mutationFn: (status: ExamStatus) => ExamManagementService.updateExam(id as string, { status }),
@@ -171,13 +204,42 @@ export const ExamDetailPage = () => {
     }
   });
 
+  const publishExamMutation = useMutation({
+    mutationKey: ['publish-exam'],
+    mutationFn: () => ExamManagementService.publishExam(id as string),
+    onSuccess: () => {
+      toast.success('Exam published successfully');
+      navigate(ADMIN_PRIVATE_ENDPOINTS.EXAM_MANAGEMENT);
+      queryClient.invalidateQueries({ queryKey: ['exam-management'] });
+    }
+  });
+
+  const sendManualPublishMutation = useMutation({
+    mutationKey: ['send-manual-publish'],
+    mutationFn: () => ExamManagementService.sendManualPublish(id as string),
+    onSuccess: () => {
+      toast.success('Manual publish mail sent successfully');
+    }
+  });
+
   const handlePublish = () => {
     confirm({
       title: 'Publish Exam',
       content: 'Are you sure you want to publish this exam? Students will be able to see it.',
       confirmText: 'Publish',
       onConfirm: () => {
-        updateExamMutation.mutate(ExamStatus.PUBLISHED);
+        publishExamMutation.mutate();
+      }
+    });
+  };
+
+  const handleSendManualPublish = () => {
+    confirm({
+      title: 'Send Manual Publish',
+      content: 'Are you sure you want to send manual publish for this exam?',
+      confirmText: 'Send',
+      onConfirm: () => {
+        sendManualPublishMutation.mutate();
       }
     });
   };
@@ -193,40 +255,76 @@ export const ExamDetailPage = () => {
     });
   };
 
+  const handleSendExamResults = () => {
+    confirm({
+      title: 'Send Exam Results',
+      content: 'Are you sure you want to send exam results for this exam?',
+      confirmText: 'Send',
+      onConfirm: () => {
+        sendExamResultsMutation.mutate();
+      }
+    });
+  };
+
   const handleAddQuestions = () => {
     navigate(`${ADMIN_PRIVATE_ENDPOINTS.EXAM_MANAGEMENT}/${id}/upload-questions`);
   };
 
-  const exam = examQuery.data?.data;
-
   if (examQuery.isPending) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <div className="flex items-center gap-2">
-          <div className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
-          <span>Loading exam details...</span>
+      <div className="flex h-screen items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="text-primary h-8 w-8 animate-spin" />
+          <p className="text-muted-foreground">Loading exam details...</p>
         </div>
       </div>
     );
   }
 
-  if (!exam) {
+  if (examQuery.isError) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <p>Exam not found</p>
+      <div className="flex h-screen items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <X className="text-destructive h-8 w-8" />
+          <p className="text-muted-foreground">Failed to load exam details</p>
+          <Button onClick={() => navigate(ADMIN_PRIVATE_ENDPOINTS.EXAM_MANAGEMENT)}>
+            Back to Exams
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const examDetails = examQuery.data?.data;
+
+  if (!examDetails) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <X className="text-destructive h-8 w-8" />
+          <p className="text-muted-foreground">Exam not found</p>
+          <Button onClick={() => navigate(ADMIN_PRIVATE_ENDPOINTS.EXAM_MANAGEMENT)}>
+            Back to Exams
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <BackButton navigate={navigate} />
-          <h1 className="text-2xl font-semibold">{exam.title}</h1>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">{examDetails.title}</h1>
+            <p className="text-muted-foreground text-sm">
+              {examDetails.subject?.title || 'No subject specified'}
+            </p>
+          </div>
         </div>
         <div className="flex gap-2">
-          {exam.status === ExamStatus.DRAFT && (
+          {examDetails.status === ExamStatus.DRAFT && (
             <>
               <Button onClick={handlePublish} variant="default">
                 Publish Exam
@@ -235,13 +333,23 @@ export const ExamDetailPage = () => {
                 <X className="mr-2 h-4 w-4" />
                 Cancel Exam
               </Button>
+              <Button onClick={handleAddQuestions} variant="outline">
+                <FilePlus className="mr-2 h-4 w-4" />
+                Upload Questions
+              </Button>
             </>
           )}
-          {exam.status === ExamStatus.DRAFT && (
-            <Button onClick={handleAddQuestions} variant="outline">
-              <FilePlus className="mr-2 h-4 w-4" />
-              Upload Questions
-            </Button>
+          {examDetails.status === ExamStatus.PUBLISHED && (
+            <>
+              <Button onClick={handleSendManualPublish} variant="default">
+                <Mail className="mr-2 h-4 w-4" />
+                Send Manual Publish
+              </Button>
+              <Button onClick={handleSendExamResults} variant="default">
+                <Mail className="mr-2 h-4 w-4" />
+                Send Exam Results
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -260,31 +368,27 @@ export const ExamDetailPage = () => {
                 <div>
                   <span className="text-muted-foreground text-sm font-medium">Status</span>
                   <div className="mt-1">
-                    <span
+                    <Badge
+                      variant="outline"
                       className={cn(
                         'inline-flex rounded-full px-2 py-1 text-xs font-medium',
-                        getStatusClassName(exam.status)
+                        getStatusClassName(examDetails.status)
                       )}
                     >
-                      {exam.status.charAt(0).toUpperCase() + exam.status.slice(1)}
-                    </span>
+                      {examDetails.status.charAt(0).toUpperCase() + examDetails.status.slice(1)}
+                    </Badge>
                   </div>
                 </div>
 
                 <div>
                   <span className="text-muted-foreground text-sm font-medium">Class</span>
-                  <p className="mt-1 text-sm">{exam.class?.name || 'N/A'}</p>
-                </div>
-
-                <div>
-                  <span className="text-muted-foreground text-sm font-medium">Subject</span>
-                  <p className="mt-1 text-sm">{exam.subject?.title || 'N/A'}</p>
+                  <p className="mt-1 text-sm">{examDetails.class?.name || 'N/A'}</p>
                 </div>
 
                 <div>
                   <span className="text-muted-foreground text-sm font-medium">Description</span>
                   <p className="text-muted-foreground mt-1 text-sm whitespace-pre-wrap">
-                    {exam.description || 'No description provided'}
+                    {examDetails.description || 'No description provided'}
                   </p>
                 </div>
               </div>
@@ -304,18 +408,18 @@ export const ExamDetailPage = () => {
                   <span className="text-muted-foreground text-sm font-medium">Duration</span>
                   <p className="mt-1 flex items-center text-sm">
                     <Clock className="text-muted-foreground mr-1 h-4 w-4" />
-                    {exam.exam_details.duration} minutes
+                    {examDetails.exam_details.duration} minutes
                   </p>
                 </div>
 
                 <div>
                   <span className="text-muted-foreground text-sm font-medium">Total Marks</span>
-                  <p className="mt-1 text-sm">{exam.exam_details.total_marks}</p>
+                  <p className="mt-1 text-sm">{examDetails.exam_details.total_marks}</p>
                 </div>
 
                 <div>
                   <span className="text-muted-foreground text-sm font-medium">Pass Marks</span>
-                  <p className="mt-1 text-sm">{exam.exam_details.pass_marks}</p>
+                  <p className="mt-1 text-sm">{examDetails.exam_details.pass_marks}</p>
                 </div>
               </div>
             </CardContent>
@@ -333,18 +437,20 @@ export const ExamDetailPage = () => {
                 <div>
                   <span className="text-muted-foreground text-sm font-medium">Exam Date</span>
                   <p className="mt-1 text-sm">
-                    {exam.schedule.exam_date ? formatDate(exam.schedule.exam_date) : 'Not set'}
+                    {examDetails.schedule.exam_date
+                      ? formatDate(examDetails.schedule.exam_date)
+                      : 'Not set'}
                   </p>
                 </div>
 
                 <div>
                   <span className="text-muted-foreground text-sm font-medium">Start Time</span>
-                  <p className="mt-1 text-sm">{exam.schedule.start_time || 'Not set'}</p>
+                  <p className="mt-1 text-sm">{examDetails.schedule.start_time || 'Not set'}</p>
                 </div>
 
                 <div>
                   <span className="text-muted-foreground text-sm font-medium">End Time</span>
-                  <p className="mt-1 text-sm">{exam.schedule.end_time || 'Not set'}</p>
+                  <p className="mt-1 text-sm">{examDetails.schedule.end_time || 'Not set'}</p>
                 </div>
               </div>
             </CardContent>
@@ -357,12 +463,12 @@ export const ExamDetailPage = () => {
               <CardTitle>Exam Sections</CardTitle>
             </CardHeader>
             <CardContent>
-              {exam.sections && exam.sections.length > 0 ? (
+              {examDetails.sections && examDetails.sections.length > 0 ? (
                 <div className="space-y-4">
-                  {exam.sections.map((section) => (
+                  {examDetails.sections.map((section) => (
                     <div key={section.id} className="rounded-lg border">
                       <button
-                        className={'w-full rounded-t-lg p-4 text-left'}
+                        className="hover:bg-muted/50 w-full rounded-t-lg p-4 text-left"
                         onClick={() =>
                           setActiveSection(activeSection === section.id ? null : section.id)
                         }
@@ -371,9 +477,9 @@ export const ExamDetailPage = () => {
                           <div>
                             <h3 className="text-base font-medium">{section.section_title}</h3>
                             <div className="mt-1 flex items-center gap-2">
-                              <span className="text-muted-foreground text-sm">
+                              <Badge variant="outline" className="text-xs">
                                 {section.question_type}
-                              </span>
+                              </Badge>
                               <span className="text-muted-foreground text-sm">•</span>
                               <span className="text-muted-foreground text-sm">
                                 {section.total_questions} Questions
@@ -409,7 +515,102 @@ export const ExamDetailPage = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-muted-foreground text-sm">No sections defined yet</p>
+                <div className="flex flex-col items-center justify-center py-8">
+                  <p className="text-muted-foreground text-sm">No sections defined yet</p>
+                  <Button onClick={handleAddQuestions} variant="outline" className="mt-4">
+                    <FilePlus className="mr-2 h-4 w-4" />
+                    Add Questions
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Exam Results</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {examResultsQuery.isPending ? (
+                <div className="flex h-32 items-center justify-center">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-muted-foreground">Loading results...</span>
+                  </div>
+                </div>
+              ) : examResultsQuery.data?.data.length === 0 ? (
+                <div className="flex h-32 items-center justify-center">
+                  <p className="text-muted-foreground">No results found</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-muted-foreground text-sm font-medium">
+                        Total Results
+                      </span>
+                      <p className="mt-1 text-sm">{examResultsQuery.data?.data.length || 0}</p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Student</TableHead>
+                          <TableHead>Total Marks</TableHead>
+                          <TableHead>Correct Answers</TableHead>
+                          <TableHead>Wrong Answers</TableHead>
+                          <TableHead>Condition</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Action</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {examResultsQuery.data?.data.map((result) => (
+                          <TableRow
+                            key={result.id}
+                            className="hover:bg-muted/50 cursor-pointer"
+                            onClick={() =>
+                              navigate(
+                                `${ADMIN_PRIVATE_ENDPOINTS.EXAM_MANAGEMENT}/${id}/results/${result.id}/students/${result.student.id}`
+                              )
+                            }
+                          >
+                            <TableCell className="font-medium">{result.student.name}</TableCell>
+                            <TableCell>{result.total_marks_obtained}</TableCell>
+                            <TableCell>{result.correct_answers}</TableCell>
+                            <TableCell>{result.wrong_answers}</TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  'text-xs',
+                                  result.condition === 'pass' ? 'text-yellow-600' : 'text-blue-600'
+                                )}
+                              >
+                                {result.condition}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant={result.status === 'pass' ? 'default' : 'destructive'}
+                                className="text-xs"
+                              >
+                                {result.status.toUpperCase()}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Button variant="ghost" size="sm">
+                                View Details
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
               )}
             </CardContent>
           </Card>

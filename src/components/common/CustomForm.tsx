@@ -174,6 +174,7 @@ CustomForm.Input = React.forwardRef<HTMLInputElement, { field: InputProps }>(({ 
               required={field.required}
             />
           </FormControl>
+          {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
           <FormMessage />
         </FormItem>
       )}
@@ -463,7 +464,9 @@ CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerPr
           </PopoverContent>
         </Popover>
         {field.description && <FormDescription>{field.description}</FormDescription>}
-        {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
+        <FormMessage className="text-red-500">
+          {formMethods.formState.errors[field.name]?.message as string} {field.error}
+        </FormMessage>
       </div>
     );
   }

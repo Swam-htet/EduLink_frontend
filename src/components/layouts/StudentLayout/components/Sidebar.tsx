@@ -1,6 +1,6 @@
 import { STUDENT_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { cn } from '@/lib/utils';
-import { User } from 'lucide-react';
+import { Book, User } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -14,6 +14,16 @@ type SidebarItem = {
 const Sidebar = () => {
   const SIDEBAR_ITEMS: SidebarItem[][] = [
     [
+      {
+        icon: <Book size={15} />,
+        label: 'Class List',
+        href: STUDENT_PRIVATE_ENDPOINTS.CLASS_LIST
+      },
+      {
+        icon: <Book size={15} />,
+        label: 'Exam List',
+        href: STUDENT_PRIVATE_ENDPOINTS.EXAM_LIST
+      },
       {
         icon: <User />,
         label: 'Profile',

@@ -1,5 +1,6 @@
 import { Student } from '@/modules/Admin/StudentManagement/types/studentManagement.types';
 import { Subject } from '@/modules/Admin/SubjectManagement/types/subject.types';
+import { Tutor } from '@/modules/Student/Class/types/class.types';
 
 export enum ClassStatus {
   Scheduled = 'scheduled',
@@ -8,6 +9,21 @@ export enum ClassStatus {
   Cancelled = 'cancelled'
 }
 
+export interface Schedule {
+  id: number;
+  class: Class;
+  subject: Subject;
+  tutor: Tutor;
+  schedule_details: {
+    schedule_status: string;
+    start_date: string;
+    end_date: string;
+    late_mins: number;
+  };
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
 export interface Class {
   id: number;
   name: string;
@@ -28,6 +44,7 @@ export interface Class {
     first_name: string;
     last_name: string;
   };
+  schedules?: Schedule[];
   created_at: string;
   updated_at: string;
 }
