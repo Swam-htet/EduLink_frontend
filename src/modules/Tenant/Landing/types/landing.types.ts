@@ -88,6 +88,10 @@ export interface LandingResponse {
   data: LandingData;
 }
 
+export interface HeroLandingResponse {
+  data: HeroValue;
+}
+
 export interface SetLandingDataRequest {
   key: LandingKey;
   value: LandingValue;

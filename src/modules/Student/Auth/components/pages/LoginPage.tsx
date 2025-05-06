@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { STUDENT_PRIVATE_ENDPOINTS } from '@/ecosystem/PageEndpoints/Private';
 import { LoginForm } from '@/modules/Student/Auth/components/forms/LoginForm';
 import { LoginFormData } from '@/modules/Student/Auth/schemas/auth.schema';
@@ -47,7 +46,7 @@ export const LoginPage = () => {
           <LoginForm onSubmit={handleSubmit} loading={loginMutation.isPending} />
         </div>
 
-        <div className="flex items-center justify-between text-sm">
+        {/* <div className="flex items-center justify-between text-sm">
           <Button
             variant="link"
             className="text-primary-600 hover:text-primary-500"
@@ -55,7 +54,7 @@ export const LoginPage = () => {
           >
             Forgot your password?
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

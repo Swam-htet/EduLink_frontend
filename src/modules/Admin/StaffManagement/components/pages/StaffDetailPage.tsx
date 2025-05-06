@@ -1,5 +1,4 @@
 import BackButton from '@/components/common/BackButtton';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import StaffManagementService from '@/modules/Admin/StaffManagement/services/staffManagement.service';
@@ -118,14 +117,14 @@ export const StaffDetailPage = () => {
       </Card>
 
       {/* Actions */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Actions</CardTitle>
         </CardHeader>
         <CardContent className="flex gap-4">
-          {/* <Button variant="outline" onClick={() => navigate(`/staff-management/edit/${id}`)}>
+          <Button variant="outline" onClick={() => navigate(`/staff-management/edit/${id}`)}>
             Edit Staff
-          </Button> */}
+          </Button>
           <Button
             variant="destructive"
             onClick={() => {
@@ -141,7 +140,7 @@ export const StaffDetailPage = () => {
             Delete Staff
           </Button>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };

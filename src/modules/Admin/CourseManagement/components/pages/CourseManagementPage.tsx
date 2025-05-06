@@ -12,7 +12,7 @@ import type {
   CourseFilterParams
 } from '@/modules/Admin/CourseManagement/types/course.types';
 import { useDialog } from '@/providers/dialog/useDialog';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +22,7 @@ export const CourseManagementPage = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<CourseFilterParams>(getDefaultFilters());
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   const { confirmDelete } = useDialog();
@@ -41,6 +42,7 @@ export const CourseManagementPage = () => {
       }),
     onSuccess: () => {
       toast.success('Course updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['course-management'] });
     },
     onError: () => {
       toast.error('Failed to update course');
@@ -52,7 +54,7 @@ export const CourseManagementPage = () => {
     mutationFn: (id: string) => CourseManagementService.deleteCourse(id),
     onSuccess: () => {
       toast.success('Course deleted successfully');
-      courseManagementQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ['course-management'] });
     },
     onError: () => {
       toast.error('Failed to delete course');

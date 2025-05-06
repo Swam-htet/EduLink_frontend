@@ -53,6 +53,10 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
     }
   });
 
+  // form error
+  const { errors } = formMethods.formState;
+  console.log(errors);
+
   const { fields, remove } = useFieldArray({
     control: formMethods.control,
     name: 'exam_questions'
@@ -83,6 +87,7 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
   };
 
   const handleSubmit = (data: UploadQuestionsFormData) => {
+    console.log(data);
     onSubmit(data);
   };
 
@@ -283,6 +288,7 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
                 <Button
                   type="button"
                   variant="outline"
+                  className="mt-2"
                   onClick={() => {
                     const questions =
                       formMethods.getValues(
@@ -303,7 +309,7 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
                 {formMethods
                   .watch(`exam_questions.${questionIndex}.matching_pairs.answers`)
                   ?.map((_, aIndex) => (
-                    <div key={aIndex} className="flex items-center gap-2">
+                    <div key={aIndex} className="mt-2 flex items-center gap-2">
                       <CustomForm.Input
                         field={{
                           name: `exam_questions.${questionIndex}.matching_pairs.answers.${aIndex}.text`,
@@ -332,6 +338,7 @@ export const ExamQuestionUploadForm = ({ exam, onSubmit }: ExamQuestionUploadFor
                   ))}
                 <Button
                   type="button"
+                  className="mt-2"
                   variant="outline"
                   onClick={() => {
                     const answers =

@@ -4,13 +4,14 @@ import { z } from 'zod';
 const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 const passwordSchema = z
   .string()
+  .min(1, 'Password is required')
   .regex(
     strongPasswordRegex,
     'Password need at least 8 characters, one uppercase, one lowercase, one number and one special character'
   );
 
 export const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().min(1, 'Email is required').email('Invalid email address'),
   password: passwordSchema
 });
 

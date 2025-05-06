@@ -39,13 +39,11 @@ apiClient.interceptors.request.use(
   }
 );
 
-// // Response interceptor
+// Response interceptor
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // store.dispatch(logout());
-      console.log('401 condition');
       if (window.location.pathname.includes('admin')) {
         store.dispatch(clearAdminCredentials());
       } else {

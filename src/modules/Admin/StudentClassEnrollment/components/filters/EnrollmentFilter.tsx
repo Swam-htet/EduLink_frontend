@@ -42,7 +42,7 @@ export const EnrollmentFilter = ({ filters, onFilterChange }: EnrollmentFilterPr
             ]
           }}
         />
-        <CustomForm.DatePicker
+        {/* <CustomForm.DatePicker
           field={{
             name: 'enrolled_at.start',
             label: 'Start Enrolled Date',
@@ -55,7 +55,7 @@ export const EnrollmentFilter = ({ filters, onFilterChange }: EnrollmentFilterPr
             label: 'End Enrolled Date',
             placeholder: 'Select End Enrolled Date'
           }}
-        />
+        /> */}
         <CustomForm.Select
           field={{
             name: 'sort_by',

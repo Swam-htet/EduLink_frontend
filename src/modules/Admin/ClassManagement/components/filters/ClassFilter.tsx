@@ -68,7 +68,7 @@ export const ClassFilter = ({ filters, onFilterChange, courses }: ClassFilterPro
             options: courses.map((course) => ({ value: course.id.toString(), label: course.title }))
           }}
         />
-
+        {/* 
         <CustomForm.DatePicker
           field={{
             name: 'date_range.start',
@@ -82,7 +82,7 @@ export const ClassFilter = ({ filters, onFilterChange, courses }: ClassFilterPro
             label: 'End Date',
             placeholder: 'Select end date'
           }}
-        />
+        /> */}
 
         <CustomForm.Select
           field={{

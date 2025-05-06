@@ -42,7 +42,7 @@ export const studentRegistrationSchema = z
     gender: z.enum(['male', 'female', 'other'], {
       required_error: 'Please select a gender'
     }),
-    profile_photo: z.any().optional(),
+    // profile_photo: z.any().optional(),
     nrc: z
       .string({
         required_error: 'NRC is required'

@@ -1,15 +1,7 @@
 import { Button as ShadcnButton } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { Form, FormDescription, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
@@ -24,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon, Clock, Eye, EyeOff } from 'lucide-react';
 import React, { createContext, useContext, useState } from 'react';
-import { FieldValues, useController, UseFormReturn } from 'react-hook-form';
+import { Controller, FieldValues, UseFormReturn } from 'react-hook-form';
 
 export interface InputProps {
   name: string;
@@ -122,12 +114,8 @@ type CustomFormProps<T extends FieldValues> = {
   children: React.ReactNode;
 };
 
-// form methods context
-// ignore type error for now
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const FormMethodsContext = createContext<UseFormReturn<any> | null>(null);
+const FormMethodsContext = createContext<UseFormReturn<FieldValues> | null>(null);
 
-// custom form component
 function CustomForm<T extends FieldValues>({
   formMethods,
   onSubmit,
@@ -135,7 +123,7 @@ function CustomForm<T extends FieldValues>({
   children
 }: CustomFormProps<T>) {
   return (
-    <FormMethodsContext.Provider value={formMethods}>
+    <FormMethodsContext.Provider value={formMethods as UseFormReturn<FieldValues>}>
       <Form {...formMethods}>
         <form onSubmit={formMethods.handleSubmit(onSubmit)} className={cn('space-y-2', className)}>
           {children}
@@ -145,72 +133,70 @@ function CustomForm<T extends FieldValues>({
   );
 }
 
-// input field component
 CustomForm.Input = React.forwardRef<HTMLInputElement, { field: InputProps }>(({ field }, ref) => {
   const formMethods = useContext(FormMethodsContext);
-  if (!formMethods) {
-    throw new Error('Input must be used within a CustomForm');
-  }
+  if (!formMethods) throw new Error('Input must be used within a CustomForm');
+  const { name, label, type, placeholder, disabled, required, error } = field;
 
   return (
-    <FormField
-      control={formMethods.control}
-      name={field.name}
-      render={({ field: formField }) => (
-        <FormItem>
-          {field.label && (
-            <FormLabel>
-              {field.label} {field.required && <span className="text-red-500">*</span>}
-            </FormLabel>
-          )}
-          <FormControl>
-            <Input
-              {...formField}
-              ref={ref}
-              type={field.type}
-              className={field.error && 'border-red-500'}
-              placeholder={field.placeholder}
-              disabled={field.disabled}
-              required={field.required}
-            />
-          </FormControl>
-          {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
-          <FormMessage />
-        </FormItem>
+    <div className="space-y-2">
+      {label && (
+        <FormLabel>
+          {label} {required && <span className="text-red-500">*</span>}
+        </FormLabel>
       )}
-    />
+      <Controller
+        name={name}
+        control={formMethods.control}
+        defaultValue={undefined}
+        render={({ field: controllerField, fieldState }) => (
+          <>
+            <Input
+              {...controllerField}
+              ref={ref}
+              type={type}
+              placeholder={placeholder}
+              disabled={disabled}
+              required={required}
+              className={cn(fieldState.error && 'border-red-500')}
+              value={controllerField.value ?? ''}
+            />
+            {(fieldState.error || error) && (
+              <p className="text-sm text-red-500">{fieldState.error?.message || error}</p>
+            )}
+          </>
+        )}
+      />
+    </div>
   );
 });
 
 CustomForm.Input.displayName = 'CustomForm.Input';
 
-// password field component
 CustomForm.Password = React.forwardRef<HTMLInputElement, { field: PasswordFieldProps }>(
   ({ field }, ref) => {
     const formMethods = useContext(FormMethodsContext);
-    if (!formMethods) {
-      throw new Error('Password must be used within a CustomForm');
-    }
-
+    if (!formMethods) throw new Error('Password must be used within a CustomForm');
     const [showPassword, setShowPassword] = useState(false);
+    const { name, label, placeholder, disabled, required, error } = field;
 
     return (
-      <FormField
-        control={formMethods.control}
-        name={field.name}
-        render={({ field: formField }) => (
-          <FormItem>
-            {field.label && <FormLabel>{field.label}</FormLabel>}
-            <FormControl>
+      <div className="space-y-2">
+        {label && <FormLabel>{label}</FormLabel>}
+        <Controller
+          name={name}
+          control={formMethods.control}
+          render={({ field: controllerField, fieldState }) => (
+            <>
               <div className="relative">
                 <Input
-                  {...formField}
+                  {...controllerField}
                   ref={ref}
                   type={showPassword ? 'text' : 'password'}
-                  placeholder={field.placeholder}
-                  disabled={field.disabled}
-                  required={field.required}
-                  className={field.error && 'border-red-500'}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  required={required}
+                  className={cn(fieldState.error && 'border-red-500')}
                 />
                 <ShadcnButton
                   className="absolute right-0 bottom-0"
@@ -225,188 +211,192 @@ CustomForm.Password = React.forwardRef<HTMLInputElement, { field: PasswordFieldP
                   )}
                 </ShadcnButton>
               </div>
-            </FormControl>
-            {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+              {(fieldState.error || error) && (
+                <p className="text-sm text-red-500">{fieldState.error?.message || error}</p>
+              )}
+            </>
+          )}
+        />
+      </div>
     );
   }
 );
 
 CustomForm.Password.displayName = 'CustomForm.Password';
 
-// checkbox component
 CustomForm.Checkbox = React.forwardRef<
   HTMLInputElement | HTMLButtonElement,
   { field: CheckFieldProps }
 >(({ field }, ref) => {
   const formMethods = useContext(FormMethodsContext);
-  if (!formMethods) {
-    throw new Error('Checkbox must be used within a CustomForm');
-  }
+  if (!formMethods) throw new Error('Checkbox must be used within a CustomForm');
+  const { name, label, description, disabled, required, error } = field;
 
   return (
-    <FormField
-      control={formMethods.control}
-      name={field.name}
-      render={({ field: formField }) => (
-        <FormItem className="flex items-center gap-2">
-          <FormControl>
-            <Checkbox
-              ref={ref as React.LegacyRef<HTMLButtonElement>}
-              checked={formField.value}
-              onCheckedChange={formField.onChange}
-              disabled={field.disabled}
-              required={field.required}
-            />
-          </FormControl>
-          <div className="space-y-1 leading-none">
-            <FormLabel>{field.label}</FormLabel>
-            {field.description && <FormDescription>{field.description}</FormDescription>}
-          </div>
-        </FormItem>
-      )}
-    />
+    <div className="space-y-2">
+      <Controller
+        name={name}
+        control={formMethods.control}
+        render={({ field: controllerField, fieldState }) => (
+          <>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                ref={ref as React.LegacyRef<HTMLButtonElement>}
+                checked={controllerField.value}
+                onCheckedChange={controllerField.onChange}
+                disabled={disabled}
+                required={required}
+              />
+              <div className="space-y-1 leading-none">
+                <FormLabel>{label}</FormLabel>
+                {description && <FormDescription>{description}</FormDescription>}
+              </div>
+            </div>
+            {(fieldState.error || error) && (
+              <p className="text-sm text-red-500">{fieldState.error?.message || error}</p>
+            )}
+          </>
+        )}
+      />
+    </div>
   );
 });
 
 CustomForm.Checkbox.displayName = 'CustomForm.Checkbox';
 
-// select component
 CustomForm.Select = React.forwardRef<HTMLSelectElement, { field: SelectProps }>(({ field }) => {
   const formMethods = useContext(FormMethodsContext);
-  if (!formMethods) {
-    throw new Error('Select must be used within a CustomForm');
-  }
+  if (!formMethods) throw new Error('Select must be used within a CustomForm');
+  const { name, label, placeholder, description, options, disabled, error } = field;
 
   return (
-    <FormField
-      control={formMethods.control}
-      name={field.name}
-      render={({ field: formField }) => (
-        <FormItem>
-          {field.label && <FormLabel>{field.label}</FormLabel>}
-          <FormControl>
+    <div className="space-y-2">
+      {label && <FormLabel>{label}</FormLabel>}
+      <Controller
+        name={name}
+        control={formMethods.control}
+        defaultValue={undefined}
+        render={({ field: controllerField, fieldState }) => (
+          <>
             <Select
-              onValueChange={formField.onChange}
-              defaultValue={formField.value}
-              disabled={field.disabled}
+              onValueChange={controllerField.onChange}
+              value={controllerField.value ?? ''}
+              disabled={disabled}
             >
-              <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder={field.placeholder} />
-                </SelectTrigger>
-              </FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
               <SelectContent>
-                {field.options.map((option) => (
+                {options.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </FormControl>
-          {field.description && <FormDescription>{field.description}</FormDescription>}
-          {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+            {description && <FormDescription>{description}</FormDescription>}
+            {(fieldState.error || error) && (
+              <p className="text-sm text-red-500">{fieldState.error?.message || error}</p>
+            )}
+          </>
+        )}
+      />
+    </div>
   );
 });
 
 CustomForm.Select.displayName = 'CustomForm.Select';
 
-// textarea component
 CustomForm.Textarea = React.forwardRef<HTMLTextAreaElement, { field: TextareaProps }>(
   ({ field }, ref) => {
     const formMethods = useContext(FormMethodsContext);
-    if (!formMethods) {
-      throw new Error('Textarea must be used within a CustomForm');
-    }
+    if (!formMethods) throw new Error('Textarea must be used within a CustomForm');
+    const { name, label, placeholder, description, disabled, required, error } = field;
 
     return (
-      <FormField
-        control={formMethods.control}
-        name={field.name}
-        render={({ field: formField }) => (
-          <FormItem>
-            {field.label && <FormLabel>{field.label}</FormLabel>}
-            <FormControl>
+      <div className="space-y-2">
+        {label && <FormLabel>{label}</FormLabel>}
+        <Controller
+          name={name}
+          control={formMethods.control}
+          render={({ field: controllerField, fieldState }) => (
+            <>
               <Textarea
-                {...formField}
+                {...controllerField}
                 ref={ref}
-                placeholder={field.placeholder}
-                disabled={field.disabled}
-                required={field.required}
+                placeholder={placeholder}
+                disabled={disabled}
+                required={required}
+                className={cn(fieldState.error && 'border-red-500')}
               />
-            </FormControl>
-            {field.description && <FormDescription>{field.description}</FormDescription>}
-            {field.error && <FormMessage className="text-red-500">{field.error}</FormMessage>}
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+              {description && <FormDescription>{description}</FormDescription>}
+              {(fieldState.error || error) && (
+                <p className="text-sm text-red-500">{fieldState.error?.message || error}</p>
+              )}
+            </>
+          )}
+        />
+      </div>
     );
   }
 );
 
 CustomForm.Textarea.displayName = 'CustomForm.Textarea';
 
-// date picker component
 CustomForm.DatePicker = React.forwardRef<HTMLInputElement, { field: DatePickerProps }>(
   ({ field }) => {
     const formMethods = useContext(FormMethodsContext);
-    if (!formMethods) {
-      throw new Error('DatePicker must be used within a CustomForm');
-    }
-
-    const { field: formField } = useController({
-      control: formMethods.control,
-      name: field.name
-    });
+    if (!formMethods) throw new Error('DatePicker must be used within a CustomForm');
+    const { name, label, placeholder, description, disabled, error } = field;
 
     return (
-      <div className="flex flex-col gap-2">
-        {field.label && <FormLabel>{field.label}</FormLabel>}
-        <Popover>
-          <PopoverTrigger>
-            <ShadcnButton
-              type="button"
-              variant="outline"
-              className={cn(
-                'w-full pl-3 text-left font-normal',
-                !formField.value && 'text-muted-foreground',
-                formMethods.formState.errors[field.name] && field.error && 'border-red-500'
+      <div className="space-y-2">
+        {label && <FormLabel>{label}</FormLabel>}
+        <Controller
+          name={name}
+          control={formMethods.control}
+          defaultValue={undefined}
+          render={({ field: controllerField, fieldState }) => (
+            <>
+              <Popover>
+                <PopoverTrigger>
+                  <ShadcnButton
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      'w-full pl-3 text-left font-normal',
+                      !controllerField.value && 'text-muted-foreground',
+                      fieldState.error && 'border-red-500'
+                    )}
+                    disabled={disabled}
+                  >
+                    {controllerField.value ? (
+                      format(new Date(controllerField.value), 'PPP')
+                    ) : (
+                      <span>{placeholder || 'Pick a date'}</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </ShadcnButton>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={controllerField.value ? new Date(controllerField.value) : undefined}
+                    onSelect={(date) => {
+                      controllerField.onChange(date ? format(date, 'yyyy-MM-dd') : undefined);
+                    }}
+                    disabled={(date) => disabled || date < new Date('1900-01-01')}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              {description && <FormDescription>{description}</FormDescription>}
+              {(fieldState.error || error) && (
+                <p className="text-sm text-red-500">{fieldState.error?.message || error}</p>
               )}
-              disabled={field.disabled}
-            >
-              {formField.value ? (
-                format(new Date(formField.value), 'PPP')
-              ) : (
-                <span>{field.placeholder || 'Pick a date'}</span>
-              )}
-              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-            </ShadcnButton>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={formField.value ? new Date(formField.value) : undefined}
-              onSelect={(date) => {
-                formField.onChange(date ? format(date, 'yyyy-MM-dd') : null);
-              }}
-              disabled={(date) => field.disabled || date < new Date('1900-01-01')}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        {field.description && <FormDescription>{field.description}</FormDescription>}
-        <FormMessage className="text-red-500">
-          {formMethods.formState.errors[field.name]?.message as string} {field.error}
-        </FormMessage>
+            </>
+          )}
+        />
       </div>
     );
   }
@@ -414,59 +404,59 @@ CustomForm.DatePicker = React.forwardRef<HTMLInputElement, { field: DatePickerPr
 
 CustomForm.DatePicker.displayName = 'CustomForm.DatePicker';
 
-// time picker component
 CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerProps }>(
   ({ field }, ref) => {
     const formMethods = useContext(FormMethodsContext);
-    if (!formMethods) {
-      throw new Error('TimePicker must be used within a CustomForm');
-    }
-
-    const { field: formField } = useController({
-      control: formMethods.control,
-      name: field.name
-    });
+    if (!formMethods) throw new Error('TimePicker must be used within a CustomForm');
+    const { name, label, description, disabled, placeholder, error } = field;
 
     return (
-      <div className="flex flex-col gap-2">
-        {field.label && <FormLabel>{field.label}</FormLabel>}
-        <Popover>
-          <PopoverTrigger>
-            <FormControl>
-              <ShadcnButton
-                type="button"
-                variant="outline"
-                className={cn(
-                  'w-full pl-3 text-left font-normal',
-                  !formField.value && 'text-muted-foreground',
-                  formMethods.formState.errors[field.name] && field.error && 'border-red-500'
-                )}
-                disabled={field.disabled}
-              >
-                {formField.value || <span>{field.placeholder || 'Pick a time'}</span>}
-                <Clock className="ml-auto h-4 w-4 opacity-50" />
-              </ShadcnButton>
-            </FormControl>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-4" align="start">
-            <div className="flex items-center space-x-2">
-              <Input
-                type="time"
-                ref={ref}
-                value={formField.value || ''}
-                className="w-full"
-                disabled={field.disabled}
-                onChange={(e) => {
-                  formField.onChange(e.target.value);
-                }}
-              />
-            </div>
-          </PopoverContent>
-        </Popover>
-        {field.description && <FormDescription>{field.description}</FormDescription>}
-        <FormMessage className="text-red-500">
-          {formMethods.formState.errors[field.name]?.message as string} {field.error}
-        </FormMessage>
+      <div className="space-y-2">
+        {label && <FormLabel>{label}</FormLabel>}
+        <Controller
+          name={name}
+          control={formMethods.control}
+          defaultValue={undefined}
+          render={({ field: controllerField, fieldState }) => (
+            <>
+              <Popover>
+                <PopoverTrigger>
+                  <ShadcnButton
+                    type="button"
+                    variant="outline"
+                    className={cn(
+                      'w-full pl-3 text-left font-normal',
+                      !controllerField.value && 'text-muted-foreground',
+                      fieldState.error && 'border-red-500'
+                    )}
+                    disabled={disabled}
+                  >
+                    {controllerField.value || <span>{placeholder || 'Pick a time'}</span>}
+                    <Clock className="ml-auto h-4 w-4 opacity-50" />
+                  </ShadcnButton>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-4" align="start">
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="time"
+                      ref={ref}
+                      value={controllerField.value ?? ''}
+                      className="w-full"
+                      disabled={disabled}
+                      onChange={(e) => {
+                        controllerField.onChange(e.target.value || undefined);
+                      }}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+              {description && <FormDescription>{description}</FormDescription>}
+              {(fieldState.error || error) && (
+                <p className="text-sm text-red-500">{fieldState.error?.message || error}</p>
+              )}
+            </>
+          )}
+        />
       </div>
     );
   }
@@ -474,7 +464,6 @@ CustomForm.TimePicker = React.forwardRef<HTMLInputElement, { field: TimePickerPr
 
 CustomForm.TimePicker.displayName = 'CustomForm.TimePicker';
 
-// button component
 CustomForm.Button = function Button({
   children,
   state = 'default',
@@ -486,9 +475,7 @@ CustomForm.Button = function Button({
   className?: string;
 }) {
   const formMethods = useContext(FormMethodsContext);
-  if (!formMethods) {
-    throw new Error('Button must be used within a CustomForm');
-  }
+  if (!formMethods) throw new Error('Button must be used within a CustomForm');
 
   return (
     <ShadcnButton

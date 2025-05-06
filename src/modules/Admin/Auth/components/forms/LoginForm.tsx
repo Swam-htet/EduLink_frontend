@@ -23,8 +23,7 @@ export const LoginForm = ({ onSubmit, loading }: LoginFormProps) => {
         field={{
           name: 'email',
           label: 'Email',
-          placeholder: 'Enter your email',
-          type: 'email'
+          placeholder: 'Enter your email'
         }}
       />
 

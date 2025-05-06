@@ -21,6 +21,8 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
     defaultValues: filters
   });
 
+  console.log('form value', formMethods.getValues());
+
   const onSubmit = (data: StudentFilterParams) => {
     onFilterChange(data);
   };
@@ -48,8 +50,7 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
           field={{
             name: 'email',
             label: 'Email',
-            placeholder: 'Search by email',
-            type: 'email'
+            placeholder: 'Search by email'
           }}
         />
 
@@ -89,37 +90,37 @@ export const StudentFilter = ({ filters, onFilterChange }: StudentFilterProps) =
           }}
         />
 
-        <CustomForm.DatePicker
+        {/* <CustomForm.DatePicker
           field={{
             name: 'date_of_birth.start',
             label: 'Start Date of Birth',
             placeholder: 'Select start date of birth'
           }}
-        />
+        /> */}
 
-        <CustomForm.DatePicker
+        {/* <CustomForm.DatePicker
           field={{
             name: 'date_of_birth.end',
             label: 'End Date of Birth',
             placeholder: 'Select end date of birth'
           }}
-        />
+        /> */}
 
-        <CustomForm.DatePicker
+        {/* <CustomForm.DatePicker
           field={{
             name: 'enrollment_date.start',
             label: 'Start Enrollment Date',
             placeholder: 'Select start enrollment date'
           }}
-        />
+        /> */}
 
-        <CustomForm.DatePicker
+        {/* <CustomForm.DatePicker
           field={{
             name: 'enrollment_date.end',
             label: 'End Enrollment Date',
             placeholder: 'Select end enrollment date'
           }}
-        />
+        /> */}
 
         <CustomForm.Select
           field={{

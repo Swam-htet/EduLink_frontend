@@ -4,18 +4,18 @@ import { Button } from '@/components/ui/button';
 
 import Sidebar from '@/components/layouts/StudentLayout/components/Sidebar';
 import { useStudentAuth } from '@/modules/Student/Auth/hooks/useStudentAuth';
-import { selectTenantId } from '@/store/tenant.slice';
+import { selectTitle } from '@/store/tenant.slice';
 import { LogOutIcon } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
 export const StudentLayout = () => {
-  const tenantId = useSelector(selectTenantId);
+  const title = useSelector(selectTitle);
   const { logout } = useStudentAuth();
   return (
     <div className="grid h-screen grid-cols-[250px_1fr]">
       <div className="flex flex-col gap-4 overflow-hidden bg-white">
         <div className="flex items-center justify-between px-6 py-4">
-          <h1 className="text-2xl font-bold">{tenantId}</h1>
+          <h1 className="text-xl font-bold">{title}</h1>
         </div>
         <Sidebar />
       </div>

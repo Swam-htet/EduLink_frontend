@@ -149,11 +149,11 @@ export const ClassListPage = () => {
                 <p className="text-muted-foreground text-sm">{selectedEvent.subject.title}</p>
               </div>
 
-              {isWithinAttendanceWindow(selectedEvent) && (
-                <Button variant="outline" className="w-full" onClick={handleMakeAttendance}>
-                  Make Class Attendance
-                </Button>
-              )}
+              {/* {isWithinAttendanceWindow(selectedEvent) && ( */}
+              <Button variant="outline" className="w-full" onClick={handleMakeAttendance}>
+                Make Class Attendance
+              </Button>
+              {/* )} */}
             </div>
           )}
         </DialogContent>

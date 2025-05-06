@@ -102,7 +102,7 @@ export const StaffFilter = ({ filters, onFilterChange }: StaffFilterProps) => {
           }}
         />
 
-        <CustomForm.DatePicker
+        {/* <CustomForm.DatePicker
           field={{
             name: 'date_of_birth.start',
             label: 'Start Date of Birth',
@@ -132,7 +132,7 @@ export const StaffFilter = ({ filters, onFilterChange }: StaffFilterProps) => {
             label: 'End Joined Date',
             placeholder: 'Select end joined date'
           }}
-        />
+        /> */}
 
         <CustomForm.Select
           field={{

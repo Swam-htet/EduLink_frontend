@@ -1,5 +1,6 @@
 import { apiClient } from '@/lib/axios/api';
 import type {
+  HeroLandingResponse,
   LandingData,
   LandingKey,
   LandingResponse,
@@ -16,6 +17,11 @@ export class LandingService {
   static async getLandingDataByKey(key: LandingKey): Promise<LandingValue> {
     const { data } = await apiClient.get<LandingResponse>(`management/configs/${key}`);
     return data.data[key];
+  }
+
+  static async getHeroLandingData(): Promise<HeroLandingResponse> {
+    const { data } = await apiClient.get<HeroLandingResponse>('configs/hero');
+    return data;
   }
 
   static async setLandingData({ key, value }: SetLandingDataRequest): Promise<void> {

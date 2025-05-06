@@ -150,7 +150,7 @@ export const StudentRegistrationForm = ({ onSubmit, isPending }: StudentRegistra
       </div>
 
       {/* Profile Photo Upload */}
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
           Profile Photo (Optional)
         </label>
@@ -163,7 +163,7 @@ export const StudentRegistrationForm = ({ onSubmit, isPending }: StudentRegistra
         {selectedFile && (
           <p className="text-muted-foreground text-xs">Selected: {selectedFile.name}</p>
         )}
-      </div>
+      </div> */}
 
       <CustomForm.Button type="submit" className="w-full" state={isPending ? 'loading' : 'default'}>
         {isPending ? 'Registering...' : 'Register'}

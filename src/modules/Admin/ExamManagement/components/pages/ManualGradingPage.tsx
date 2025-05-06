@@ -21,7 +21,7 @@ import * as z from 'zod';
 
 const gradingSchema = z.object({
   marks: z.number().min(1, 'Marks must be greater than or equal to 1'),
-  comments: z.string().optional()
+  comments: z.string().min(1, 'Comments are required')
 });
 
 type GradingFormValues = z.infer<typeof gradingSchema>;
@@ -136,7 +136,7 @@ export const ManualGradingPage: React.FC = () => {
       answerId: string;
       marks: number;
       comments: string;
-    }) => ExamManagementService.manualGrading(answerId, marks, comments),
+    }) => ExamManagementService.manualGrading(answerId, resultId, marks, comments),
     onSuccess: () => {
       toast.success('Grading saved successfully');
       queryClient.invalidateQueries({ queryKey: ['examResult', examId, resultId, studentId] });

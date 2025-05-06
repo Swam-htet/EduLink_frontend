@@ -25,6 +25,7 @@ type SidebarItem = {
 
 const Sidebar = () => {
   const { logout } = useAdminAuth();
+
   const SIDEBAR_ITEMS: SidebarItem[][] = [
     // [
     //   {

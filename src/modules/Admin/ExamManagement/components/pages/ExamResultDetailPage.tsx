@@ -171,11 +171,11 @@ export const ExamResultDetailPage: React.FC = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-2xl font-bold">Exam Result Details</CardTitle>
-          {data.condition === 'auto-generated' && (
-            <Button onClick={handleManualGrading} variant="default">
-              Go to Manual Grading
-            </Button>
-          )}
+          {/* {data.condition === 'auto-generated' && ( */}
+          <Button onClick={handleManualGrading} variant="default">
+            Go to Manual Grading
+          </Button>
+          {/* )} */}
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

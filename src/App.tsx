@@ -12,12 +12,12 @@ function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <DialogProvider>
-          <TenantProvider>
-            <ReactQueryProvider>
+          <ReactQueryProvider>
+            <TenantProvider>
               <Toaster />
               <Router />
-            </ReactQueryProvider>
-          </TenantProvider>
+            </TenantProvider>
+          </ReactQueryProvider>
         </DialogProvider>
       </PersistGate>
     </Provider>

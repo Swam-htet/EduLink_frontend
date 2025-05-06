@@ -50,26 +50,26 @@ export const ExamFilter = ({ filters, onFilterChange }: ExamFilterProps) => {
           }}
         />
 
-        <CustomForm.DatePicker
+        {/* <CustomForm.DatePicker
           field={{
             name: 'exam_date',
             label: 'Exam Date'
           }}
-        />
+        /> */}
 
-        <CustomForm.TimePicker
+        {/* <CustomForm.TimePicker
           field={{
             name: 'start_time',
             label: 'Start Time'
           }}
-        />
-
+        /> */}
+        {/* 
         <CustomForm.TimePicker
           field={{
             name: 'end_time',
             label: 'End Time'
           }}
-        />
+        /> */}
 
         <CustomForm.Select
           field={{

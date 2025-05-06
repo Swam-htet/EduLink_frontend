@@ -62,7 +62,7 @@ const ScheduleTable = ({ schedules }: { schedules: Schedule[] }) => {
       accessor: (schedule) => (
         <div className="flex items-center gap-2">
           <BookOpen className="text-muted-foreground h-4 w-4" />
-          <span>{schedule.subject.title}</span>
+          <span>{schedule.subject.title || '-'}</span>
         </div>
       ),
       width: '20%'

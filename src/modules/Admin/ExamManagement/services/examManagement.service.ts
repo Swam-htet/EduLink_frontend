@@ -69,9 +69,15 @@ export class ExamManagementService {
     return data;
   }
 
-  static async manualGrading(answerId?: string, marks?: number, comments?: string) {
+  static async manualGrading(
+    answerId?: string,
+    resultId?: string,
+    marks?: number,
+    comments?: string
+  ) {
     const { data } = await apiClient.post<ActionResponse>(`management/exams/manual-grading`, {
       answer_id: answerId,
+      result_id: resultId,
       marks,
       comments
     });

@@ -214,13 +214,13 @@ export const ExamDetailPage = () => {
     }
   });
 
-  const sendManualPublishMutation = useMutation({
-    mutationKey: ['send-manual-publish'],
-    mutationFn: () => ExamManagementService.sendManualPublish(id as string),
-    onSuccess: () => {
-      toast.success('Manual publish mail sent successfully');
-    }
-  });
+  // const sendManualPublishMutation = useMutation({
+  //   mutationKey: ['send-manual-publish'],
+  //   mutationFn: () => ExamManagementService.sendManualPublish(id as string),
+  //   onSuccess: () => {
+  //     toast.success('Manual publish mail sent successfully');
+  //   }
+  // });
 
   const handlePublish = () => {
     confirm({
@@ -233,16 +233,16 @@ export const ExamDetailPage = () => {
     });
   };
 
-  const handleSendManualPublish = () => {
-    confirm({
-      title: 'Send Manual Publish',
-      content: 'Are you sure you want to send manual publish for this exam?',
-      confirmText: 'Send',
-      onConfirm: () => {
-        sendManualPublishMutation.mutate();
-      }
-    });
-  };
+  // const handleSendManualPublish = () => {
+  //   confirm({
+  //     title: 'Send Manual Publish',
+  //     content: 'Are you sure you want to send manual publish for this exam?',
+  //     confirmText: 'Send',
+  //     onConfirm: () => {
+  //       sendManualPublishMutation.mutate();
+  //     }
+  //   });
+  // };
 
   const handleCancel = () => {
     confirmDelete({
@@ -341,10 +341,10 @@ export const ExamDetailPage = () => {
           )}
           {examDetails.status === ExamStatus.PUBLISHED && (
             <>
-              <Button onClick={handleSendManualPublish} variant="default">
+              {/* <Button onClick={handleSendManualPublish} variant="default">
                 <Mail className="mr-2 h-4 w-4" />
                 Send Manual Publish
-              </Button>
+              </Button> */}
               <Button onClick={handleSendExamResults} variant="default">
                 <Mail className="mr-2 h-4 w-4" />
                 Send Exam Results
