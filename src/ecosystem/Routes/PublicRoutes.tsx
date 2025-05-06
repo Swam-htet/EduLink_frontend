@@ -1,4 +1,5 @@
 import { PUBLIC_ENDPOINTS } from '@/ecosystem/PageEndpoints/Public';
+import { TermsAndConditionPage } from '@/modules/Edulink/Landing/components/pages';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 
@@ -82,5 +83,9 @@ export const publicRoutes: RouteObject[] = [
   {
     path: PUBLIC_ENDPOINTS.TENANT_LANDING,
     element: <TenantLandingPage />
+  },
+  {
+    path: PUBLIC_ENDPOINTS.TERMS_AND_CONDITIONS,
+    element: <TermsAndConditionPage />
   }
 ];

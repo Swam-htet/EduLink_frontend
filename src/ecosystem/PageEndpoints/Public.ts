@@ -5,7 +5,8 @@ export const PUBLIC_ENDPOINTS = {
   STUDENT_LOGIN: '/student/login',
   STUDENT_REGISTRATION: '/student-registration',
   REGISTRATION_SUCCESS: '/student-registration/success',
-  NOT_FOUND: '*'
+  NOT_FOUND: '*',
+  TERMS_AND_CONDITIONS: '/terms-and-conditions'
 } as const;
 
 export type PublicEndpoints = typeof PUBLIC_ENDPOINTS;
